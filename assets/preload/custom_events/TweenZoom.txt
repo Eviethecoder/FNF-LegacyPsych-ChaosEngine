@@ -1,0 +1,8 @@
+value 1 is easing type. is empty it uses linear.
+value 2 is zoom modifier. if zoom is 1 and you add 1 to it,
+it becomes 2.
+if empty it resets the camera zoom to stage default
+you just also set the time. this is done by adding a , and the time you want it to take
+example:
+2,2
+zoom will be added by 2. and take 2 seconds to do

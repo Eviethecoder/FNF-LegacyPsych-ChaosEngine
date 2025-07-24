@@ -190,6 +190,33 @@ class Paths
 		return getPath('$key.lua', TEXT, library);
 	}
 
+	public static function soundExists(path:String, key:String, ?library:String):Bool{ // for Vocals.hx
+		#if MODS_ALLOWED
+		var file:String = modsSounds(path, key);
+		if(FileSystem.exists(file)) {
+			return true;
+		}
+		#end
+		
+		var folder:String = '';
+		if(path == 'songs') folder = 'songs:';
+		return OpenFlAssets.exists(folder + getPath('$path/$key.$SOUND_EXT', SOUND, library));
+	}
+
+
+	/**
+	 * so these 2 functions are v slice ports for the soundtray
+	 */
+	 public static function vsliceimage(key:String, ?library:String):String
+		{
+		  return getPath('images/$key.png', IMAGE, library);
+		}
+
+	public static function vslicesound(key:String, ?library:String):String
+		{
+			return getPath('sounds/$key.ogg', SOUND, library);
+		}
+
 	static public function video(key:String)
 	{
 		#if MODS_ALLOWED

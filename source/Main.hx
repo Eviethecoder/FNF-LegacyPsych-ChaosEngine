@@ -60,8 +60,10 @@ class Main extends Sprite
 			gameWidth = Math.ceil(stageWidth / zoom);
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
-
-		addChild(new FlxGame(gameWidth, gameHeight, InitState, #if (flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen));
+		var game:FlxGame =new FlxGame(gameWidth, gameHeight, InitState, #if (flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen);
+		@:privateAccess
+		game._customSoundTray = FunkinSoundTray;
+		addChild(game);
 
 		#if !mobile
 		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);

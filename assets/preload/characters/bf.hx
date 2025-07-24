@@ -1,0 +1,3 @@
+function onCreate(){
+    trace('test');
+}

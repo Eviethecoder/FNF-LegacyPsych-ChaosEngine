@@ -1,0 +1,4 @@
+value 1 is the easing type.
+value 2 is the character. supports Dad, Boyfriend, and Gf values. 
+
+leaving value 1 empty will use the default camera movement easing

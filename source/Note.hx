@@ -42,6 +42,7 @@ class Note extends FlxSprite
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
+	public var endnote:Bool = false;
 	public var noteType(default, set):String = null;
 
 	public var eventName:String = '';
@@ -415,6 +416,10 @@ class Note extends FlxSprite
 			if (alpha > 0.3)
 				alpha = 0.3;
 		}
+		if(isSustainNote && animation.curAnim.name.endsWith('end') &&  endnote == false)
+		{
+			endnote = true;
+		} 
 	}
 
 	public function clipToStrumNote(myStrum:StrumNote)

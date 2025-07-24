@@ -1,0 +1,2 @@
+value 1: the value to add to thew camera zoom. 
+example: if zoom is one and you set the value to 2. the new zoom is 3

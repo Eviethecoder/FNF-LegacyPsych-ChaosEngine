@@ -17,7 +17,7 @@ using StringTools;
 @:allow(FunkinLua)
 class LuaUtils {
     //Better optimized than using some getProperty shit or idk
-	static inline function getFlxEaseByString(?ease:String = '') {
+	public static function getFlxEaseByString(?ease:String = '') {
 		return switch(ease.toLowerCase().trim()) {
 			case 'backin': return FlxEase.backIn;
 			case 'backinout': return FlxEase.backInOut;

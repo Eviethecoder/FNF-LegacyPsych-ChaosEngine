@@ -8,6 +8,8 @@ import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxSort;
+import flixel.util.FlxTimer;
+import flixel.util.FlxColor;
 import Section.SwagSection;
 #if MODS_ALLOWED
 import sys.io.File;
@@ -33,6 +35,12 @@ typedef CharacterFile = {
 	var flip_x:Bool;
 	var no_antialiasing:Bool;
 	var healthbar_colors:Array<Int>;
+	@:optional
+	var images:Array<String>;
+	@:optional
+	var animtype:String;
+	
+
 }
 
 typedef AnimArray = {
@@ -44,20 +52,26 @@ typedef AnimArray = {
 	var offsets:Array<Int>;
 }
 
+@:build(macros.TestMacro.build())
 class Character extends FlxSprite
 {
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
 
+	
 	public var isPlayer:Bool = false;
 	public var curCharacter:String = DEFAULT_CHARACTER;
+
+	public var animstyle:String = 'psych';
 
 	public var colorTween:FlxTween;
 	public var holdTimer:Float = 0;
 	public var heyTimer:Float = 0;
+	var holdtimer:FlxTimer;
 	public var specialAnim:Bool = false;
 	public var animationNotes:Array<Dynamic> = [];
 	public var stunned:Bool = false;
+	var alt:String = '';
 	public var singDuration:Float = 4; //Multiplier of how long a character holds the sing pose
 	public var idleSuffix:String = '';
 	public var danceIdle:Bool = false; //Character use "danceLeft" and "danceRight" instead of "idle"
@@ -70,10 +84,16 @@ class Character extends FlxSprite
 	public var cameraPosition:Array<Float> = [0, 0];
 
 	public var hasMissAnimations:Bool = false;
+	var holdnote:Bool = false;
+	var theFrames:FlxAtlasFrames;
+	var hasscript:Bool;
+
+	var characterscriptPath:String;
 
 	//Used on Character Editor
 	public var imageFile:String = '';
 	public var jsonScale:Float = 1;
+	public var imagelist:Array<String>; 
 	public var noAntialiasing:Bool = false;
 	public var originalFlipX:Bool = false;
 	public var healthColorArray:Array<Int> = [255, 0, 0];
@@ -83,7 +103,11 @@ class Character extends FlxSprite
 	{
 		super(x, y);
 
+		#if (haxe >= "4.0.0")
+		animOffsets = new Map();
+		#else
 		animOffsets = new Map<String, Array<Dynamic>>();
+		#end
 		curCharacter = character;
 		this.isPlayer = isPlayer;
 		antialiasing = ClientPrefs.data.globalAntialiasing;
@@ -94,7 +118,8 @@ class Character extends FlxSprite
 
 			default:
 				var characterPath:String = 'characters/' + curCharacter + '.json';
-
+				characterscriptPath = 'characters/' + curCharacter + '.hx';
+				
 				#if MODS_ALLOWED
 				var path:String = Paths.modFolders(characterPath);
 				if (!FileSystem.exists(path)) {
@@ -157,12 +182,36 @@ class Character extends FlxSprite
 						frames = Paths.getPackerAtlas(json.image);
 					
 					case "sparrow":
-						frames = Paths.getSparrowAtlas(json.image);
+						if (json.images != null && json.images.length > 0)
+						{
+							for (img in json.images)
+							{
+								var atlas = Paths.getSparrowAtlas(img);
+								if (theFrames == null)
+									theFrames = atlas;
+								else
+									theFrames.addAtlas(atlas);
+							}
+							var atlas = Paths.getSparrowAtlas(json.image);
+							theFrames.addAtlas(atlas);
+							trace(theFrames);
+							frames = theFrames;
+						}
+						else
+						{
+							frames = Paths.getSparrowAtlas(json.image);
+						}
 					
 					case "texture":
 						frames = AtlasFrameMaker.construct(json.image);
 				}
 				imageFile = json.image;
+				if(json.images == null){
+					imagelist = null;
+				}
+				else{
+					imagelist = json.images;
+				}
 
 				if(json.scale != 1) {
 					jsonScale = json.scale;
@@ -174,6 +223,9 @@ class Character extends FlxSprite
 				cameraPosition = json.camera_position;
 
 				healthIcon = json.healthicon;
+				if( json.animtype !=null){
+					animstyle = json.animtype;
+				}
 				singDuration = json.sing_duration;
 				flipX = !!json.flip_x;
 				if(json.no_antialiasing) {
@@ -243,15 +295,35 @@ class Character extends FlxSprite
 
 		switch(curCharacter)
 		{
-			case 'pico-speaker':
-				skipDance = true;
-				loadMappedAnims();
-				playAnim("shoot1");
+			default:
+				trace(curCharacter);
 		}
+		if(sys.FileSystem.exists(Paths.getPreloadPath(characterscriptPath)) && PlayState.instance!=null ){
+
+			try{
+				trace('script found!! '+ characterscriptPath );
+				#if !macro
+				__hscript = HaxeScript.HaxeScript.FromFile(Paths.getPreloadPath(characterscriptPath), this); 
+				__hscript.onError = PlayState.instance.hscriptError;
+				hasscript = true;
+				#end 
+			}
+			catch(e:Dynamic){  
+				PlayState.instance.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
+				PlayState.instance.addTextToDebug("[ ERROR ] Could not load character script " + Paths.getPreloadPath(characterscriptPath), FlxColor.RED);
+				hasscript = false;  
+			} 
+		}
+		else{
+			hasscript = false;  
+			trace('no script has been found for path:' + characterscriptPath );
+		}
+	
 	}
 
 	override function update(elapsed:Float)
 	{
+		FlxG.watch.addQuick('alt:', alt);
 		if(!debugMode && animation.curAnim != null)
 		{
 			if(heyTimer > 0)
@@ -287,25 +359,24 @@ class Character extends FlxSprite
 					if(animation.curAnim.finished) playAnim(animation.curAnim.name, false, false, animation.curAnim.frames.length - 3);
 			}
 
+			
+			
 			if (animation.curAnim.name.startsWith('sing'))
-				holdTimer += elapsed;
-			else if(isPlayer)
-				holdTimer = 0;
-
-			if (!isPlayer)
 			{
-				if (holdTimer >= Conductor.stepCrochet * (0.0011 #if FLX_PITCH / (FlxG.sound.music != null ? FlxG.sound.music.pitch : 1) #end) * singDuration)
-				{
-					dance();
-					holdTimer = 0;
-				}
+				holdTimer += elapsed;
 			}
 
-			if(animation.curAnim.finished && animation.getByName(animation.curAnim.name + '-loop') != null)
-				playAnim(animation.curAnim.name + '-loop');
+			if (holdTimer >= Conductor.stepCrochet * (0.0011 / (FlxG.sound.music != null ? FlxG.sound.music.pitch : 1)) * singDuration)
+			{
+				dance();
+				holdTimer = 0;
+			}
+			
 
-			if (animation.curAnim.name.endsWith('miss') && animation.curAnim.finished && !debugMode)
-				playAnim('idle', true, false, 10);
+			if(animation.curAnim.finished && animation.getByName(animation.curAnim.name + '-loop') != null)
+			{
+				playAnim(animation.curAnim.name + '-loop');
+			}
 		}
 		super.update(elapsed);
 	}
@@ -333,6 +404,76 @@ class Character extends FlxSprite
 			}
 		}
 	}
+
+
+	public function setFunctionOnScripts(name:String,  params:Array<Dynamic>){
+		if(hasscript){
+			__hscript.runFunction(name, params);
+		}
+		else{
+			
+		}
+
+	}
+
+	public function playSingAnim(note:Note,AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0 ):Void
+		{
+			specialAnim = false;
+			if (note.isSustainNote == true && animstyle != 'psych'){
+				holdnote = note.isSustainNote;
+
+				
+				holdtimer = new FlxTimer().start(1, function(tmr:FlxTimer)
+					{
+						holdnote = false;
+					});
+
+				if (isSinging() && AnimName == getCurrentAnimation()){
+					switch(animstyle){
+						case ('pause'):
+							if(note.endnote){
+								trace('endnote');
+								this.animation.curAnim.paused = false;
+							}
+							else{
+								this.animation.curAnim.paused = true;
+							}
+					}
+
+				}
+				else{
+					if (holdtimer !=null){
+						holdtimer.cancel();
+						holdtimer = null;
+						holdnote = false;
+					}
+
+					playAnim(AnimName + alt, Force, Reversed, Frame); 
+				}
+			}
+			else{
+				playAnim(AnimName+ alt, Force, Reversed, Frame);
+			}
+			}
+
+			
+		
+
+		 /**
+   * Returns the name of the animation that is currently playing.
+   * If no animation is playing (usually this means the character is BROKEN!),
+   *   returns an empty string to prevent NPEs.
+   */
+   public function getCurrentAnimation():String
+	{
+	  if (this.animation == null || this.animation.curAnim == null) return "";
+	  return this.animation.curAnim.name;
+	}
+
+	public function isSinging():Bool
+		{
+		  return getCurrentAnimation().startsWith('sing');
+		}
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{

@@ -1,6 +1,6 @@
 package editors;
 
-#if hxdiscord_rpc
+#if desktop
 import Discord.DiscordClient;
 #end
 import animateatlas.AtlasFrameMaker;
@@ -12,6 +12,7 @@ import flixel.FlxCamera;
 import flixel.input.keyboard.FlxKey;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.FlxGraphic;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -51,11 +52,13 @@ class CharacterEditorState extends MusicBeatState
 	var bgLayer:FlxTypedGroup<FlxSprite>;
 	var charLayer:FlxTypedGroup<Character>;
 	var dumbTexts:FlxTypedGroup<FlxText>;
+	var theFrames:FlxAtlasFrames;
 	//var animList:Array<String> = [];
 	var curAnim:Int = 0;
 	var daAnim:String = 'spooky';
 	var goToPlayState:Bool = true;
 	var camFollow:FlxObject;
+	var imagelist:Array<String>;
 
 	public function new(daAnim:String = 'spooky', goToPlayState:Bool = true)
 	{
@@ -75,9 +78,12 @@ class CharacterEditorState extends MusicBeatState
 	var leHealthIcon:HealthIcon;
 	var characterList:Array<String> = [];
 
+	var animStyles:Array<String> = ['psych','v-slice','pause'];
+
 	var cameraFollowPointer:FlxSprite;
 	var healthBarBG:FlxSprite;
 
+	var animtype:FlxUIDropDownMenuCustom;
 	override function create()
 	{
 		//FlxG.sound.playMusic(Paths.music('breakfast'), 0.5);
@@ -179,6 +185,7 @@ class CharacterEditorState extends MusicBeatState
 		var tabs = [
 			{name: 'Character', label: 'Character'},
 			{name: 'Animations', label: 'Animations'},
+			{name: 'Extras', label: 'Extras'},
 		];
 		UI_characterbox = new FlxUITabMenu(null, tabs, true);
 		UI_characterbox.cameras = [camMenu];
@@ -193,9 +200,9 @@ class CharacterEditorState extends MusicBeatState
 
 		//addOffsetsUI();
 		addSettingsUI();
-
 		addCharacterUI();
 		addAnimationsUI();
+		addExtrasUI();
 		UI_characterbox.selected_tab_id = 'Character';
 
 		FlxG.mouse.visible = true;
@@ -412,6 +419,7 @@ class CharacterEditorState extends MusicBeatState
 		}';
 
 	var charDropDown:FlxUIDropDownMenuCustom;
+
 	function addSettingsUI() {
 		var tab_group = new FlxUI(null, UI_box);
 		tab_group.name = "Settings";
@@ -493,6 +501,7 @@ class CharacterEditorState extends MusicBeatState
 	}
 
 	var imageInputText:FlxUIInputText;
+	var imagesInputText:FlxUIInputText;
 	var healthIconInputText:FlxUIInputText;
 
 	var singDurationStepper:FlxUINumericStepper;
@@ -508,7 +517,40 @@ class CharacterEditorState extends MusicBeatState
 	var healthColorStepperR:FlxUINumericStepper;
 	var healthColorStepperG:FlxUINumericStepper;
 	var healthColorStepperB:FlxUINumericStepper;
+	function addExtrasUI() {
+		var tab_group = new FlxUI(null, UI_box);
+		tab_group.name = "Extras";
 
+		imagesInputText = new FlxUIInputText(15, 30, 200, '', 8);
+		var reloadImage:FlxButton = new FlxButton(imagesInputText.x + 210, imagesInputText.y - 3, "Load all images", function()
+		{
+        	var thelist = imagesInputText.text.split(",");
+			imagelist = thelist;
+			trace(thelist);
+			char.imagelist = imagelist;
+			reloadCharacterImage();
+			if(char.animation.curAnim != null) {
+				char.playAnim(char.animation.curAnim.name, true);
+			}
+			trace(theFrames);
+		});
+
+		
+
+		healthIconInputText = new FlxUIInputText(15, imagesInputText.y + 35, 75, leHealthIcon.getCharacter(), 8);
+
+
+		animtype = new FlxUIDropDownMenuCustom(healthIconInputText.x +200, healthIconInputText.y -10 , FlxUIDropDownMenuCustom.makeStrIdLabelArray(animStyles, true), function(character:String)
+		{
+			char.animstyle = animtype.selectedLabel;
+		});
+		tab_group.add(new FlxText(15, imagesInputText.y - 18, 0, 'Image files'));
+		tab_group.add(imagesInputText);
+		tab_group.add(reloadImage);
+		tab_group.add(animtype);
+		UI_characterbox.addGroup(tab_group);
+		trace('should be added');
+	}
 	function addCharacterUI() {
 		var tab_group = new FlxUI(null, UI_box);
 		tab_group.name = "Character";
@@ -523,7 +565,11 @@ class CharacterEditorState extends MusicBeatState
 			}
 		});
 
-		var decideIconColor:FlxButton = new FlxButton(reloadImage.x, reloadImage.y + 30, "Get Icon Color", function()
+		
+
+		healthIconInputText = new FlxUIInputText(15, imageInputText.y + 35, 75, leHealthIcon.getCharacter(), 8);
+
+		var decideIconColor:FlxButton = new FlxButton(healthIconInputText.x +100, reloadImage.y + 30, "Get Icon Color", function()
 			{
 				var coolColor = FlxColor.fromInt(CoolUtil.dominantColor(leHealthIcon));
 				healthColorStepperR.value = coolColor.red;
@@ -533,8 +579,7 @@ class CharacterEditorState extends MusicBeatState
 				getEvent(FlxUINumericStepper.CHANGE_EVENT, healthColorStepperG, null);
 				getEvent(FlxUINumericStepper.CHANGE_EVENT, healthColorStepperB, null);
 			});
-
-		healthIconInputText = new FlxUIInputText(15, imageInputText.y + 35, 75, leHealthIcon.getCharacter(), 8);
+		
 
 		singDurationStepper = new FlxUINumericStepper(15, healthIconInputText.y + 45, 0.1, 4, 0, 999, 1);
 
@@ -569,7 +614,7 @@ class CharacterEditorState extends MusicBeatState
 		positionCameraYStepper = new FlxUINumericStepper(positionYStepper.x, positionYStepper.y + 40, 10, char.cameraPosition[1], -9000, 9000, 0);
 
 		var saveCharacterButton:FlxButton = new FlxButton(reloadImage.x, noAntialiasingCheckBox.y + 40, "Save Character", function() {
-			saveCharacter();
+	saveCharacter();
 		});
 
 		healthColorStepperR = new FlxUINumericStepper(singDurationStepper.x, saveCharacterButton.y, 20, char.healthColorArray[0], 0, 255, 0);
@@ -587,6 +632,7 @@ class CharacterEditorState extends MusicBeatState
 		tab_group.add(reloadImage);
 		tab_group.add(decideIconColor);
 		tab_group.add(healthIconInputText);
+		
 		tab_group.add(singDurationStepper);
 		tab_group.add(scaleStepper);
 		tab_group.add(flipXCheckBox);
@@ -828,6 +874,9 @@ class CharacterEditorState extends MusicBeatState
 
 	function reloadCharacterImage() {
 		var lastAnim:String = '';
+		if (theFrames != null){
+			theFrames = null;
+		};
 		if(char.animation.curAnim != null) {
 			lastAnim = char.animation.curAnim.name;
 		}
@@ -837,7 +886,23 @@ class CharacterEditorState extends MusicBeatState
 		} else if(Paths.fileExists('images/' + char.imageFile + '.txt', TEXT)) {
 			char.frames = Paths.getPackerAtlas(char.imageFile);
 		} else {
-			char.frames = Paths.getSparrowAtlas(char.imageFile);
+			if (imagelist != null){
+				for (img in imagelist){
+					var atlas = Paths.getSparrowAtlas(img);
+					if (theFrames == null)
+						theFrames = atlas;
+					else
+						theFrames.addAtlas(atlas);
+
+
+			}
+			var atlas = Paths.getSparrowAtlas(char.imageFile);
+			theFrames.addAtlas(atlas);
+			char.frames = theFrames;
+			}
+			else{
+				char.frames = Paths.getSparrowAtlas(char.imageFile);
+			}
 		}
 
 
@@ -981,6 +1046,10 @@ class CharacterEditorState extends MusicBeatState
 	function reloadCharacterOptions() {
 		if(UI_characterbox != null) {
 			imageInputText.text = char.imageFile;
+			if(char.imagelist != null){
+				var list = char.imagelist.join(',');
+				imagesInputText.text = list;
+			}
 			healthIconInputText.text = char.healthIcon;
 			singDurationStepper.value = char.singDuration;
 			scaleStepper.value = char.jsonScale;
@@ -1275,9 +1344,11 @@ class CharacterEditorState extends MusicBeatState
 		var json = {
 			"animations": char.animationsArray,
 			"image": char.imageFile,
+			"images": char.imagelist,
 			"scale": char.jsonScale,
 			"sing_duration": char.singDuration,
 			"healthicon": char.healthIcon,
+			"animtype": char.animstyle,
 
 			"position":	char.positionArray,
 			"camera_position": char.cameraPosition,

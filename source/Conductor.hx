@@ -107,6 +107,26 @@ class Conductor
 		return Math.floor(getStepRounded(time)/4);
 	}
 
+		/**
+	 * Duration of a step (sixtennth note) in milliseconds. Calculated based on bpm.
+	 */
+	public static var stepLengthMs(get, never):Float;
+
+	public static function get_stepLengthMs():Float
+	{
+		return beatLengthMs / 4;
+	}
+		/**
+	 * Duration of a beat (quarter note) in milliseconds. Calculated based on bpm.
+	 */
+	public static var beatLengthMs(get, never):Float;
+
+	public static function get_beatLengthMs():Float
+	{
+		// Tied directly to BPM.
+		return ((60/ bpm) * 1000);
+	}
+
 	public static function mapBPMChanges(song:SwagSong)
 	{
 		bpmChangeMap = [];

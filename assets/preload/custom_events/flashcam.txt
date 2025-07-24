@@ -1,0 +1,3 @@
+value 1 is the color name/hex code
+value 2 is the duration of the flash
+by default value 2 will be set to 1 if no value is used
