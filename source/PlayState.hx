@@ -160,15 +160,12 @@ class PlayState extends MusicBeatState
 	public var health:Float = 1;
 	public var combo:Int = 0;
 
-	private var healthBarBG:AttachedSprite;
+	
+	public var hud:HudHandler;
 
-	public var healthBar:FlxBar;
+
 
 	var songPercent:Float = 0;
-
-	private var timeBarBG:AttachedSprite;
-
-	public var timeBar:FlxBar;
 
 	public var ratingsData:Array<Rating> = [];
 	public var sicks:Int = 0;
@@ -197,6 +194,12 @@ class PlayState extends MusicBeatState
 	public var botplaySine:Float = 0;
 	public var botplayTxt:FlxText;
 
+	/**
+   * The displayed value of the player's health.
+   * Used to provide smooth animations based on linear interpolation of the player's health.
+   */
+  	var healthLerp:Float = 1;
+	var songLerp:Float = 0;
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
 	public var camHUD:FlxCamera;
@@ -1022,7 +1025,6 @@ class PlayState extends MusicBeatState
 		noteGroup = new FlxTypedGroup<FlxBasic>();
 		add(noteGroup);
 		uiGroup = new FlxSpriteGroup();
-		add(uiGroup);
 
 		switch (curStage)
 		{
@@ -1077,36 +1079,11 @@ class PlayState extends MusicBeatState
 		}
 		updateTime = showTime;
 
-		timeBarBG = new AttachedSprite('timeBar');
-		timeBarBG.x = timeTxt.x;
-		timeBarBG.y = timeTxt.y + (timeTxt.height / 4);
-		timeBarBG.scrollFactor.set();
-		timeBarBG.alpha = 0;
-		timeBarBG.visible = showTime;
-		timeBarBG.color = FlxColor.BLACK;
-		timeBarBG.xAdd = -4;
-		timeBarBG.yAdd = -4;
-		uiGroup.add(timeBarBG);
-
-		timeBar = new FlxBar(timeBarBG.x + 4, timeBarBG.y + 4, LEFT_TO_RIGHT, Std.int(timeBarBG.width - 8), Std.int(timeBarBG.height - 8), this,
-			'songPercent', 0, 1);
-		timeBar.scrollFactor.set();
-		timeBar.createFilledBar(0xFF000000, 0xFFFFFFFF);
-		timeBar.numDivisions = 800; // How much lag this causes?? Should i tone it down to idk, 400 or 200?
-		timeBar.alpha = 0;
-		timeBar.visible = showTime;
-		uiGroup.add(timeBar);
-		uiGroup.add(timeTxt);
-		timeBarBG.sprTracker = timeBar;
 
 		strumLineNotes = new FlxTypedGroup<StrumNote>();
 		noteGroup.add(strumLineNotes);
 
-		if (ClientPrefs.data.timeBarType == 'Song Name')
-		{
-			timeTxt.size = 24;
-			timeTxt.y += 3;
-		}
+		
 
 		var splash:NoteSplash = new NoteSplash(100, 100, 0);
 		grpNoteSplashes.add(splash);
@@ -1145,54 +1122,63 @@ class PlayState extends MusicBeatState
 		FlxG.fixedTimestep = false;
 		moveCameraSection();
 
-		healthBarBG = new AttachedSprite('healthBar');
-		healthBarBG.y = FlxG.height * 0.89;
-		healthBarBG.screenCenter(X);
-		healthBarBG.scrollFactor.set();
-		healthBarBG.visible = !ClientPrefs.data.hideHud;
-		healthBarBG.xAdd = -4;
-		healthBarBG.yAdd = -4;
-		uiGroup.add(healthBarBG);
-		if (ClientPrefs.data.downScroll)
-			healthBarBG.y = 0.11 * FlxG.height;
 
-		healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
-			'health', 0, 2);
-		healthBar.scrollFactor.set();
-		// healthBar
-		healthBar.visible = !ClientPrefs.data.hideHud;
-		healthBar.alpha = ClientPrefs.data.healthBarAlpha;
-		uiGroup.add(healthBar);
-		healthBarBG.sprTracker = healthBar;
+		hud = new HudHandler(Paths.hudjson(PlayState.SONG.hudSkin), PlayState.SONG.hudSkin, SONG.song);
+		add(hud);
+		add(uiGroup);
+		hud.cameras = [camHUD];
+	
 
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
-		iconP1.y = healthBar.y - 75;
+		iconP1.y = hud.healthBar.y - 75;
+		if(hud.iconp1overide !=null){
+			iconP1.x =  hud.healthBar.x + hud.geticonP1Pos(0);
+			iconP1.y += hud.geticonP1Pos(1);
+			trace(iconP1.x + ' ' + iconP1.y);
+		}
+		else{
+			iconP1.y = hud.healthBar.y - 75;
+		}
 		iconP1.visible = !ClientPrefs.data.hideHud;
 		iconP1.alpha = ClientPrefs.data.healthBarAlpha;
+	
+		iconP1.visible = hud.iconp1vis;
 		uiGroup.add(iconP1);
 
+		
 		iconP2 = new HealthIcon(dad.healthIcon, false);
-		iconP2.y = healthBar.y - 75;
+		if(hud.iconp2overide !=null){
+			iconP2.x += hud.geticonP2Pos(0);
+			iconP2.y += hud.geticonP2Pos(1);
+			trace(iconP2.x + ' ' + iconP2.y);
+		}
+		else{
+			iconP2.y = hud.healthBar.y - 75;
+		}
+		
 		iconP2.visible = !ClientPrefs.data.hideHud;
 		iconP2.alpha = ClientPrefs.data.healthBarAlpha;
 		uiGroup.add(iconP2);
-		reloadHealthBarColors();
+		hud.reloadHealthBarColors();
 
-		scoreTxt = new FlxText(0, healthBarBG.y + 36, FlxG.width, "", 20);
+		
+		scoreTxt = new FlxText(0, hud.healthBar.y + 36, FlxG.width, "", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
+		scoreTxt.x += hud.scorposs[0];
+		scoreTxt.y += hud.scorposs[1];
 		scoreTxt.visible = !ClientPrefs.data.hideHud;
 		uiGroup.add(scoreTxt);
 
-		botplayTxt = new FlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
+		botplayTxt = new FlxText(400, hud.timeBar.y + 55, FlxG.width - 800, "BOTPLAY", 32);
 		botplayTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		botplayTxt.scrollFactor.set();
 		botplayTxt.borderSize = 1.25;
 		botplayTxt.visible = cpuControlled;
 		uiGroup.add(botplayTxt);
 		if (ClientPrefs.data.downScroll)
-			botplayTxt.y = timeBarBG.y - 78;
+			botplayTxt.y = hud.timeBar.y - 78;
 
 		uiGroup.cameras = [camHUD];
 		noteGroup.cameras = [camHUD];
@@ -1626,13 +1612,7 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	public function reloadHealthBarColors()
-	{
-		healthBar.createFilledBar(FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]),
-			FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]));
-
-		healthBar.updateBar();
-	}
+	
 
 	public function addCharacterToList(newCharacter:String, type:Int)
 	{
@@ -2592,7 +2572,7 @@ class PlayState extends MusicBeatState
 
 		// Song duration in a float, useful for the time left feature
 		songLength = FlxG.sound.music.length;
-		FlxTween.tween(timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
+		FlxTween.tween(hud.timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 		FlxTween.tween(timeTxt, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 
 		switch (curStage)
@@ -3134,6 +3114,17 @@ class PlayState extends MusicBeatState
 	var canPause:Bool = true;
 	var limoSpeed:Float = 0;
 
+	 /**
+     * Updates the values of the health bar.
+     */
+  function updateHealth():Void
+  {
+   
+      healthLerp = FlxMath.lerp(healthLerp, health, 0.15);
+    
+  }
+
+
 	override public function update(elapsed:Float)
 	{
 
@@ -3142,6 +3133,9 @@ class PlayState extends MusicBeatState
 			camNotes.zoom = camHUD.zoom;
 		}
 		setFunctionOnScripts('onUpdate', [elapsed]);
+		updateHealth();
+		hud.updatehealth(healthLerp);
+		hud.updateTime(songPercent);
 
 		switch (curStage)
 		{
@@ -3347,24 +3341,24 @@ class PlayState extends MusicBeatState
 
 		var iconOffset:Int = 26;
 
-		iconP1.x = healthBar.x
-			+ (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01))
+		iconP1.x = hud.healthBar.x
+			+ (hud.healthBar.width * (FlxMath.remapToRange(hud.healthBar.percent, 0, 100, 100, 0) * 0.01))
 			+ (150 * iconP1.scale.x - 150) / 2
 			- iconOffset;
-		iconP2.x = healthBar.x
-			+ (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01))
+		iconP2.x = hud.healthBar.x
+			+ (hud.healthBar.width * (FlxMath.remapToRange(hud.healthBar.percent, 0, 100, 100, 0) * 0.01))
 			- (150 * iconP2.scale.x) / 2
 			- iconOffset * 2;
 
 		if (health > 2)
 			health = 2;
 
-		if (healthBar.percent < 20)
+		if (hud.healthBar.percent < 20)
 			iconP1.animation.curAnim.curFrame = 1;
 		else
 			iconP1.animation.curAnim.curFrame = 0;
 
-		if (healthBar.percent > 80)
+		if (hud.healthBar.percent > 80)
 			iconP2.animation.curAnim.curFrame = 1;
 		else
 			iconP2.animation.curAnim.curFrame = 0;
@@ -4125,7 +4119,7 @@ class PlayState extends MusicBeatState
 							setOnLuas('gfName', gf.curCharacter);
 						}
 				}
-				reloadHealthBarColors();
+				hud.reloadHealthBarColors();
 
 			case 'BG Freaks Expression':
 				if (bgGirls != null)
@@ -4318,9 +4312,8 @@ public function moveCamera(isDad:Bool,? isGf:Bool)
 			}
 		}
 
-		timeBarBG.visible = false;
-		timeBar.visible = false;
-		timeTxt.visible = false;
+		hud.timeBar.visible = false;
+		hud.timeTxt.visible = false;
 		canPause = false;
 		endingSong = true;
 		camZooming = false;

@@ -2001,14 +2001,14 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "setHealthBarColors", function(leftHex:String, rightHex:String) {
 			var left:FlxColor = CoolUtil.colorFromString(leftHex);
 			var right:FlxColor = CoolUtil.colorFromString(rightHex);
-			PlayState.instance.healthBar.createFilledBar(left, right);
-			PlayState.instance.healthBar.updateBar();
+			PlayState.instance.hud.healthBar.setColors(left, right);
+			PlayState.instance.hud.healthBar.updateBar();
 		});
 		Lua_helper.add_callback(lua, "setTimeBarColors", function(leftHex:String, rightHex:String) {
 			var left:FlxColor = CoolUtil.colorFromString(leftHex);
 			var right:FlxColor = CoolUtil.colorFromString(rightHex);
-			PlayState.instance.timeBar.createFilledBar(right, left);
-			PlayState.instance.timeBar.updateBar();
+			PlayState.instance.hud.timeBar.setColors(right, left);
+			PlayState.instance.hud.timeBar.updateBar();
 		});
 
 		Lua_helper.add_callback(lua, "setObjectCamera", function(obj:String, camera:String = '') {

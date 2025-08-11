@@ -2,6 +2,8 @@ package;
 
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxG;
+import Discord.DiscordClient;
+import lime.app.Application;
 
 /**
  * Handles initialization of variables when first opening the game.
@@ -46,6 +48,15 @@ class InitState extends flixel.FlxState {
         Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
 
+        
+        if (!DiscordClient.isInitialized)
+        {
+            DiscordClient.initialize();
+            Application.current.onExit.add (function (exitCode) {
+                DiscordClient.shutdown();
+            });
+        }
+			
         FlxG.switchState(Type.createInstance(Main.initialState, []));
     }
 }

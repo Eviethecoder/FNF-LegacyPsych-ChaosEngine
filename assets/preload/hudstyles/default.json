@@ -1,0 +1,19 @@
+{
+  "healthbar": {
+    "animations": [
+    ],
+    "image": ["healthBar"],
+    "scale": 1,
+    "barStyle": "default",
+    "position": [0, 0],
+    "barOffsets": [0, 0],
+    "no_antialiasing": false
+  },
+  "timeBar": {
+    "image": ["timeBar"],
+    "scale": 1.2,
+    "barStyle":"default",
+    "position": [100, 50],
+    "barOffsets": [5, 5]
+  }
+}

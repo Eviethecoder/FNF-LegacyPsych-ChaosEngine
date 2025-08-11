@@ -1,8 +1,8 @@
 package;
 
-#if hxdiscord_rpc
+
 import Discord.DiscordClient;
-#end
+
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -89,7 +89,7 @@ class TitleState extends MusicBeatState
 	{
 		super.create();
 
-		swagShader = new ColorSwap();
+		
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
 		#if CHECK_FOR_UPDATES
@@ -164,23 +164,18 @@ class TitleState extends MusicBeatState
 			FlxTransitionableState.skipNextTransOut = true;
 			MusicBeatState.switchState(new FlashingState());
 		} else {
-			#if desktop
-			if (!DiscordClient.isInitialized)
-			{
-				DiscordClient.initialize();
-				Application.current.onExit.add (function (exitCode) {
-					DiscordClient.shutdown();
-				});
-			}
-			#end
+			
 
 			if (initialized)
 				startIntro();
 			else
 			{
+				trace('timer started');
 				new FlxTimer().start(1, function(tmr:FlxTimer)
 				{
+					trace('Starting Intro');
 					startIntro();
+
 				});
 			}
 		}
@@ -191,7 +186,7 @@ class TitleState extends MusicBeatState
 	var gfDance:FlxSprite;
 	var danceLeft:Bool = false;
 	var titleText:FlxSprite;
-	var swagShader:ColorSwap = null;
+	
 
 	function startIntro()
 	{
@@ -226,7 +221,7 @@ class TitleState extends MusicBeatState
 		// logoBl.screenCenter();
 		// logoBl.color = FlxColor.BLACK;
 
-		swagShader = new ColorSwap();
+		
 		gfDance = new FlxSprite(titleJSON.gfx, titleJSON.gfy);
 
 		var easterEgg:String = FlxG.save.data.psychDevsEasterEgg;
@@ -260,9 +255,8 @@ class TitleState extends MusicBeatState
 		gfDance.antialiasing = ClientPrefs.data.globalAntialiasing;
 
 		add(gfDance);
-		gfDance.shader = swagShader.shader;
 		add(logoBl);
-		logoBl.shader = swagShader.shader;
+	
 
 		titleText = new FlxSprite(titleJSON.startx, titleJSON.starty);
 		#if (desktop && MODS_ALLOWED)
@@ -488,12 +482,7 @@ class TitleState extends MusicBeatState
 			skipIntro();
 		}
 
-		if(swagShader != null)
-		{
-			if(controls.UI_LEFT) swagShader.hue -= elapsed * 0.1;
-			if(controls.UI_RIGHT) swagShader.hue += elapsed * 0.1;
-		}
-
+		
 		super.update(elapsed);
 	}
 

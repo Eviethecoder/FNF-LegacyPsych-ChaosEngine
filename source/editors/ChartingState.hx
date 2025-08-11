@@ -107,6 +107,8 @@ class ChartingState extends MusicBeatState
 	public static var lastSection:Int = 0;
 	private static var lastSong:String = '';
 
+	var exstentionnum:Int = 4;
+
 	var bpmTxt:FlxText;
 
 	var camPos:FlxObject;
@@ -227,6 +229,7 @@ class ChartingState extends MusicBeatState
 				bpm: 150.0,
 				needsVoices: true,
 				arrowSkin: '',
+				hudSkin: 'default',
 				splashSkin: 'noteSplashes',//idk it would crash if i didn't
 				player1: 'bf',
 				player2: 'dad',
@@ -449,6 +452,7 @@ class ChartingState extends MusicBeatState
 	var playSoundDad:FlxUICheckBox = null;
 	var UI_songTitle:FlxUIInputText;
 	var noteSkinInputText:FlxUIInputText;
+	var hudSkinInputText:FlxUIInputText;
 	var noteSplashesInputText:FlxUIInputText;
 	var stageDropDown:FlxUIDropDownMenuCustom;
 	#if FLX_PITCH
@@ -647,12 +651,19 @@ class ChartingState extends MusicBeatState
 		if(skin == null) skin = '';
 		noteSkinInputText = new FlxUIInputText(player2DropDown.x, player2DropDown.y + 50, 150, skin, 8);
 		blockPressWhileTypingOn.push(noteSkinInputText);
+		
+		
 
 		noteSplashesInputText = new FlxUIInputText(noteSkinInputText.x, noteSkinInputText.y + 35, 150, _song.splashSkin, 8);
 		blockPressWhileTypingOn.push(noteSplashesInputText);
 
+		var hudskin = PlayState.SONG.hudSkin;
+		hudSkinInputText = new FlxUIInputText(noteSplashesInputText.x, noteSplashesInputText.y + 50, 150, hudskin, 8);
+		blockPressWhileTypingOn.push(hudSkinInputText);
+
 		var reloadNotesButton:FlxButton = new FlxButton(noteSplashesInputText.x + 5, noteSplashesInputText.y + 20, 'Change Notes', function() {
 			_song.arrowSkin = noteSkinInputText.text;
+			_song.hudSkin = hudSkinInputText.text;
 			updateGrid();
 		});
 
@@ -673,6 +684,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(stepperSpeed);
 		tab_group_song.add(reloadNotesButton);
 		tab_group_song.add(noteSkinInputText);
+		tab_group_song.add(hudSkinInputText);
 		tab_group_song.add(noteSplashesInputText);
 		tab_group_song.add(new FlxText(stepperBPM.x, stepperBPM.y - 15, 0, 'Song BPM:'));
 		tab_group_song.add(new FlxText(stepperBPM.x + 100, stepperBPM.y - 15, 0, 'Song Offset:'));
@@ -682,6 +694,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(new FlxText(player1DropDown.x, player1DropDown.y - 15, 0, 'Boyfriend:'));
 		tab_group_song.add(new FlxText(stageDropDown.x, stageDropDown.y - 15, 0, 'Stage:'));
 		tab_group_song.add(new FlxText(noteSkinInputText.x, noteSkinInputText.y - 15, 0, 'Note Texture:'));
+		tab_group_song.add(new FlxText(hudSkinInputText.x, hudSkinInputText.y - 15, 0, 'Hud Texture:'));
 		tab_group_song.add(new FlxText(noteSplashesInputText.x, noteSplashesInputText.y - 15, 0, 'Note Splashes Texture:'));
 		tab_group_song.add(player2DropDown);
 		tab_group_song.add(gfVersionDropDown);
@@ -994,8 +1007,10 @@ class ChartingState extends MusicBeatState
 		#if LUA_ALLOWED
 		var directories:Array<String> = [];
 
+		
 		#if MODS_ALLOWED
 		directories.push(Paths.mods('custom_notetypes/'));
+		directories.push(Paths.getPreloadPath('custom_notetypes/'));
 		directories.push(Paths.mods(Paths.currentModDirectory + '/custom_notetypes/'));
 		for(mod in Paths.getGlobalMods())
 			directories.push(Paths.mods(mod + '/custom_notetypes/'));
@@ -1006,8 +1021,14 @@ class ChartingState extends MusicBeatState
 			if(FileSystem.exists(directory)) {
 				for (file in FileSystem.readDirectory(directory)) {
 					var path = haxe.io.Path.join([directory, file]);
-					if (!FileSystem.isDirectory(path) && file.endsWith('.lua')) {
-						var fileToCheck:String = file.substr(0, file.length - 4);
+					if (!FileSystem.isDirectory(path) && file.endsWith('.lua') ||!FileSystem.isDirectory(path) && file.endsWith('.hx')) {
+						if(file.endsWith('.hx')){
+							exstentionnum = 3;
+						}
+						else{
+							exstentionnum = 4;
+						}
+						var fileToCheck:String = file.substr(0, file.length - exstentionnum);
 						if(!noteTypeMap.exists(fileToCheck)) {
 							displayNameList.push(fileToCheck);
 							noteTypeMap.set(fileToCheck, key);
@@ -1055,6 +1076,7 @@ class ChartingState extends MusicBeatState
 		#if LUA_ALLOWED
 		var eventPushedMap:Map<String, Bool> = new Map<String, Bool>();
 		var directories:Array<String> = [];
+		directories.push(Paths.getPreloadPath('custom_events/'));
 
 		#if MODS_ALLOWED
 		directories.push(Paths.mods('custom_events/'));
@@ -1235,6 +1257,7 @@ class ChartingState extends MusicBeatState
 	var voicesVolume:FlxUINumericStepper;
 	function addChartingUI() {
 		var tab_group_chart = new FlxUI(null, UI_box);
+		
 		tab_group_chart.name = 'Charting';
 
 		#if desktop
@@ -1430,7 +1453,7 @@ class ChartingState extends MusicBeatState
 			// vocals.stop();
 		}
 
-		var file:Dynamic = Paths.voices(currentSongName);
+	
 		vocals = new Vocals(currentSongName);
 		generateSong();
 		FlxG.sound.music.pause();

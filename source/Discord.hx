@@ -100,7 +100,7 @@ class DiscordClient
 		presence.endTimestamp = Std.int(endTimestamp / 1000);
 		updatePresence();
 
-		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
+		trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}
 
 	public static function updatePresence()
