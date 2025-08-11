@@ -96,6 +96,8 @@ class Note extends FlxSprite
 	public var distance:Float = 2000; // plan on doing scroll directions soon -bb
 
 	public var hitsoundDisabled:Bool = false;
+	public var script:HaxeScript = null;
+
 
 	private function set_multSpeed(value:Float):Float
 	{
@@ -169,6 +171,12 @@ class Note extends FlxSprite
 		noteSplashHue = colorSwap.hue;
 		noteSplashSat = colorSwap.saturation;
 		noteSplashBrt = colorSwap.brightness;
+		if(PlayState.instance != null){
+			loadNoteScript(this);
+		}
+		if(PlayState.instance == null){
+			loadNoteScriptchart(this);
+		}
 		return value;
 	}
 
@@ -262,6 +270,7 @@ class Note extends FlxSprite
 			earlyHitMult = 1;
 		}
 		x += offsetX;
+		runScriptFunction('new', []);
 	}
 
 	var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;
@@ -386,6 +395,7 @@ class Note extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
+		runScriptFunction('update', [elapsed]);
 		super.update(elapsed);
 
 		if (mustPress)
@@ -420,6 +430,7 @@ class Note extends FlxSprite
 		{
 			endnote = true;
 		} 
+		runScriptFunction('updateLate', [elapsed]);
 	}
 
 	public function clipToStrumNote(myStrum:StrumNote)
@@ -459,5 +470,69 @@ class Note extends FlxSprite
 			frame = frames.frames[animation.frameIndex];
 
 		return rect;
+	}
+
+	public function loadNoteScriptchart(note:Note):HaxeScript {
+		//Paths.getPreloadPath('custom_notetypes/'), Paths.modFolders('custom_notetypes/')
+
+		var type:String = note.noteType;
+		if(type.length == 0)
+			type = 'Note';
+		var path = Paths.getPreloadPath('custom_notetypes/' + type + '.hx'); 
+		
+
+		
+		try {
+			if(sys.FileSystem.exists(path)) 
+				script = HaxeScript.FromFile(path, note);
+			else {
+				path = Paths.modFolders('custom_notetypes/' + type + '.hx'); 
+				if(sys.FileSystem.exists(path)) 
+					script = HaxeScript.FromFile(path, note);
+			}
+		}
+		catch(e) { 
+			trace(e);
+		}
+
+
+		return script;
+	}
+
+	public function loadNoteScript(note:Note):HaxeScript {
+		//Paths.getPreloadPath('custom_notetypes/'), Paths.modFolders('custom_notetypes/')
+
+		var type:String = note.noteType;
+		if(type.length == 0)
+			type = 'Note';
+		var path = Paths.getPreloadPath('custom_notetypes/' + type + '.hx'); 
+		
+
+		
+		try {
+			if(sys.FileSystem.exists(path)) 
+				script = HaxeScript.FromFile(path, note);
+			else {
+				path = Paths.modFolders('custom_notetypes/' + type + '.hx'); 
+				if(sys.FileSystem.exists(path)) 
+					script = HaxeScript.FromFile(path, note);
+			}
+		}
+		catch(e) { 
+			PlayState.instance.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
+			PlayState.instance.addTextToDebug("[ ERROR ] Could not load note script " + path, FlxColor.RED);  
+		}
+
+		if(script != null)
+			script.onError = PlayState.instance.hscriptError;
+
+		return script;
+	}
+
+	public function runScriptFunction(id:String, params:Array<Dynamic>):Dynamic {
+		if(script == null) 
+			return null;
+ 
+		return script.runFunction(id, params);
 	}
 }
