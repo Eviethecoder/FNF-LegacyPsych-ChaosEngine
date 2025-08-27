@@ -5,6 +5,7 @@ import flixel.FlxCamera;
 import openfl.geom.Rectangle;
 import flixel.FlxSprite; 
 import flixel.FlxG; 
+import flixel.text.FlxText;
 import lime.app.Application;
 import lime.ui.WindowAttributes;
 import flixel.FlxState;
@@ -14,10 +15,13 @@ import hscript.Macro;
 import flixel.util.FlxColor;
 import flixel.addons.display.FlxBackdrop;
 import hscript.Parser;
-import psychlua.LuaUtils;
 import flixel.tweens.FlxTween;
 import openfl.display.BlendMode;
+import flixel.tweens.FlxEase;
 import scriptobjects.*;
+
+
+using StringTools;
 
 
 //curently this is just me and NoclueBros hscript interpreter -kuru
@@ -26,6 +30,7 @@ class HaxeScript {
     public var parser:Parser;
     public var onError:(Dynamic, String, String)->Void = null;
     public var filePath:String = '';
+    
  
     
     @:noCompletion public var obj:Dynamic; 
@@ -107,6 +112,7 @@ class HaxeScript {
                 adddvar(script, className, cls);
             }
         });
+         adddvar(script,"controls",function(){ return Controls;});
 
         adddvar(script,"controls",function(){ return Controls;});
         adddvar(script,"this", script.obj);
@@ -117,7 +123,7 @@ class HaxeScript {
         adddvar(script,"FlxRuntimeShader", flixel.addons.display.FlxRuntimeShader);
         adddvar(script,"Note", Note);
         adddvar(script,"ClientPrefs", ClientPrefs);
-        adddvar(script,"easeFromString", LuaUtils.getFlxEaseByString);
+        adddvar(script,"easeFromString", getFlxEaseByString);
         adddvar(script,"colorFromString", FlxColor.fromString);
         adddvar(script,"praseIntfromString",  function(number:String) {
             
@@ -142,9 +148,9 @@ class HaxeScript {
 			var testicle:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
 
 			if(testicle != null) {
-				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {x: value}, duration, {ease: LuaUtils.getFlxEaseByString(ease),
+				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {x: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -179,7 +185,7 @@ class HaxeScript {
 			var danote:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
 
 			if(danote != null) {
-				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(danote, {y: value}, duration, {ease: LuaUtils.getFlxEaseByString(ease),
+				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(danote, {y: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
 						PlayState.instance.modchartTweens.remove(tag);
 					}
@@ -192,9 +198,9 @@ class HaxeScript {
 			var testicle:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
 
 			if(testicle != null) {
-				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {angle: value}, duration, {ease: LuaUtils.getFlxEaseByString(ease),
+				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {angle: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -206,9 +212,9 @@ class HaxeScript {
 			var testicle:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
 
 			if(testicle != null) {
-				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {direction: value}, duration, {ease: LuaUtils.getFlxEaseByString(ease),
+				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {direction: value}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
-						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						
 						PlayState.instance.modchartTweens.remove(tag);
 					}
 				}));
@@ -220,6 +226,48 @@ class HaxeScript {
         return f != null && f.__fn == 'skip';
     }
 
+    public static function getFlxEaseByString(?ease:String = '') {
+		return switch(ease.toLowerCase().trim()) {
+			case 'backin': return FlxEase.backIn;
+			case 'backinout': return FlxEase.backInOut;
+			case 'backout': return FlxEase.backOut;
+			case 'bouncein': return FlxEase.bounceIn;
+			case 'bounceinout': return FlxEase.bounceInOut;
+			case 'bounceout': return FlxEase.bounceOut;
+			case 'circin': return FlxEase.circIn;
+			case 'circinout': return FlxEase.circInOut;
+			case 'circout': return FlxEase.circOut;
+			case 'cubein': return FlxEase.cubeIn;
+			case 'cubeinout': return FlxEase.cubeInOut;
+			case 'cubeout': return FlxEase.cubeOut;
+			case 'elasticin': return FlxEase.elasticIn;
+			case 'elasticinout': return FlxEase.elasticInOut;
+			case 'elasticout': return FlxEase.elasticOut;
+			case 'expoin': return FlxEase.expoIn;
+			case 'expoinout': return FlxEase.expoInOut;
+			case 'expoout': return FlxEase.expoOut;
+			case 'quadin': return FlxEase.quadIn;
+			case 'quadinout': return FlxEase.quadInOut;
+			case 'quadout': return FlxEase.quadOut;
+			case 'quartin': return FlxEase.quartIn;
+			case 'quartinout': return FlxEase.quartInOut;
+			case 'quartout': return FlxEase.quartOut;
+			case 'quintin': return FlxEase.quintIn;
+			case 'quintinout': return FlxEase.quintInOut;
+			case 'quintout': return FlxEase.quintOut;
+			case 'sinein': return FlxEase.sineIn;
+			case 'sineinout': return FlxEase.sineInOut;
+			case 'sineout': return FlxEase.sineOut;
+			case 'smoothstepin': return FlxEase.smoothStepIn;
+			case 'smoothstepinout': return FlxEase.smoothStepInOut;
+			case 'smoothstepout': return FlxEase.smoothStepInOut;
+			case 'smootherstepin': return FlxEase.smootherStepIn;
+			case 'smootherstepinout': return FlxEase.smootherStepInOut;
+			case 'smootherstepout': return FlxEase.smootherStepOut;
+			case _: return FlxEase.linear;
+		}
+	}
+
 
     static function cancelTween(tag:String) {
 		if(PlayState.instance.modchartTweens.exists(tag)) {
@@ -229,7 +277,130 @@ class HaxeScript {
 		}
 	}
 
+    //its funny that you can tell when this is just ported here
+
+    public static function setVarInArray(instance:Dynamic, variable:String, value:Dynamic):Any
+	{
+		var shit:Array<String> = variable.split('[');
+		if(shit.length > 1)
+		{
+			var blah:Dynamic = null;
+			if(PlayState.instance.variables.exists(shit[0]))
+			{
+				var retVal:Dynamic = PlayState.instance.variables.get(shit[0]);
+				if(retVal != null)
+					blah = retVal;
+			}
+			else
+				blah = Reflect.getProperty(instance, shit[0]);
+
+			for (i in 1...shit.length)
+			{
+				var leNum:Dynamic = shit[i].substr(0, shit[i].length - 1);
+				if(i >= shit.length-1) //Last array
+					blah[leNum] = value;
+				else //Anything else
+					blah = blah[leNum];
+			}
+			return blah;
+		}
+		/*if(Std.isOfType(instance, Map))
+			instance.set(variable,value);
+		else*/
+			
+		if(PlayState.instance.variables.exists(variable))
+		{
+			PlayState.instance.variables.set(variable, value);
+			return true;
+		}
+
+		Reflect.setProperty(instance, variable, value);
+		return true;
+	}
+    public static function getPropertyLoopThingWhatever(killMe:Array<String>, ?checkForTextsToo:Bool = true, ?getProperty:Bool=true):Dynamic
+	{
+		var coverMeInPiss:Dynamic = getObjectDirectly(killMe[0], checkForTextsToo);
+		var end = killMe.length;
+		if(getProperty)end=killMe.length-1;
+
+		for (i in 1...end) {
+			coverMeInPiss = getVarInArray(coverMeInPiss, killMe[i]);
+		}
+		return coverMeInPiss;
+	}
+    public static function getObjectDirectly(objectName:String, ?checkForTextsToo:Bool = true):Dynamic
+	{
+		var coverMeInPiss:Dynamic = PlayState.instance.getLuaObject(objectName, checkForTextsToo);
+		if(coverMeInPiss==null)
+			coverMeInPiss = getVarInArray(getInstance(), objectName);
+
+		return coverMeInPiss;
+	}
+    public static function getVarInArray(instance:Dynamic, variable:String):Any
+	{
+		var shit:Array<String> = variable.split('[');
+		if(shit.length > 1)
+		{
+			var blah:Dynamic = null;
+			if(PlayState.instance.variables.exists(shit[0]))
+			{
+				var retVal:Dynamic = PlayState.instance.variables.get(shit[0]);
+				if(retVal != null)
+					blah = retVal;
+			}
+			else
+				blah = Reflect.getProperty(instance, shit[0]);
+
+			for (i in 1...shit.length)
+			{
+				var leNum:Dynamic = shit[i].substr(0, shit[i].length - 1);
+				blah = blah[leNum];
+			}
+			return blah;
+		}
+
+		if(PlayState.instance.variables.exists(variable))
+		{
+			var retVal:Dynamic = PlayState.instance.variables.get(variable);
+			if(retVal != null)
+				return retVal;
+		}
+
+		return Reflect.getProperty(instance, variable);
+	}
+    public static inline function getInstance()
+	{
+		return PlayState.instance.isDead ? GameOverSubstate.instance : PlayState.instance;
+	}
+
+
     public static function adddvar(script:HaxeScript, name:String, object:Dynamic){
         script.interpreter.variables[name] = object;
     }
 } 
+
+class ModchartSprite extends FlxSprite
+{
+	public var wasAdded:Bool = false;
+	public var animOffsets:Map<String, Array<Float>> = new Map<String, Array<Float>>();
+	//public var isInFront:Bool = false;
+
+	public function new(?x:Float = 0, ?y:Float = 0)
+	{
+		super(x, y);
+		antialiasing = ClientPrefs.data.globalAntialiasing;
+	}
+}
+
+class ModchartText extends FlxText
+{
+	public var wasAdded:Bool = false;
+	public function new(x:Float, y:Float, text:String, width:Float)
+	{
+		super(x, y, width, text, 16);
+		setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		cameras = [PlayState.instance.camHUD];
+		scrollFactor.set();
+		borderSize = 2;
+	}
+}

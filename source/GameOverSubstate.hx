@@ -37,7 +37,7 @@ class GameOverSubstate extends MusicBeatSubstate
 	override function create()
 	{
 		instance = this;
-		PlayState.instance.callOnLuas('onGameOverStart', []);
+		PlayState.instance.setFunctionOnScripts('onGameOverStart', []);
 
 		super.create();
 	}
@@ -46,7 +46,7 @@ class GameOverSubstate extends MusicBeatSubstate
 	{
 		super();
 
-		PlayState.instance.setOnLuas('inGameOver', true);
+		
 
 		Conductor.songPosition = 0;
 
@@ -79,7 +79,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		if (FlxG.sound.music.playing)
 			Conductor.songPosition = FlxG.sound.music.time;
 
-		PlayState.instance.callOnLuas('onUpdate', [elapsed]);
+		PlayState.instance.setFunctionOnScripts('onUpdate', [elapsed]);
 		if(updateCamera) {
 			var lerpVal:Float = CoolUtil.boundTo(elapsed * 0.6, 0, 1);
 			camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
@@ -102,7 +102,7 @@ class GameOverSubstate extends MusicBeatSubstate
 				MusicBeatState.switchState(new FreeplayState());
 
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
-			PlayState.instance.callOnLuas('onGameOverConfirm', [false]);
+			PlayState.instance.setFunctionOnScripts('onGameOverConfirm', [false]);
 		}
 
 		if (boyfriend.animation.curAnim != null && boyfriend.animation.curAnim.name == 'firstDeath')
@@ -130,7 +130,7 @@ class GameOverSubstate extends MusicBeatSubstate
 			}
 		}
 
-		PlayState.instance.callOnLuas('onUpdatePost', [elapsed]);
+		PlayState.instance.setFunctionOnScripts('onUpdatePost', [elapsed]);
 	}
 
 	override function beatHit()
@@ -161,7 +161,7 @@ class GameOverSubstate extends MusicBeatSubstate
 					MusicBeatState.resetState();
 				});
 			});
-			PlayState.instance.callOnLuas('onGameOverConfirm', [true]);
+			PlayState.instance.setFunctionOnScripts('onGameOverConfirm', [true]);
 		}
 	}
 }

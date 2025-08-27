@@ -3,6 +3,7 @@ package;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.addons.ui.FlxUIState;
+import flixel.text.FlxText;
 import flixel.math.FlxRect;
 import flixel.util.FlxTimer;
 import flixel.addons.transition.FlxTransitionableState;
@@ -14,14 +15,13 @@ import flixel.util.FlxGradient;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxState;
 import flixel.FlxCamera;
-import FunkinLua.DebugLuaText;
 import flixel.FlxBasic;
 
 class MusicBeatState extends FlxUIState
 {
 	private var curSection:Int = 0;
 	private var stepsToDo:Int = 0;
-	private var debugGroup:FlxTypedGroup<DebugLuaText>;
+	private var debugGroup:FlxTypedGroup<DebugText>;
 
 	private var curStep:Int = 0;
 	private var curBeat:Int = 0;
@@ -34,7 +34,7 @@ class MusicBeatState extends FlxUIState
 
 	public function new( ){
 		super();
-		debugGroup = new FlxTypedGroup<DebugLuaText>();
+		debugGroup = new FlxTypedGroup<DebugText>();
 		
 		add(debugGroup);
 
@@ -216,7 +216,7 @@ class MusicBeatState extends FlxUIState
 	public function addTextToDebug(text:String, color:FlxColor)
 	{
 		
-		debugGroup.forEachAlive(function(spr:DebugLuaText)
+		debugGroup.forEachAlive(function(spr:DebugText)
 		{
 			spr.y += 20;
 		});
@@ -227,7 +227,7 @@ class MusicBeatState extends FlxUIState
 			blah.destroy();
 			debugGroup.remove(blah);
 		}
-		debugGroup.insert(0, new DebugLuaText(text, debugGroup, color));
+		debugGroup.insert(0, new DebugText(text, debugGroup, color));
 	
 	}
 
@@ -258,5 +258,25 @@ class MusicBeatState extends FlxUIState
 		var val:Null<Float> = 4;
 		if(PlayState.SONG != null && PlayState.SONG.notes[curSection] != null) val = PlayState.SONG.notes[curSection].sectionBeats;
 		return val == null ? 4 : val;
+	}
+}
+
+class DebugText extends FlxText
+{
+	private var disableTime:Float = 6;
+	public var parentGroup:FlxTypedGroup<DebugText>;
+	public function new(text:String, parentGroup:FlxTypedGroup<DebugText>, color:FlxColor) {
+		this.parentGroup = parentGroup;
+		super(10, 10, 0, text, 16);
+		setFormat(Paths.font("vcr.ttf"), 20, color, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		scrollFactor.set();
+		borderSize = 1;
+	}
+
+	override function update(elapsed:Float) {
+		super.update(elapsed);
+		disableTime -= elapsed;
+		if(disableTime < 0) disableTime = 0;
+		if(disableTime < 1) alpha = disableTime;
 	}
 }
