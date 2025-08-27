@@ -34,6 +34,8 @@ typedef Hudstyle = {
     @:optional
     var scorpos:Array<Float>;
     @:optional
+    var noteskin:String;
+    @:optional
     var falback:String;
     
 }
@@ -76,8 +78,10 @@ class HudHandler extends FlxGroup{
         setupjson(json);
         trace('hudname is: ' + hudname);
         hudscriptpath = 'hudstyles/' + hudname + '.hx';
+        
+        this.songname = Paths.formatToSongPath(songname);
+        trace('song name is' +songname);
         barsetup();
-        this.songname = songname;
     }
 
     public function barsetup(){
@@ -117,6 +121,25 @@ class HudHandler extends FlxGroup{
                 reloadHealthBarColors();
                 add(healthBar);
                 add(bg);
+               
+                
+            }
+            else{
+                
+                healthBar = new Bar(0, FlxG.height * (!ClientPrefs.data.downScroll ? 0.89 : 0.11),bars.healthbar.barStyle, gethealthbargraphics(0), function() return PlayState.instance.health, 0, 2);
+                healthBar.screenCenter(X);
+                healthBar.leftToRight = false;
+                healthBar.scrollFactor.set();
+                healthBar.visible = !ClientPrefs.data.hideHud;
+                healthBar.alpha = ClientPrefs.data.healthBarAlpha;
+                reloadHealthBarColors();
+                add(healthBar);
+
+
+                
+            }
+
+            if(bars.timeBar.barStyle == 'png'){
                 timebg = new FlxSprite().loadGraphic(Paths.image(gettimebargraphics(0)));
 			    timebg.antialiasing = true;
                 timebg.scale.set(bars.timeBar.scale, bars.timeBar.scale);
@@ -134,19 +157,9 @@ class HudHandler extends FlxGroup{
                 timeBar.visible = showTime;
                 add(timeBar);
                 add(timebg);
-                
             }
             else{
                 
-                healthBar = new Bar(0, FlxG.height * (!ClientPrefs.data.downScroll ? 0.89 : 0.11),bars.healthbar.barStyle, gethealthbargraphics(0), function() return PlayState.instance.health, 0, 2);
-                healthBar.screenCenter(X);
-                healthBar.leftToRight = false;
-                healthBar.scrollFactor.set();
-                healthBar.visible = !ClientPrefs.data.hideHud;
-                healthBar.alpha = ClientPrefs.data.healthBarAlpha;
-                reloadHealthBarColors();
-                add(healthBar);
-
                 timeBar = new Bar(0, timeTxt.y + (timeTxt.height / 4),bars.timeBar.barStyle, gettimebargraphics(0), function() return 0, 0, 1);
                 timeBar.scrollFactor.set();
                 timeBar.screenCenter(X);
@@ -157,7 +170,6 @@ class HudHandler extends FlxGroup{
                 timeBar.setColors(FlxColor.WHITE,FlxColor.BLACK);
                 add(timeBar);
 
-                
             }
             if (ClientPrefs.data.timeBarType == 'Song Name')
             {
@@ -185,6 +197,9 @@ class HudHandler extends FlxGroup{
         }
         if (bars.scorpos != null) {
             scorposs = bars.scorpos;
+        }
+        if(bars.noteskin == null){
+            bars.noteskin == 'NOTE_assets';
         }
 
     }
@@ -221,6 +236,32 @@ class HudHandler extends FlxGroup{
     } else {
         // No script loaded, use fallback
         return bars.healthbar.image[barnum];
+    }
+}
+public function getNoteskin(player:Bool):String {
+    if (script != null) {
+        
+
+        // Grab the function from the script
+        var func = script.interpreter.variables.get("getNoteskin");
+
+        if (func != null) {
+            var noteskin:String = cast Reflect.callMethod(null, func, [player]);
+           
+
+            if (noteskin != null) {
+                return noteskin;
+            } else {
+             
+                return bars.noteskin;
+            }
+        } else {
+           
+            return bars.noteskin;
+        }
+    } else {
+        // No script loaded, use fallback
+        return bars.noteskin;
     }
 }
 public function gettimebargraphics(barnum:Int):String {
@@ -267,12 +308,15 @@ public function gettimebargraphics(barnum:Int):String {
                     return pos; // Script returned valid value
                 } else {
                     trace('Script returned null, falling back to JSON iconP1pos.');
+                    return bars.iconP1pos[arraynum];
                 }
             } else {
                 trace('Script function geticonP1Pos not found, falling back to JSON.');
+                return bars.iconP1pos[arraynum];
             }
         } else {
             trace('No script loaded, using JSON iconP1pos.');
+            return bars.iconP1pos[arraynum];
         }
 
         // Fallback to JSON value
@@ -287,7 +331,7 @@ public function gettimebargraphics(barnum:Int):String {
 
     public function geticonP2Pos(arraynum:Int):Float {
     // If JSON has iconP1pos
-    if (bars.iconP1pos != null) {
+    if (bars.iconP2pos != null) {
         // Try script override first
         if (script != null) {
             var func = script.interpreter.variables.get("geticonP2Pos");
@@ -300,12 +344,15 @@ public function gettimebargraphics(barnum:Int):String {
                     return pos; // Script returned valid value
                 } else {
                     trace('Script returned null, falling back to JSON iconP1pos.');
+                    return bars.iconP2pos[arraynum];
                 }
             } else {
                 trace('Script function geticonP1Pos not found, falling back to JSON.');
+                return bars.iconP2pos[arraynum];
             }
         } else {
             trace('No script loaded, using JSON iconP1pos.');
+            return bars.iconP2pos[arraynum];
         }
 
         // Fallback to JSON value
@@ -321,7 +368,7 @@ public function gettimebargraphics(barnum:Int):String {
         if(timeBar != null){
             timeBar.valueFunction = function() return time;
             timeBar.updateBar();
-            trace('time is: ' + time );
+           
         }
         runScriptFunction('updateTime', [time]);
     }

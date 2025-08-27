@@ -173,6 +173,7 @@ class Note extends FlxSprite
 		noteSplashBrt = colorSwap.brightness;
 		if(PlayState.instance != null){
 			loadNoteScript(this);
+			
 		}
 		if(PlayState.instance == null){
 			loadNoteScriptchart(this);
@@ -180,7 +181,7 @@ class Note extends FlxSprite
 		return value;
 	}
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?player:Bool, ?sustainNote:Bool = false, ?inEditor:Bool = false)
 	{
 		super();
 
@@ -189,6 +190,9 @@ class Note extends FlxSprite
 
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
+		if(player !=null){
+			mustPress = player;
+		}
 		this.inEditor = inEditor;
 
 		x += (ClientPrefs.data.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X) + 50;
@@ -290,7 +294,9 @@ class Note extends FlxSprite
 		var skin:String = texture;
 		if (texture.length < 1)
 		{
-			skin = PlayState.SONG.arrowSkin;
+
+			
+			skin = PlayState.instance.hud.getNoteskin(mustPress);
 			if (skin == null || skin.length < 1)
 			{
 				skin = 'NOTE_assets';
@@ -371,7 +377,7 @@ class Note extends FlxSprite
 
 		if (isSustainNote)
 		{
-			animation.addByPrefix('purpleholdend', 'pruple end hold'); // ?????
+			animation.addByPrefix('purpleholdend', 'pruple end hold'); // ?????                  //LITERALLY makes 0 sense???? why
 			animation.addByPrefix(colArray[noteData] + 'holdend', colArray[noteData] + ' hold end');
 			animation.addByPrefix(colArray[noteData] + 'hold', colArray[noteData] + ' hold piece');
 		}
@@ -510,8 +516,10 @@ class Note extends FlxSprite
 
 		
 		try {
-			if(sys.FileSystem.exists(path)) 
+			if(sys.FileSystem.exists(path)){
 				script = HaxeScript.FromFile(path, note);
+				PlayState.instance.hscriptArray.push(script);
+			}
 			else {
 				path = Paths.modFolders('custom_notetypes/' + type + '.hx'); 
 				if(sys.FileSystem.exists(path)) 

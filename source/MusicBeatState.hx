@@ -11,14 +11,17 @@ import flixel.tweens.FlxTween;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxState;
 import flixel.FlxCamera;
+import FunkinLua.DebugLuaText;
 import flixel.FlxBasic;
 
 class MusicBeatState extends FlxUIState
 {
 	private var curSection:Int = 0;
 	private var stepsToDo:Int = 0;
+	private var debugGroup:FlxTypedGroup<DebugLuaText>;
 
 	private var curStep:Int = 0;
 	private var curBeat:Int = 0;
@@ -28,6 +31,14 @@ class MusicBeatState extends FlxUIState
 	public var controls(get, never):Controls;
 
 	public static var camBeat:FlxCamera;
+
+	public function new( ){
+		super();
+		debugGroup = new FlxTypedGroup<DebugLuaText>();
+		
+		add(debugGroup);
+
+	}
 
 	inline function get_controls():Controls
 		return Controls.instance;
@@ -40,12 +51,20 @@ class MusicBeatState extends FlxUIState
 		if(!skip) {
 			openSubState(new CustomFadeTransition(0.7, true));
 		}
+		trace(Type.getClassName(Type.getClass(this)));
 		FlxTransitionableState.skipNextTransOut = false;
+		
+		
+		
 	}
 
 	override function update(elapsed:Float)
 	{
 		//everyStep();
+		if (FlxG.keys.justPressed.F5) {
+			ScriptedStatehandler.reListStates();
+			FlxG.resetState();
+		}
 		var oldStep:Int = curStep;
 
 		updateCurStep();
@@ -118,10 +137,37 @@ class MusicBeatState extends FlxUIState
 		curStep = lastChange.stepTime + Math.floor(shit);
 	}
 
+	public static function switchscriptedstate(nextState:String) {
+		var curState:Dynamic = FlxG.state;
+		var leState:MusicBeatState = curState;
+		
+		if(!FlxTransitionableState.skipNextTransIn) {
+			leState.openSubState(new CustomFadeTransition(0.6, false));
+			
+		
+			CustomFadeTransition.finishCallback = function() {
+				ScriptedStatehandler.curselectedstate = nextState;
+				FlxG.switchState(new ScriptableMusicBeatState(nextState));
+			};
+				//trace('changed state');
+			
+			return;
+		}
+		FlxTransitionableState.skipNextTransIn = false;
+		ScriptedStatehandler.curselectedstate = nextState;
+		FlxG.switchState(new ScriptableMusicBeatState(nextState));
+		
+		
+	}
+
 	public static function switchState(nextState:FlxState) {
 		// Custom made Trans in
 		var curState:Dynamic = FlxG.state;
 		var leState:MusicBeatState = curState;
+		var statepass:FlxState = nextState;
+		var foundstate:Bool = false;
+		var doogstate:Bool = false;
+		
 		if(!FlxTransitionableState.skipNextTransIn) {
 			leState.openSubState(new CustomFadeTransition(0.6, false));
 			if(nextState == FlxG.state) {
@@ -131,16 +177,32 @@ class MusicBeatState extends FlxUIState
 				//trace('resetted');
 			} else {
 				CustomFadeTransition.finishCallback = function() {
-					FlxG.switchState(nextState);
+					detectscriiptedstates(statepass);
 				};
 				//trace('changed state');
 			}
 			return;
 		}
 		FlxTransitionableState.skipNextTransIn = false;
-		FlxG.switchState(nextState);
+		detectscriiptedstates(statepass);
+		
+		
 	}
 
+	public static function detectscriiptedstates(nextState:FlxState){
+		var classname:String = Type.getClassName(Type.getClass(nextState));
+		for (i in 0... ScriptedStatehandler.states.length){
+			trace(ScriptedStatehandler.states[i] + 'compared to ' +classname);
+			if (ScriptedStatehandler.states[i] == classname){
+				
+				ScriptedStatehandler.curselectedstate = ScriptedStatehandler.states[i];
+				FlxG.switchState(new ScriptableMusicBeatState(classname));
+				return;
+			}
+		}
+		FlxG.switchState(nextState);
+
+	}
 	public static function resetState() {
 		MusicBeatState.switchState(FlxG.state);
 	}
@@ -149,6 +211,30 @@ class MusicBeatState extends FlxUIState
 		var curState:Dynamic = FlxG.state;
 		var leState:MusicBeatState = curState;
 		return leState;
+	}
+
+	public function addTextToDebug(text:String, color:FlxColor)
+	{
+		
+		debugGroup.forEachAlive(function(spr:DebugLuaText)
+		{
+			spr.y += 20;
+		});
+
+		if (debugGroup.members.length > 34)
+		{
+			var blah = debugGroup.members[34];
+			blah.destroy();
+			debugGroup.remove(blah);
+		}
+		debugGroup.insert(0, new DebugLuaText(text, debugGroup, color));
+	
+	}
+
+	public function hscriptError(e:Dynamic, funcName:String, fPath:String) { 
+		addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38));
+		addTextToDebug("[ ERROR ] Could not run function " + funcName + " (script: "+fPath+") ", FlxColor.RED); 
+		trace(e );
 	}
 
 	public function stepHit():Void

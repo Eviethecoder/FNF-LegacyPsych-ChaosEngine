@@ -6,6 +6,7 @@ import Discord.DiscordClient;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import transitions.StickerSubState;
 import flixel.FlxCamera;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.effects.FlxFlicker;
@@ -30,7 +31,18 @@ class MainMenuState extends MusicBeatState
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
 	private var camGame:FlxCamera;
+	var stickerSubState:StickerSubState;
 	private var camAchievement:FlxCamera;
+	public function new(?stickers:StickerSubState = null)
+	{
+		super();
+		
+
+		if (stickers != null)
+		{
+			stickerSubState = stickers;
+		}
+	}
 	
 	var optionShit:Array<String> = [
 		'story_mode',
@@ -221,7 +233,8 @@ class MainMenuState extends MusicBeatState
 								switch (daChoice)
 								{
 									case 'story_mode':
-										MusicBeatState.switchState(new StoryMenuState());
+										openSubState(new StickerSubState(null, (sticker) -> new StoryMenuState(sticker)));
+										
 									case 'freeplay':
 										MusicBeatState.switchState(new FreeplayState());
 									#if MODS_ALLOWED

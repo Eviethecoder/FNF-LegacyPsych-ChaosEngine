@@ -7,13 +7,17 @@ import flixel.FlxSprite;
 import flixel.FlxG; 
 import lime.app.Application;
 import lime.ui.WindowAttributes;
+import flixel.FlxState;
 import PlayState;
 import hscript.Interp;
 import hscript.Macro;
 import flixel.util.FlxColor;
+import flixel.addons.display.FlxBackdrop;
 import hscript.Parser;
 import psychlua.LuaUtils;
 import flixel.tweens.FlxTween;
+import openfl.display.BlendMode;
+import scriptobjects.*;
 
 
 //curently this is just me and NoclueBros hscript interpreter -kuru
@@ -22,22 +26,24 @@ class HaxeScript {
     public var parser:Parser;
     public var onError:(Dynamic, String, String)->Void = null;
     public var filePath:String = '';
+ 
     
     @:noCompletion public var obj:Dynamic; 
 
-    public static function FromFile(path:String, obj:Dynamic):HaxeScript { 
+    public static function FromFile(path:String, obj:Dynamic, ?runautocreate:Bool= true):HaxeScript { 
         var script:HaxeScript = null;
         try{ 
-            script = new HaxeScript(sys.io.File.getContent(path), obj);
+            script = new HaxeScript(sys.io.File.getContent(path), obj,runautocreate);
             script.filePath = path;
         } 
         catch(e) {
             throw e; 
         }
+      
         return script;
     }
 
-    public function new(code:String, obj:Dynamic) {
+    public function new(code:String, obj:Dynamic,runautocreate:Bool) {
         interpreter = new Interp();
         parser = new Parser();
 
@@ -47,7 +53,10 @@ class HaxeScript {
          
         __default_stuff(this);
         interpreter.execute(parser.parseString(code));
-        this.runFunction('onCreate', []);
+        if(runautocreate){
+            this.runFunction('onCreate', []);
+        }
+        
     }
 
     public function runFunction(id:String, params:Array<Dynamic>):Dynamic {  
@@ -69,13 +78,15 @@ class HaxeScript {
 
         return result;
     }
+    
 
     public function get(id:String):Dynamic {   
         return interpreter.variables[id];
     }
 
     public static function __default_stuff(script:HaxeScript):Void {   
-        script.interpreter.variables["Cool"] = {
+       
+         script.interpreter.variables["Cool"] = {
             'SkipFunction': function(value = null){ 
                 return {'__fn': 'skip', '__value': value};
             }
@@ -97,7 +108,9 @@ class HaxeScript {
             }
         });
 
+        adddvar(script,"controls",function(){ return Controls;});
         adddvar(script,"this", script.obj);
+        adddvar(script, "Std", Std);
         adddvar(script,"FlxG", FlxG);
         adddvar(script,"FlxSprite", flixel.FlxSprite);
         adddvar(script,"Paths", Paths);
@@ -118,7 +131,10 @@ class HaxeScript {
         });
         adddvar(script,"PlayState", PlayState.instance);
         adddvar(script,"BGSprite", BGSprite);
+        adddvar(script,"Math", Math);
+        adddvar(script, 'persistantvariables', ScriptedStatehandler.persistantvariables);
 
+        adddvar(script,"FlxBackdrop",FlxBackdrop);
         //Tween shit, but for strums.. this shit isnt  static in lua shit so we just adding it here so we can easily use it
 		adddvar(script, "noteTweenX", function(tag:String, note:Int, value:Dynamic, duration:Float, ease:String) {
 			cancelTween(tag);
@@ -133,6 +149,29 @@ class HaxeScript {
 					}
 				}));
 			}
+		});
+
+        adddvar(script, "ScriptedFlxSprite",  ScriptedFlxSprite);
+
+        adddvar(script, "switchscriptedstate",  function(name:String){
+            MusicBeatState.switchscriptedstate(name);
+        });
+        adddvar(script, "switchState",  function(name:FlxState){
+            MusicBeatState.switchState(name);
+        });
+        adddvar(script,'BlendMode',{
+			SUBTRACT: BlendMode.SUBTRACT,
+			ADD: BlendMode.ADD,
+			MULTIPLY: BlendMode.MULTIPLY,
+			ALPHA: BlendMode.ALPHA,
+			DARKEN: BlendMode.DARKEN,
+			DIFFERENCE: BlendMode.DIFFERENCE,
+			INVERT: BlendMode.INVERT,
+			HARDLIGHT: BlendMode.HARDLIGHT,
+			LIGHTEN: BlendMode.LIGHTEN,
+			OVERLAY: BlendMode.OVERLAY,
+			SHADER: BlendMode.SHADER,
+			SCREEN: BlendMode.SCREEN
 		});
 		adddvar(script, "noteTweenY", function(tag:String, note:Int, value:Dynamic, duration:Float, ease:String) {
 			cancelTween(tag);

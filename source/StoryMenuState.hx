@@ -5,6 +5,7 @@ import Discord.DiscordClient;
 #end
 import flixel.FlxG;
 import flixel.FlxSprite;
+import transitions.StickerSubState;
 import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -48,14 +49,38 @@ class StoryMenuState extends MusicBeatState
 	var rightArrow:FlxSprite;
 
 	var loadedWeeks:Array<WeekData> = [];
+	var stickerSubState:StickerSubState;
+
+	public function new(?stickers:StickerSubState = null)
+	{
+		super();
+
+		if (stickers != null)
+		{
+			stickerSubState = stickers;
+		}
+	}
 
 	override function create()
 	{
-		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
+		if (stickerSubState != null)
+		{
+			// this.persistentUpdate = true;
+			// this.persistentDraw = true;
+
+			openSubState(stickerSubState);
+			trace("StickerSubState: " + stickerSubState);
+			Paths.clearStoredMemory();
+			stickerSubState.degenStickers();
+			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+		}
+		Paths.clearStoredMemory();
+		
 
 		PlayState.isStoryMode = true;
 		WeekData.reloadWeekFiles(true);
+		
 		if(curWeek >= WeekData.weeksList.length) curWeek = 0;
 		persistentUpdate = persistentDraw = true;
 
