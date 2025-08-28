@@ -1545,8 +1545,7 @@ class FunkinLua {
 			PlayState.instance.startCountdown();
 			return true;
 		});
-		Lua_helper.add_callback(lua, "endSong", function() {
-			PlayState.instance.KillNotes();
+		Lua_helper.add_callback(lua, "endSong", function() { 
 			PlayState.instance.endSong();
 			return true;
 		});

@@ -235,8 +235,7 @@ class PauseSubState extends MusicBeatSubstate
 					else
 					{
 						if (curTime != Conductor.songPosition)
-						{
-							PlayState.instance.clearNotesBefore(curTime);
+						{ 
 							PlayState.instance.setSongTime(curTime);
 						}
 						close();
