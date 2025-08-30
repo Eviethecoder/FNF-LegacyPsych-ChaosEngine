@@ -35,7 +35,7 @@ class StrumNote extends FlxSprite
 		super(x, y);
 
 		var skin:String = 'NOTE_assets';
-		if(PlayState.instance.hud.bars.noteskin != null){
+		if(PlayState.instance !=null && PlayState.instance.hud.bars.noteskin != null){
 			var playerbool:Bool = false;
 			if(player == 1){
 				playerbool = true;

@@ -199,7 +199,7 @@ class HudHandler extends FlxGroup{
             scorposs = bars.scorpos;
         }
         if(bars.noteskin == null){
-            bars.noteskin == 'NOTE_assets';
+            bars.noteskin = 'NOTE_assets';
         }
 
     }

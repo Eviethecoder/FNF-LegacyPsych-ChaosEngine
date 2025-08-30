@@ -124,6 +124,7 @@ class HaxeScript {
         adddvar(script,"Note", Note);
         adddvar(script,"ClientPrefs", ClientPrefs);
         adddvar(script,"easeFromString", getFlxEaseByString);
+		adddvar(script,"FlxSpriteGroup", flixel.group.FlxSpriteGroup);
         adddvar(script,"colorFromString", FlxColor.fromString);
         adddvar(script,"praseIntfromString",  function(number:String) {
             
@@ -281,32 +282,31 @@ class HaxeScript {
 
     public static function setVarInArray(instance:Dynamic, variable:String, value:Dynamic):Any
 	{
-		var shit:Array<String> = variable.split('[');
-		if(shit.length > 1)
+		var variablelist:Array<String> = variable.split('[');
+		if(variablelist.length > 1)
 		{
-			var blah:Dynamic = null;
-			if(PlayState.instance.variables.exists(shit[0]))
+            //ithink
+			var curvalue:Dynamic = null;
+			if(PlayState.instance.variables.exists(variablelist[0]))
 			{
-				var retVal:Dynamic = PlayState.instance.variables.get(shit[0]);
+				var retVal:Dynamic = PlayState.instance.variables.get(variablelist[0]);
 				if(retVal != null)
-					blah = retVal;
+					curvalue = retVal;
 			}
 			else
-				blah = Reflect.getProperty(instance, shit[0]);
+				curvalue = Reflect.getProperty(instance, variablelist[0]);
 
-			for (i in 1...shit.length)
+			for (i in 1...variablelist.length)
 			{
-				var leNum:Dynamic = shit[i].substr(0, shit[i].length - 1);
-				if(i >= shit.length-1) //Last array
-					blah[leNum] = value;
+				var leNum:Dynamic = variablelist[i].substr(0, variablelist[i].length - 1);
+				if(i >= variablelist.length-1) //Last array
+					curvalue[leNum] = value;
 				else //Anything else
-					blah = blah[leNum];
+					curvalue = curvalue[leNum];
 			}
-			return blah;
+			return curvalue;
 		}
-		/*if(Std.isOfType(instance, Map))
-			instance.set(variable,value);
-		else*/
+		
 			
 		if(PlayState.instance.variables.exists(variable))
 		{

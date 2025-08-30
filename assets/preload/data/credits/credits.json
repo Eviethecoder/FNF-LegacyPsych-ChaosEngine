@@ -1,0 +1,169 @@
+{
+  "Catagorys": [
+    {
+      "name": "Psych Engine Team",
+      "people": [
+        {
+          "name": "Shadow Mario",
+          "icon": "ShadowMario",
+          "description": "Main Programmer of Psych Engine",
+          "link": "https://ko-fi.com/shadowmario",
+          "color": "444444"
+        },
+        {
+          "name": "Riveren",
+          "icon": "riveren",
+          "description": "Main Artist/Animator of Psych Engine",
+          "link": "https://twitter.com/riverennn",
+          "color": "14967B"
+        }
+      ]
+    },
+    {
+      "name": "Former Engine Members",
+      "people": [
+        {
+          "name": "bb-panzu",
+          "icon": "bb",
+          "description": "Ex-Programmer of Psych Engine",
+          "link": "https://twitter.com/bbsub3",
+          "color": "3E813A"
+        }
+      ]
+    },
+    {
+      "name": "Engine Contributors",
+      "people": [
+        {
+          "name": "CrowPlexus",
+          "icon": "crowplexus",
+          "description": "Input System v3, Major Help and Other PRs",
+          "link": "https://twitter.com/crowplexus",
+          "color": "A1A1A1"
+        },
+        {
+          "name": "Keoiki",
+          "icon": "keoiki",
+          "description": "Note Splash Animations and Latin Alphabet",
+          "link": "https://twitter.com/Keoiki_",
+          "color": "D2D2D2"
+        },
+        {
+          "name": "SqirraRNG",
+          "icon": "sqirra",
+          "description": "Crash Handler and Base code for Chart Editor's Waveform",
+          "link": "https://twitter.com/gedehari",
+          "color": "E1843A"
+        },
+        {
+          "name": "EliteMasterEric",
+          "icon": "EliteMasterEric",
+          "description": "Runtime Shaders support",
+          "link": "https://twitter.com/EliteMasterEric",
+          "color": "FFBD40"
+        },
+        {
+          "name": "PolybiusProxy",
+          "icon": "proxy",
+          "description": ".MP4 Video Loader Library (hxCodec)",
+          "link": "https://twitter.com/polybiusproxy",
+          "color": "DCD294"
+        },
+        {
+          "name": "Tahir",
+          "icon": "tahir",
+          "description": "Implementing and maintaining SScript on Psych",
+          "link": "https://github.com/TahirKarabekiroglu",
+          "color": "A04397"
+        },
+        {
+          "name": "iFlicky",
+          "icon": "flicky",
+          "description": "Composer of Psync and Tea Time, Made the Dialogue Sounds",
+          "link": "https://twitter.com/flicky_i",
+          "color": "9E29CF"
+        },
+        {
+          "name": "KadeDev",
+          "icon": "Kade-github",
+          "description": "Fixed some cool stuff on Chart Editor and other PRs",
+          "link": "https://twitter.com/kade0912",
+          "color": "64A250"
+        },
+        {
+          "name": "superpowers04",
+          "icon": "superpowers04",
+          "description": "LUA JIT Fork",
+          "link": "https://twitter.com/superpowers04",
+          "color": "B957ED"
+        },
+        {
+          "name": "Nebula the Zorua",
+          "icon": "nebula",
+          "description": "Original Base for LUA JIT Fork, LUA Reworks",
+          "link": "https://www.youtube.com/@DankPods",
+          "color": "7D40B2"
+        },
+        {
+          "name": "Smokey",
+          "icon": "smokey",
+          "description": "Sprite Atlas Support",
+          "link": "https://twitter.com/Smokey_5_",
+          "color": "483D92"
+        }
+      ]
+    },
+    {
+      "name": "Funkin' Crew",
+      "people": [
+        {
+          "name": "ninjamuffin99",
+          "icon": "ninjamuffin99",
+          "description": "Programmer of Friday Night Funkin'",
+          "link": "https://twitter.com/ninja_muffin99",
+          "color": "CF2D2D"
+        },
+        {
+          "name": "PhantomArcade",
+          "icon": "phantomarcade",
+          "description": "Animator of Friday Night Funkin'",
+          "link": "https://twitter.com/PhantomArcade3K",
+          "color": "FADC45"
+        },
+        {
+          "name": "evilsk8r",
+          "icon": "evilsk8r",
+          "description": "Artist of Friday Night Funkin'",
+          "link": "https://twitter.com/evilsk8r",
+          "color": "5ABD4B"
+        },
+        {
+          "name": "kawaisprite",
+          "icon": "kawaisprite",
+          "description": "Composer of Friday Night Funkin'",
+          "link": "https://twitter.com/kawaisprite",
+          "color": "378FC7"
+        }
+      ]
+    },
+    {
+      "name": "Sub Engine Team",
+      "people": [
+        {
+          "name": "Kuru Bot",
+          "icon": "Eviethecoder",
+          "description": "Main Programmer",
+          "link": "https://ko-fi.com/shadowmario",
+          "color": "444444"
+        },
+        {
+          "name": "noClueBruh",
+          "icon": "NoClueBruh",
+          "description": "Main Programer2",
+          "link": "https://twitter.com/riverennn",
+          "color": "14967B"
+        }
+      ]
+    }
+  ]
+}

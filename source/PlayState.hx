@@ -490,31 +490,9 @@ class PlayState extends MusicBeatState
 		switch (curStage)
 		{
 			case 'stage': // Week 1
-				var bg:BGSprite = new BGSprite('stageback', -600, -200, 0.9, 0.9);
-				add(bg);
-
-				var stageFront:BGSprite = new BGSprite('stagefront', -650, 600, 0.9, 0.9);
-				stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
-				stageFront.updateHitbox();
-				add(stageFront);
-				if (!ClientPrefs.data.lowQuality)
-				{
-					var stageLight:BGSprite = new BGSprite('stage_light', -125, -100, 0.9, 0.9);
-					stageLight.setGraphicSize(Std.int(stageLight.width * 1.1));
-					stageLight.updateHitbox();
-					add(stageLight);
-					var stageLight:BGSprite = new BGSprite('stage_light', 1225, -100, 0.9, 0.9);
-					stageLight.setGraphicSize(Std.int(stageLight.width * 1.1));
-					stageLight.updateHitbox();
-					stageLight.flipX = true;
-					add(stageLight);
-
-					var stageCurtains:BGSprite = new BGSprite('stagecurtains', -500, -300, 1.3, 1.3);
-					stageCurtains.setGraphicSize(Std.int(stageCurtains.width * 0.9));
-					stageCurtains.updateHitbox();
-					add(stageCurtains);
-				}
+				
 				dadbattleSmokes = new FlxSpriteGroup(); // troll'd
+			
 
 			case 'spooky': // Week 2
 				if (!ClientPrefs.data.lowQuality)
@@ -838,7 +816,6 @@ class PlayState extends MusicBeatState
 			introSoundsSuffix = '-pixel';
 		}
 
-		add(gfGroup); // Needed for blammed lights
 
 		// Shitty layering but whatev it works LOL
 		if (curStage == 'limo')
@@ -846,6 +823,7 @@ class PlayState extends MusicBeatState
 
 
 		add(stageBackground);
+		add(gfGroup);
 		add(dadGroup);
 		add(boyfriendGroup);
 		add(stageForground);
@@ -2037,7 +2015,10 @@ hud = new HudHandler(Paths.hudjson(PlayState.SONG.hudSkin), PlayState.SONG.hudSk
 		var ret:Dynamic = false;
 		for (script in hscriptArray ){
 			var func = script.interpreter.variables.get("onStartCountdown");
-			ret = cast Reflect.callMethod(null, func, []);
+			if (func != null){
+				ret = cast Reflect.callMethod(null, func, []);
+			}
+			
 		}
 		if (ret != true)
 		{
@@ -2200,6 +2181,10 @@ hud = new HudHandler(Paths.hudjson(PlayState.SONG.hudSkin), PlayState.SONG.hudSk
 	public function addToStageForeground(obj:FlxObject)
 	{
 		insert(members.indexOf(stageForground), obj);
+	}
+	public function addToStage(obj:FlxBasic)
+	{
+		add(obj);
 	}
 
 	public function addBehindDad(obj:FlxObject)
@@ -2412,6 +2397,7 @@ hud = new HudHandler(Paths.hudjson(PlayState.SONG.hudSkin), PlayState.SONG.hudSk
 			case "constant":
 				songSpeed = ClientPrefs.getGameplaySetting('scrollspeed', 1);
 		}
+		oppsongSpeed = songSpeed;
 
 		var songData = SONG;
 		Conductor.bpm = songData.bpm;
@@ -2542,7 +2528,7 @@ hud = new HudHandler(Paths.hudjson(PlayState.SONG.hudSkin), PlayState.SONG.hudSk
 						(Conductor.stepCrochet / FlxMath.roundDecimal(songSpeed, 2)),
 						note.id, oldNote,player, true);
 
-					sustainNote.mustPress = note.strumLine == 1;
+					//sustainNote.mustPress = note.strumLine == 1;
 
 					if(sustainNote.mustPress != true){
 						sustainNote.strumTime = note.time + (Conductor.stepCrochet * susNote) +(Conductor.stepCrochet / FlxMath.roundDecimal(oppsongSpeed, 2));
@@ -2697,7 +2683,10 @@ hud = new HudHandler(Paths.hudjson(PlayState.SONG.hudSkin), PlayState.SONG.hudSk
 		var returnedValue:Float = 0;
 		for (script in hscriptArray ){
 			var func = script.interpreter.variables.get("eventEarlyTrigger");
-			returnedValue  = cast Reflect.callMethod(null, func, [event.event]);
+			if(func !=null){
+				returnedValue  = cast Reflect.callMethod(null, func, [event.event]);
+			}
+			
 		}
 		if (returnedValue != 0)
 		{
@@ -3155,7 +3144,9 @@ hud = new HudHandler(Paths.hudjson(PlayState.SONG.hudSkin), PlayState.SONG.hudSk
 			var ret:Dynamic = false;
 			for (script in hscriptArray ){
 				var func = script.interpreter.variables.get("onPause");
-				ret  = cast Reflect.callMethod(null, func, []);
+				if(func !=null){
+					ret  = cast Reflect.callMethod(null, func, []);
+				}
 			}
 			if (ret != true)
 				openPauseMenu();
@@ -3390,8 +3381,14 @@ if(hud.iconp1overide ==null){
 									daNote.y -= 19;
 								}
 							}
-							daNote.y += (Note.swagWidth / 2) - (60.5 * (songSpeed - 1));
-							daNote.y += 27.5 * ((SONG.bpm / 100) - 1) * (songSpeed - 1);
+							if(daNote.mustPress == false){
+								daNote.y += (Note.swagWidth / 2) - (60.5 * (oppsongSpeed - 1));
+								daNote.y += 27.5 * ((SONG.bpm / 100) - 1) * (oppsongSpeed - 1);
+							}
+							else{
+								daNote.y += (Note.swagWidth / 2) - (60.5 * (songSpeed - 1));
+								daNote.y += 27.5 * ((SONG.bpm / 100) - 1) * (songSpeed - 1);
+							}
 						}
 					}
 
@@ -3506,7 +3503,9 @@ if(hud.iconp1overide ==null){
 			var ret:Dynamic = false;
 			for (script in hscriptArray ){
 				var func = script.interpreter.variables.get("onGameOver");
-				ret  = cast Reflect.callMethod(null, func, []);
+				if(func !=null){
+					ret  = cast Reflect.callMethod(null, func, []);
+				}
 			}
 			if (ret != true)
 			{
@@ -3621,7 +3620,6 @@ if(hud.iconp1overide ==null){
 							}
 						});
 				}
-
 			case 'Hey!':
 				var value:Int = 2;
 				switch (value1.toLowerCase().trim())
@@ -4195,7 +4193,10 @@ public function moveCamera(isDad:Bool,? isGf:Bool)
 		var ret:Dynamic = false;
 		for (script in hscriptArray ){
 			var func = script.interpreter.variables.get("onEndSong");
-			ret  = cast Reflect.callMethod(null, func, []);
+			if (func != null){
+				ret  = cast Reflect.callMethod(null, func, []);
+			}
+			
 		}
 		if (ret != true && !transitioning)
 		{
@@ -4546,7 +4547,10 @@ public function moveCamera(isDad:Bool,? isGf:Bool)
 		var ret:Dynamic = false;
 		for (script in hscriptArray ){
 			var func = script.interpreter.variables.get("preKeyPress");
-			ret  = cast Reflect.callMethod(null, func, []);
+			if (func != null){
+				ret  = cast Reflect.callMethod(null, func, []);
+			}
+			
 		}
 		if (ret == true)
 			return;
@@ -5402,7 +5406,10 @@ public function moveCamera(isDad:Bool,? isGf:Bool)
 		var ret:Dynamic = false;
 		for (script in hscriptArray ){
 			var func = script.interpreter.variables.get("onRecalculateRating");
-			ret  = cast Reflect.callMethod(null, func, [curBeat]);
+			if (func != null){
+				ret  = cast Reflect.callMethod(null, func, [curBeat]);
+			}
+			
 		}
 		if (ret != true)
 		{

@@ -295,10 +295,14 @@ class Note extends FlxSprite
 		if (texture.length < 1)
 		{
 
-			
-			skin = PlayState.instance.hud.getNoteskin(mustPress);
-			if (skin == null || skin.length < 1)
-			{
+			if(PlayState.instance != null){
+				skin = PlayState.instance.hud.getNoteskin(mustPress);
+				if (skin == null || skin.length < 1)
+				{
+					skin = 'NOTE_assets';
+				}
+			}
+			else{
 				skin = 'NOTE_assets';
 			}
 		}
@@ -432,6 +436,7 @@ class Note extends FlxSprite
 			if (alpha > 0.3)
 				alpha = 0.3;
 		}
+		
 		if(isSustainNote && animation.curAnim.name.endsWith('end') &&  endnote == false)
 		{
 			endnote = true;
