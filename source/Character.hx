@@ -416,7 +416,7 @@ class Character extends FlxSprite
 
 	}
 
-	public function playSingAnim(note:Note,AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0 ):Void
+	public function playSingAnim(note:Note, AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0 ):Void
 		{
 			specialAnim = false;
 			if (note.isSustainNote == true && animstyle != 'psych'){

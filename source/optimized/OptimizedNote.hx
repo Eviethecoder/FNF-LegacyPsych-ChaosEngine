@@ -1,5 +1,6 @@
 package optimized;
 
+import flixel.math.FlxRect;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.frames.FlxFramesCollection;
 import flixel.animation.FlxAnimationController;
@@ -20,8 +21,26 @@ typedef DataNote = {
 
     // flags
     var missed:Bool;
-    var pressed:Bool;
+    var pressed:Bool; 
 }; 
+
+class OptimizedNote {
+    public static inline function CanHit(note:DataNote) { 
+        return note.time > Conductor.songPosition - Conductor.safeZoneOffset && note.time < Conductor.songPosition + Conductor.safeZoneOffset * 0.5;
+    }
+
+    public static inline function TooLate(note:DataNote) {
+        return note.time < Conductor.songPosition - Conductor.safeZoneOffset;
+    }
+ 
+    public static inline function Note_TooEarly(note:DataNote) {
+        return note.time >= Conductor.songPosition + Conductor.safeZoneOffset * 0.5;
+    } 
+
+    public static inline function Note_ShouldHold(note:DataNote) {
+        return  Conductor.songPosition > note.time && Conductor.songPosition < note.time + note.length;
+    }
+}
 
 class NoteRenderer extends FlxSprite {
     private var __renderFunction:Void->Void;
@@ -58,6 +77,7 @@ class NoteStamp extends FlxSprite {
         super(0, 0); 
 
         antialiasing = ClientPrefs.data.globalAntialiasing;
+        clipRect = new FlxRect(0, 0, 1280, 720);
     } 
 
     public function loadSkin(skinPath:String) {
@@ -90,6 +110,12 @@ class NoteStamp extends FlxSprite {
         scale.x = 0.7;
         scale.y = 0.7;
         alpha = 1;
+
+        color = FlxColor.WHITE;
+
+        clipRect.set(0, 0, 1280, 720);
+        clipRect = clipRect; // update
+        
         updateHitbox();
     }
 

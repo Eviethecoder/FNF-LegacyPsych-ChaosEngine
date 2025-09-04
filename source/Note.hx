@@ -399,6 +399,8 @@ class Note extends FlxSprite
 		}
 	}
 
+	
+
 	override function update(elapsed:Float)
 	{
 		runScriptFunction('update', [elapsed]);
