@@ -65,7 +65,7 @@ class HudHandler extends FlxGroup{
     public var timeBar:Bar;
     var json:Hudstyle;
     public var script:HaxeScript = null;
-    public var iconp1overide:Array<Float>;
+    public var iconp1overide:Array<Float>; 
     public var iconp1vis:Bool = true;
     public var iconp2overide:Array<Float>;
     public var scorposs:Array<Float> =[0,0];
@@ -181,7 +181,23 @@ class HudHandler extends FlxGroup{
     }
 
     public function setupjson(location:String){
-        json = cast Json.parse(File.getContent(location));
+        var path:String;
+        if(sys.FileSystem.exists(Paths.hudjson(location))){
+            path = Paths.hudjson(location);
+            trace('loading hud json from: ' + path);
+            
+    
+        }
+        else if(sys.FileSystem.exists(Paths.modshudJson(location))){
+            path = Paths.modshudJson(location);
+            trace('loading hud json from: ' + path);
+        }
+        else{
+            trace('no hud json found at: ' + location);
+            return;
+        }
+       
+        json = cast Json.parse(File.getContent(path));
         trace ('json healthbar is : ' + json.healthbar);
         trace ('json timeBar is : ' + json.timeBar);
         bars = json;
@@ -255,8 +271,10 @@ public function getNoteskin(player:Bool):String {
              
                 return bars.noteskin;
             }
-        } else {
+        } 
+        else {
            
+            
             return bars.noteskin;
         }
     } else {
@@ -411,10 +429,26 @@ public function gettimebargraphics(barnum:Int):String {
 				hasscript = false;  
 			} 
 		}
-		else{
-			hasscript = false;  
-			trace('no script has been found for path:' + hudscriptpath );
+		else if(sys.FileSystem.exists(Paths.modFolders(hudscriptpath)) && PlayState.instance!=null ){
+
+			try{
+				trace('script found!! '+ hudscriptpath );
+				#if !macro
+				script = HaxeScript.HaxeScript.FromFile(Paths.modFolders(hudscriptpath), this); 
+				script.onError = PlayState.instance.hscriptError;
+				hasscript = true;
+				#end 
+			}
+			catch(e:Dynamic){  
+				PlayState.instance.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
+				PlayState.instance.addTextToDebug("[ ERROR ] Could not load Hud script " + Paths.getPreloadPath(hudscriptpath), FlxColor.RED);
+				hasscript = false;  
+			} 
 		}
+        else{
+            trace('no script found at: ' + hudscriptpath);
+            hasscript = false;
+        }
 
     }
 

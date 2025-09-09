@@ -2,7 +2,7 @@ package;
 
 import animateatlas.AtlasFrameMaker;
 import flixel.FlxG;
-import flixel.FlxSprite;
+
 import flixel.addons.effects.FlxTrail;
 import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -19,6 +19,9 @@ import openfl.utils.AssetType;
 import openfl.utils.Assets;
 import haxe.Json;
 import haxe.format.JsonParser;
+
+import animate.FlxAnimate;
+import animate.FlxAnimateFrames;
 
 using StringTools;
 
@@ -53,7 +56,7 @@ typedef AnimArray = {
 }
 
 @:build(macros.TestMacro.build())
-class Character extends FlxSprite
+class Character extends FlxAnimate 
 {
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
@@ -293,11 +296,7 @@ class Character extends FlxSprite
 			}*/
 		}
 
-		switch(curCharacter)
-		{
-			default:
-				trace(curCharacter);
-		}
+		
 		if(sys.FileSystem.exists(Paths.getPreloadPath(characterscriptPath)) && PlayState.instance!=null ){
 
 			try{
@@ -306,6 +305,7 @@ class Character extends FlxSprite
 				__hscript = HaxeScript.HaxeScript.FromFile(Paths.getPreloadPath(characterscriptPath), this); 
 				__hscript.onError = PlayState.instance.hscriptError;
 				hasscript = true;
+				__hscript.adddvar('Section', Section);
 				#end 
 			}
 			catch(e:Dynamic){  
@@ -314,9 +314,25 @@ class Character extends FlxSprite
 				hasscript = false;  
 			} 
 		}
+		else if(sys.FileSystem.exists(Paths.modFolders(characterscriptPath)) && PlayState.instance!=null ){
+
+			try{
+				trace('script found!! '+ characterscriptPath );
+				#if !macro
+				__hscript = HaxeScript.HaxeScript.FromFile(Paths.modFolders(characterscriptPath), this); 
+				__hscript.onError = PlayState.instance.hscriptError;
+				hasscript = true;
+				__hscript.adddvar('Section', Section);
+				#end 
+			}
+			catch(e:Dynamic){  
+				PlayState.instance.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
+				PlayState.instance.addTextToDebug("[ ERROR ] Could not load character script " + Paths.modFolders(characterscriptPath), FlxColor.RED);
+				hasscript = false;  
+			} 
+		}
 		else{
 			hasscript = false;  
-			trace('no script has been found for path:' + characterscriptPath );
 		}
 	
 	}
@@ -324,6 +340,7 @@ class Character extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		FlxG.watch.addQuick('alt:', alt);
+		
 		if(!debugMode && animation.curAnim != null)
 		{
 			if(heyTimer > 0)
@@ -344,20 +361,7 @@ class Character extends FlxSprite
 				dance();
 			}
 			
-			switch(curCharacter)
-			{
-				case 'pico-speaker':
-					if(animationNotes.length > 0 && Conductor.songPosition > animationNotes[0][0])
-					{
-						var noteData:Int = 1;
-						if(animationNotes[0][1] > 2) noteData = 3;
-
-						noteData += FlxG.random.int(0, 1);
-						playAnim('shoot' + noteData, true);
-						animationNotes.shift();
-					}
-					if(animation.curAnim.finished) playAnim(animation.curAnim.name, false, false, animation.curAnim.frames.length - 3);
-			}
+			
 
 			
 			
@@ -388,6 +392,7 @@ class Character extends FlxSprite
 	 */
 	public function dance()
 	{
+		setFunctionOnScripts('dance', []);
 		if (!debugMode && !skipDance && !specialAnim)
 		{
 			if(danceIdle)
@@ -418,41 +423,47 @@ class Character extends FlxSprite
 
 	public function playSingAnim(note:Note,AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0 ):Void
 		{
+			
 			specialAnim = false;
-			if (note.isSustainNote == true && animstyle != 'psych'){
-				holdnote = note.isSustainNote;
-
+			alt += note.animSuffix;
+			setFunctionOnScripts('playSingAnim', [note, AnimName, Force, Reversed, Frame]);
+			if (!note.noAnimation){
 				
-				holdtimer = new FlxTimer().start(1, function(tmr:FlxTimer)
-					{
-						holdnote = false;
-					});
+				if (note.isSustainNote == true && animstyle != 'psych'){
+					holdnote = note.isSustainNote;
 
-				if (isSinging() && AnimName == getCurrentAnimation()){
-					switch(animstyle){
-						case ('pause'):
-							if(note.endnote){
-								trace('endnote');
-								this.animation.curAnim.paused = false;
-							}
-							else{
-								this.animation.curAnim.paused = true;
-							}
+					
+					holdtimer = new FlxTimer().start(1, function(tmr:FlxTimer)
+						{
+							holdnote = false;
+						});
+
+					if (isSinging() && AnimName == getCurrentAnimation()){
+						switch(animstyle){
+							case ('pause'):
+								if(note.endnote){
+									trace('endnote');
+									this.animation.curAnim.paused = false;
+								}
+								else{
+									this.animation.curAnim.paused = true;
+								}
+						}
+
 					}
+					else{
+						if (holdtimer !=null){
+							holdtimer.cancel();
+							holdtimer = null;
+							holdnote = false;
+						}
 
+						playAnim(AnimName + alt, Force, Reversed, Frame); 
+					}
 				}
 				else{
-					if (holdtimer !=null){
-						holdtimer.cancel();
-						holdtimer = null;
-						holdnote = false;
-					}
-
-					playAnim(AnimName + alt, Force, Reversed, Frame); 
+					playAnim(AnimName+ alt, Force, Reversed, Frame);
 				}
-			}
-			else{
-				playAnim(AnimName+ alt, Force, Reversed, Frame);
 			}
 			}
 
@@ -477,6 +488,7 @@ class Character extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
+		setFunctionOnScripts('playAnim',[AnimName, Force, Reversed, Frame]);
 		specialAnim = false;
 		animation.play(AnimName, Force, Reversed, Frame);
 
@@ -506,15 +518,16 @@ class Character extends FlxSprite
 		}
 	}
 	
-	function loadMappedAnims():Void
+	
+
+	function chartloader(chartName:String):Void
 	{
-		var noteData:Array<SwagSection> = Song.loadFromJson('picospeaker', Paths.formatToSongPath(PlayState.SONG.song)).notes;
+		var noteData:Array<SwagSection> = Song.loadFromJson(chartName, Paths.formatToSongPath(PlayState.SONG.song)).notes;
 		for (section in noteData) {
 			for (songNotes in section.sectionNotes) {
 				animationNotes.push(songNotes);
 			}
 		}
-		TankmenBG.animationNotes = animationNotes;
 		animationNotes.sort(sortAnims);
 	}
 

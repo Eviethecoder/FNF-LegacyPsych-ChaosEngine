@@ -389,28 +389,43 @@ class AlphaCharacter extends FlxSprite
 	}
 
 	private function set_image(name:String)
+{
+	var lastAnim:String = null;
+	if (animation != null)
 	{
-		var lastAnim:String = null;
-		if (animation != null)
-		{
-			lastAnim = animation.name;
-		}
-		image = name;
-		frames = Paths.getSparrowAtlas(name);
-		this.scale.x = parent.scaleX;
-		this.scale.y = parent.scaleY;
-		alignOffset = 0;
-		
-		if (lastAnim != null)
-		{
-			animation.addByPrefix(lastAnim, lastAnim, 24);
-			animation.play(lastAnim, true);
-			
-			updateHitbox();
-			updateLetterOffset();
-		}
-		return name;
+		lastAnim = animation.name;
 	}
+	image = name;
+
+	// Load raw atlas
+	var frameset = Paths.getSparrowAtlas(name);
+
+	// Sanitize frame names: strip " instance ####"
+	for (f in frameset.frames)
+	{
+		if (f.name.indexOf("instance") != -1)
+		{
+			// Remove trailing " instance ####"
+			f.name = ~/ instance \d+/.replace(f.name, "");
+		}
+	}
+
+	frames = frameset;
+	this.scale.x = parent.scaleX;
+	this.scale.y = parent.scaleY;
+	alignOffset = 0;
+	
+	if (lastAnim != null)
+	{
+		animation.addByPrefix(lastAnim, lastAnim, 24);
+		animation.play(lastAnim, true);
+		
+		updateHitbox();
+		updateLetterOffset();
+	}
+	return name;
+}
+
 
 	public function updateLetterOffset()
 	{

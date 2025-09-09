@@ -39,7 +39,7 @@ class Githubicon extends AttachedSprite
         var loader = new Loader();
         loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(e:Event) {
             var bmp:Bitmap = cast(loader.content, Bitmap);
-
+                //made me wana kill myself ngl
             // Resize the bitmap to 150x150
             var resizedData = new openfl.display.BitmapData(150, 150, true, 0x00000000);
             resizedData.draw(bmp, new openfl.geom.Matrix(150 / bmp.width, 0, 0, 150 / bmp.height));

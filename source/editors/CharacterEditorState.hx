@@ -31,7 +31,7 @@ import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import haxe.Json;
 import Character;
-import flixel.system.debug.interaction.tools.Pointer.GraphicCursorCross;
+import flixel.system.debug.Icon;
 import lime.system.Clipboard;
 import flixel.animation.FlxAnimation;
 
@@ -104,7 +104,7 @@ class CharacterEditorState extends MusicBeatState
 		charLayer = new FlxTypedGroup<Character>();
 		add(charLayer);
 
-		var pointer:FlxGraphic = FlxGraphic.fromClass(GraphicCursorCross);
+		var pointer:FlxGraphic = FlxGraphic.fromBitmapData(Icon.cross);
 		cameraFollowPointer = new FlxSprite().loadGraphic(pointer);
 		cameraFollowPointer.setGraphicSize(40, 40);
 		cameraFollowPointer.updateHitbox();

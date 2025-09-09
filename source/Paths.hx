@@ -121,6 +121,8 @@ class Paths
 
 	public static function getPath(file:String, type:AssetType, ?library:Null<String> = null)
 	{
+		
+
 		if (library != null)
 			return getLibraryPath(file, library);
 
@@ -155,6 +157,10 @@ class Paths
 	inline public static function getPreloadPath(file:String = '')
 	{
 		return 'assets/$file';
+	}
+	inline public static function getPreloadimagePath(file:String = '')
+	{
+		return 'assets/images/$file';
 	}
 
 	inline static public function file(file:String, type:AssetType = TEXT, ?library:String)
@@ -439,6 +445,10 @@ class Paths
 	inline static public function modsJson(key:String) {
 		return modFolders('data/' + key + '.json');
 	}
+	inline static public function modshudJson(key:String) {
+		trace('looking for hud json at: ' + 'mods/hudstyles/' + key + '.json');
+		return modFolders('hudstyles/' + key + '.json');
+	}
 
 	inline static public function modsVideo(key:String) {
 		return modFolders('videos/' + key + '.' + VIDEO_EXT);
@@ -447,6 +457,10 @@ class Paths
 	inline static public function modsSounds(path:String, key:String) {
 		return modFolders(path + '/' + key + '.' + SOUND_EXT);
 	}
+	inline static public function modspath(key:String) {
+		return modFolders(key);
+	}
+
 
 	inline static public function modsImages(key:String) {
 		return modFolders('images/' + key + '.png');

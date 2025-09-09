@@ -1,12 +1,13 @@
 package;
 
 import sys.FileSystem;
+import haxe.ds.StringMap;
 
 class ScriptedStatehandler {
     public static var states:Array<String> = [];
     public static var curselectedstate:String; 
-    public static var persistantvariables:Array<String> = ['didit'];
-    
+ 
+    public static  var persistantvariables = new StringMap<Dynamic>(); // keys = String, values = Int
     public static function generateStateList(){
         var folderPath = "states";
         var foldersToCheck:Array<String> = [Paths.getPreloadPath('states/'), Paths.modFolders('states/')];
@@ -20,7 +21,7 @@ class ScriptedStatehandler {
 
                 for (file in FileSystem.readDirectory(foldersToCheck[i])) {
                     var filname:String = file.substr(0, file.length - 3);
-                    trace('state name is' +filname );
+                    trace('state name is' +filname);
                     files.insert(0,filname);
 
                 }

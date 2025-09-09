@@ -885,8 +885,21 @@ class PlayState extends MusicBeatState
 				addTextToDebug("[ ERROR ] Could not load stage script " + hxFile, FlxColor.RED); 
 			}
 		}
+		else if(FileSystem.exists(Paths.modFolders(hxFile))) {
+			hxFile = Paths.modFolders(hxFile);
+			try{
+				trace('script found!! '+ hxFile);
+				stagescript = HaxeScript.FromFile(hxFile, instance);
+				stagescript.onError = hscriptError;
+				hscriptArray.push(stagescript);
+			}
+			catch(e:Dynamic){ 
+				addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
+				addTextToDebug("[ ERROR ] Could not load stage script " + hxFile, FlxColor.RED); 
+			}
+		}
 		else{
-			trace('script not found!! '+ hxFile);
+			trace('no stage script found for ' + curStage);
 		}
 
 		
@@ -1030,7 +1043,7 @@ class PlayState extends MusicBeatState
 			timeTxt.text = SONG.song;
 		}
 		updateTime = showTime;
-hud = new HudHandler(Paths.hudjson(PlayState.SONG.hudSkin), PlayState.SONG.hudSkin, SONG.song); ///do this before song is generated for noteskins
+hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song); ///do this before song is generated for noteskins
 
 		strumLineNotes = new FlxTypedGroup<StrumNote>();
 		noteGroup.add(strumLineNotes);
@@ -3163,33 +3176,11 @@ hud = new HudHandler(Paths.hudjson(PlayState.SONG.hudSkin), PlayState.SONG.hudSk
 		iconP2.scale.set(mult, mult);
 		iconP2.updateHitbox();
 
-		var iconOffset:Int = 26;
 
-if(hud.iconp1overide ==null){
-			iconP1.x = hud.healthBar.x
-			+ (hud.healthBar.width * (FlxMath.remapToRange(hud.healthBar.percent, 0, 100, 100, 0) * 0.01))
-			+ (150 * iconP1.scale.x - 150) / 2
-			- iconOffset;
-		}
-		if(hud.iconp2overide ==null){
-			iconP2.x = hud.healthBar.x
-			+ (hud.healthBar.width * (FlxMath.remapToRange(hud.healthBar.percent, 0, 100, 100, 0) * 0.01))
-			- (150 * iconP2.scale.x) / 2
-			- iconOffset * 2;
-		}
 
 		if (health > 2)
 			health = 2;
 
-		if (hud.healthBar.percent < 20)
-			iconP1.animation.curAnim.curFrame = 1;
-		else
-			iconP1.animation.curAnim.curFrame = 0;
-
-		if (hud.healthBar.percent > 80)
-			iconP2.animation.curAnim.curFrame = 1;
-		else
-			iconP2.animation.curAnim.curFrame = 0;
 
 		if (FlxG.keys.anyJustPressed(debugKeysCharacter) && !endingSong && !inCutscene)
 		{
@@ -4816,24 +4807,23 @@ public function moveCamera(isDad:Bool,? isGf:Bool)
 			dad.specialAnim = true;
 			dad.heyTimer = 0.6;
 		}
-		else if (!note.noAnimation)
+		
+		var altAnim:String = note.animSuffix;
+
+		//why is this here we already have notes to do this
+		if (SONG.notes[curSection] != null)
+			if (SONG.notes[curSection].altAnim && !SONG.notes[curSection].gfSection)
+				altAnim = '-alt';
+
+		var char:Character = dad;
+		var animToPlay:String = singAnimations[Std.int(Math.abs(note.noteData))];
+		if (note.gfNote)
+			char = gf;
+
+		if (char != null)
 		{
-			var altAnim:String = note.animSuffix;
-
-			if (SONG.notes[curSection] != null)
-				if (SONG.notes[curSection].altAnim && !SONG.notes[curSection].gfSection)
-					altAnim = '-alt';
-
-			var char:Character = dad;
-			var animToPlay:String = singAnimations[Std.int(Math.abs(note.noteData))] + altAnim;
-			if (note.gfNote)
-				char = gf;
-
-			if (char != null)
-			{
-				char.playSingAnim(note,animToPlay, true);
-				char.holdTimer = 0;
-			}
+			char.playSingAnim(note,animToPlay, true);
+			char.holdTimer = 0;
 		}
 
 		vocals.volume = 1;
@@ -4895,41 +4885,40 @@ public function moveCamera(isDad:Bool,? isGf:Bool)
 			return;
 		}
 
-		if (!note.noAnimation)
+		
+		var animToPlay:String = singAnimations[Std.int(Math.abs(note.noteData))];
+
+		if (note.gfNote)
 		{
-			var animToPlay:String = singAnimations[Std.int(Math.abs(note.noteData))];
-
-			if (note.gfNote)
+			if (gf != null)
 			{
-				if (gf != null)
-				{
-					gf.playSingAnim(note,animToPlay+ note.animSuffix, true);
-					gf.holdTimer = 0;
-				}
-			}
-			else
-			{
-				boyfriend.playSingAnim(note,animToPlay+ note.animSuffix, true);
-				boyfriend.holdTimer = 0;
-			}
-
-			if (note.noteType == 'Hey!')
-			{
-				if (boyfriend.animOffsets.exists('hey'))
-				{
-					boyfriend.playAnim('hey', true);
-					boyfriend.specialAnim = true;
-					boyfriend.heyTimer = 0.6;
-				}
-
-				if (gf != null && gf.animOffsets.exists('cheer'))
-				{
-					gf.playAnim('cheer', true);
-					gf.specialAnim = true;
-					gf.heyTimer = 0.6;
-				}
+				gf.playSingAnim(note,animToPlay, true);
+				gf.holdTimer = 0;
 			}
 		}
+		else
+		{
+			boyfriend.playSingAnim(note,animToPlay, true);
+			boyfriend.holdTimer = 0;
+		}
+
+		if (note.noteType == 'Hey!')
+		{
+			if (boyfriend.animOffsets.exists('hey'))
+			{
+				boyfriend.playAnim('hey', true);
+				boyfriend.specialAnim = true;
+				boyfriend.heyTimer = 0.6;
+			}
+
+			if (gf != null && gf.animOffsets.exists('cheer'))
+			{
+				gf.playAnim('cheer', true);
+				gf.specialAnim = true;
+				gf.heyTimer = 0.6;
+			}
+		}
+		
 
 		if (cpuControlled)
 		{
@@ -5245,8 +5234,11 @@ public function moveCamera(isDad:Bool,? isGf:Bool)
 			notes.sort(FlxSort.byY, ClientPrefs.data.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
 
-		iconP1.scale.set(1.2, 1.2);
-		iconP2.scale.set(1.2, 1.2);
+
+
+		iconP1.bop();
+		iconP2.bop();
+	
 
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();

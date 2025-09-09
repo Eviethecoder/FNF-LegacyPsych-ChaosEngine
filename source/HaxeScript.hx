@@ -112,10 +112,10 @@ class HaxeScript {
                 adddvar(script, className, cls);
             }
         });
-         adddvar(script,"controls",function(){ return Controls;});
-
+		
         adddvar(script,"controls",function(){ return Controls;});
         adddvar(script,"this", script.obj);
+		adddvar(script, "FlxGroup", flixel.group.FlxGroup);
         adddvar(script, "Std", Std);
         adddvar(script,"FlxG", FlxG);
         adddvar(script,"FlxSprite", flixel.FlxSprite);

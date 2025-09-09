@@ -296,7 +296,9 @@ class ChartingState extends MusicBeatState
 		resetIdle();
 		var eventIcon:FlxSprite = new FlxSprite(-GRID_SIZE - 5, -90).loadGraphic(Paths.image('eventArrow'));
 		leftIcon = new HealthIcon('bf');
+		leftIcon.autoUpdate = false;
 		rightIcon = new HealthIcon('dad');
+		rightIcon.autoUpdate = false;
 		eventIcon.scrollFactor.set(1, 1);
 		leftIcon.scrollFactor.set(1, 1);
 		rightIcon.scrollFactor.set(1, 1);

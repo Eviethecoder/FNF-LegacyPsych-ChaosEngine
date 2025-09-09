@@ -22,6 +22,7 @@ class FunkinSoundTray extends FlxSoundTray
   var graphicScale:Float = 0.30;
   var lerpYPos:Float = 0;
   var alphaTarget:Float = 0;
+  var bg:Bitmap;
 
   var volumeMaxSound:String;
 
@@ -32,7 +33,7 @@ class FunkinSoundTray extends FlxSoundTray
     super();
     removeChildren();
 
-    var bg:Bitmap = new Bitmap(Assets.getBitmapData(Paths.vsliceimage("soundtray/volumebox")));
+    bg = new Bitmap(Assets.getBitmapData(Paths.vsliceimage("soundtray/volumebox")));
     bg.scaleX = graphicScale;
     bg.scaleY = graphicScale;
     bg.smoothing = true;
@@ -52,7 +53,7 @@ class FunkinSoundTray extends FlxSoundTray
     for (i in 1...11)
     {
       var bar:Bitmap = new Bitmap(Assets.getBitmapData(Paths.vsliceimage("soundtray/bars_" + i)));
-      bar.x = bg.x;
+      bar.x = bg.x +8;
       bar.y = bg.y;
       bar.scaleX = graphicScale;
       bar.scaleY = graphicScale;
@@ -138,12 +139,50 @@ class FunkinSoundTray extends FlxSoundTray
     {
       if (i < globalVolume)
       {
-        _bars[i].visible = true;
+        _bars[i].visible==true;
       }
       else
       {
-        _bars[i].visible = false;
+        _bars[i].visible==false;
       }
     }
   }
+ 
+  /**
+	 * Shows the volume animation for the desired settings
+	 * @param   volume    The volume, 1.0 is full volume
+	 * @param   sound     The sound to play, if any
+	 * @param   duration  How long the tray will show
+	 * @param   label     The test label to display
+	 */
+	override public function showAnim(volume:Float, ?sound:FlxSoundAsset, duration = 1.0, label = "VOLUME")
+	{
+		if (sound != null)
+			FlxG.sound.play(FlxG.assets.getSoundAddExt(sound));
+		
+		_timer = 1;
+		lerpYPos = 0;
+		visible = true;
+		active = true;
+
+		_label.text = label;
+    final numBars = Math.round(volume * 10);
+		updateSize();
+    for (i in 0..._bars.length)
+			_bars[i].visible = i < numBars ? true : false;
+	}
+  override function updateSize()
+	{
+		if (_label.textWidth + 10 > _bg.width)
+			_label.width = _label.textWidth + 10;
+			
+		_bg.width = _label.textWidth + 10 > _minWidth ? _label.textWidth + 10 : _minWidth;
+		
+		_label.width = _bg.width;
+		
+		
+		
+		
+		screenCenter();
+	}
 }

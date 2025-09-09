@@ -15,6 +15,8 @@ import flixel.math.FlxMath;
 import sys.FileSystem;
 import sys.io.File;
 
+import flixel.tweens.FlxEase;
+
 import openfl.Assets;
 import haxe.Json;
 
@@ -174,7 +176,7 @@ class CreditsState extends MusicBeatState
 		return null;
 }
 
-
+	var moveTween:FlxTween = null;
     function changeSelection(change:Int = 0) {
         FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 		do {
@@ -214,7 +216,10 @@ class CreditsState extends MusicBeatState
             descText.text = person.description;
             descText.y = FlxG.height - descText.height + offsetThing - 60;
             descBox.setGraphicSize(Std.int(descText.width + 20), Std.int(descText.height + 25));
-            descBox.updateHitbox();
+            var changeamount: Int = 1;
+        
+            if(moveTween != null) moveTween.cancel();
+		    moveTween = FlxTween.tween(descText, {y : descText.y + 75}, 0.25, {ease: FlxEase.sineOut});
         }
     }
 

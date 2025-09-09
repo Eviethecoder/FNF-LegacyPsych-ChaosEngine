@@ -33,6 +33,7 @@ class Note extends FlxSprite
 	public var noteWasHit:Bool = false;
 	public var prevNote:Note;
 	public var nextNote:Note;
+	public var isEvent:Bool = false;
 
 	public var spawned:Bool = false;
 
@@ -160,9 +161,6 @@ class Note extends FlxSprite
 					hitCausesMiss = true;
 				case 'Alt Animation':
 					animSuffix = '-alt';
-				case 'No Animation':
-					noAnimation = true;
-					noMissAnimation = true;
 				case 'GF Sing':
 					gfNote = true;
 			}

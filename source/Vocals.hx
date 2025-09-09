@@ -1,5 +1,5 @@
 package;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.FlxG;
 
 // me and the voices at 3:22am (we're having a great time)
