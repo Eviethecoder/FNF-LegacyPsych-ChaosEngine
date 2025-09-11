@@ -62,6 +62,7 @@ class HudHandler extends FlxGroup{
     public var healthBar:Bar;
     public var timebg:FlxSprite;
     public var bg:FlxSprite;
+    public var spritegroup:FlxTypedGroup<FlxSprite>;
     public var timeBar:Bar;
     var json:Hudstyle;
     public var script:HaxeScript = null;
@@ -176,7 +177,10 @@ class HudHandler extends FlxGroup{
                 timeTxt.size = 24;
                 timeTxt.y += 3;
             }
+            spritegroup = new FlxTypedGroup<FlxSprite>();
             runScriptFunction('BarCreatePost', []);
+            add(spritegroup);
+            spritegroup.cameras = [PlayState.instance.camHUD];
         }
     }
 
@@ -421,6 +425,7 @@ public function gettimebargraphics(barnum:Int):String {
 				script = HaxeScript.HaxeScript.FromFile(Paths.getPreloadPath(hudscriptpath), this); 
 				script.onError = PlayState.instance.hscriptError;
 				hasscript = true;
+                
 				#end 
 			}
 			catch(e:Dynamic){  

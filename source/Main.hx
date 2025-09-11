@@ -10,6 +10,7 @@ import debug.FPSCounter;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.display.StageScaleMode;
+import winapi.WindowsAPI;
 
 //crash handler stuff
 #if CRASH_HANDLER
@@ -63,6 +64,9 @@ class Main extends Sprite
 		var game:FlxGame =new FlxGame(gameWidth, gameHeight, InitState, #if (flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen);
 		@:privateAccess
 		game._customSoundTray = FunkinSoundTray;
+		#if !debug
+		FlxG.signals.postUpdate.add(function() { if(FlxG.keys.justPressed.F1) { WindowsAPI.allocConsole(); }});
+		#end
 		addChild(game);
 
 		#if !mobile

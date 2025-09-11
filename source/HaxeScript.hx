@@ -9,12 +9,15 @@ import flixel.text.FlxText;
 import lime.app.Application;
 import lime.ui.WindowAttributes;
 import flixel.FlxState;
+import flixel.FlxBasic;
 import PlayState;
+import flixel.FlxCamera;
 import hscript.Interp;
 import hscript.Macro;
 import flixel.util.FlxColor;
 import flixel.addons.display.FlxBackdrop;
 import hscript.Parser;
+import flixel.group.FlxGroup;
 import flixel.tweens.FlxTween;
 import openfl.display.BlendMode;
 import flixel.tweens.FlxEase;
@@ -115,7 +118,8 @@ class HaxeScript {
 		
         adddvar(script,"controls",function(){ return Controls;});
         adddvar(script,"this", script.obj);
-		adddvar(script, "FlxGroup", flixel.group.FlxGroup);
+		adddvar(script,"ScriptedFlxGroup", ScriptedFlxGroup);
+		
         adddvar(script, "Std", Std);
         adddvar(script,"FlxG", FlxG);
         adddvar(script,"FlxSprite", flixel.FlxSprite);
@@ -124,7 +128,6 @@ class HaxeScript {
         adddvar(script,"Note", Note);
         adddvar(script,"ClientPrefs", ClientPrefs);
         adddvar(script,"easeFromString", getFlxEaseByString);
-		adddvar(script,"FlxSpriteGroup", flixel.group.FlxSpriteGroup);
         adddvar(script,"colorFromString", FlxColor.fromString);
         adddvar(script,"praseIntfromString",  function(number:String) {
             
@@ -402,5 +405,55 @@ class ModchartText extends FlxText
 		cameras = [PlayState.instance.camHUD];
 		scrollFactor.set();
 		borderSize = 2;
+	}
+}
+
+class ScriptedFlxGroup {
+    public var group:FlxTypedGroup<Dynamic>;
+
+    public function new(maxsize:Int = 0) {
+        group = new FlxTypedGroup<Dynamic>(maxsize);
+    }
+
+    public function addtogroup(obj:FlxBasic) {
+        group.add(obj);
+    }
+
+    public function removefromgroup(obj:FlxBasic, splice:Bool = false) {
+        group.remove(obj, splice);
+    }
+
+    public function clear() {
+        group.clear();
+    }
+
+    public function length():Int {
+        return group.length;
+    }
+
+    public function getmembers():Array<Dynamic> {
+        return group.members;
+    }
+
+    public function get(index:Int):Dynamic {
+        return group.members[index];
+    }
+
+	 public function setcam(cam:FlxCamera){
+       group.cameras = [cam];
+    }
+
+    public function exists(obj:FlxBasic):Bool {
+        return group.members.indexOf(obj) != -1;
+    }
+
+	public function addtostate(playstate:Bool){
+		
+		if(playstate){
+			PlayState.instance.add(group);
+		}
+		else{
+			FlxG.state.add(group);
+		}
 	}
 }
