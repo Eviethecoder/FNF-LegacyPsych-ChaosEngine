@@ -1,10 +1,16 @@
 package;
 
-import animateatlas.AtlasFrameMaker;
+
+
 import flixel.FlxG;
 
+
+import animate.FlxAnimateController;
+import animate.internal.Timeline;
+
+
+
 import flixel.addons.effects.FlxTrail;
-import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxSort;
@@ -60,6 +66,7 @@ class Character extends FlxAnimate
 {
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
+	public var spriteType:String ='sparrow';
 
 	
 	public var isPlayer:Bool = false;
@@ -91,7 +98,11 @@ class Character extends FlxAnimate
 	var theFrames:FlxAtlasFrames;
 	var hasscript:Bool;
 
+	var offsethandler:Array<Float> = [];
+
 	var characterscriptPath:String;
+	var ogx:Float;
+	var ogy:Float;
 
 	//Used on Character Editor
 	public var imageFile:String = '';
@@ -115,6 +126,7 @@ class Character extends FlxAnimate
 		this.isPlayer = isPlayer;
 		antialiasing = ClientPrefs.data.globalAntialiasing;
 		var library:String = null;
+
 		switch (curCharacter)
 		{
 			//case 'your character name in case you want to hardcode them instead':
@@ -145,7 +157,7 @@ class Character extends FlxAnimate
 				#end
 
 				var json:CharacterFile = cast Json.parse(rawJson);
-				var spriteType = "sparrow";
+				
 				//sparrow
 				//packer
 				//texture
@@ -206,7 +218,11 @@ class Character extends FlxAnimate
 						}
 					
 					case "texture":
-						frames = AtlasFrameMaker.construct(json.image);
+						var frames = FlxAnimateFrames.fromAnimate(json.image + '.json', {
+						swfMode: false,         // If to render like in a SWF file, rather than the Animate editor.
+						cacheOnLoad: false,     // If to precache all animation filters and masks at once, rather than at runtime.
+						filterQuality: MEDIUM   // Level of quality used to render filters. (HIGH, MEDIUM, LOW, RUDY)
+});
 				}
 				imageFile = json.image;
 				if(json.images == null){
@@ -244,23 +260,48 @@ class Character extends FlxAnimate
 
 				animationsArray = json.animations;
 				if(animationsArray != null && animationsArray.length > 0) {
-					for (anim in animationsArray) {
-						var animAnim:String = '' + anim.anim;
-						var animName:String = '' + anim.name;
-						var animFps:Int = anim.fps;
-						var animLoop:Bool = !!anim.loop; //Bruh
-						var animIndices:Array<Int> = anim.indices;
-						if(animIndices != null && animIndices.length > 0) {
-							animation.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
-						} else {
-							animation.addByPrefix(animAnim, animName, animFps, animLoop);
-						}
+					for (anims in animationsArray) {
+						var animAnim:String = '' + anims.anim;
+						var animName:String = '' + anims.name;
+						var animFps:Int = anims.fps;
+						var animLoop:Bool = !!anims.loop; //Bruh
+						var animIndices:Array<Int> = anims.indices;
+						switch(spriteType){
+							case 'packer' | 'sparrow':
+								trace('SPARROW OR PACKER');
+								if(animIndices != null && animIndices.length > 0) {
+									
+								anim.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
+								} else {
+									anim.addByPrefix(animAnim, animName, animFps, animLoop);
+								}
 
-						if(anim.offsets != null && anim.offsets.length > 1) {
-							addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
+							case 'texture':
+								if(animIndices != null && animIndices.length > 0) {
+									if(this.timeline !=null){
+										anim.addByTimelineIndices(animName, this.library.timeline, animIndices, animFps, animLoop);
+									}
+									else{
+										anim.addBySymbolIndices(animAnim, animName, animIndices, animFps, animLoop);
+									}
+									
+								} else {
+									if(this.timeline!=null){
+										anim.addByTimeline(animName, this.library.timeline, animFps, animLoop);
+									}
+									else{
+										
+										anim.addBySymbol(animAnim, animName, animFps, animLoop);
+									}
+								}
 						}
+						if(anims.offsets != null && anims.offsets.length > 1) {
+							addOffset(anims.anim, anims.offsets[0], anims.offsets[1]);
 					}
-				} else {
+					
+				}
+			}
+				else {
 					quickAnimAdd('idle', 'BF idle dance');
 				}
 				//trace('Loaded file to character ' + curCharacter);
@@ -425,7 +466,9 @@ class Character extends FlxAnimate
 		{
 			
 			specialAnim = false;
-			alt += note.animSuffix;
+			if(note.animSuffix != '' ){
+				alt += note.animSuffix;
+			}
 			setFunctionOnScripts('playSingAnim', [note, AnimName, Force, Reversed, Frame]);
 			if (!note.noAnimation){
 				
@@ -490,15 +533,20 @@ class Character extends FlxAnimate
 	{
 		setFunctionOnScripts('playAnim',[AnimName, Force, Reversed, Frame]);
 		specialAnim = false;
-		animation.play(AnimName, Force, Reversed, Frame);
+			
+		anim.play(AnimName, Force, Reversed, Frame);
 
 		var daOffset = animOffsets.get(AnimName);
 		if (animOffsets.exists(AnimName))
 		{
-			offset.set(daOffset[0], daOffset[1]);
+
+			this.offset.set(daOffset[0], daOffset[1]);
+		
 		}
 		else
-			offset.set(0, 0);
+			this.offset.set(0, 0);
+
+	
 
 		if (curCharacter.startsWith('gf'))
 		{
