@@ -206,7 +206,7 @@ class Character extends FlxAnimate
 									theFrames = atlas;
 								else
 									theFrames.addAtlas(atlas);
-							}
+						}
 							var atlas = Paths.getSparrowAtlas(json.image);
 							theFrames.addAtlas(atlas);
 							trace(theFrames);
@@ -218,7 +218,7 @@ class Character extends FlxAnimate
 						}
 					
 					case "texture":
-						var frames = FlxAnimateFrames.fromAnimate(json.image + '.json', {
+						var frames = FlxAnimateFrames.fromAnimate(json.image + '/' + json.image + '.json', {
 						swfMode: false,         // If to render like in a SWF file, rather than the Animate editor.
 						cacheOnLoad: false,     // If to precache all animation filters and masks at once, rather than at runtime.
 						filterQuality: MEDIUM   // Level of quality used to render filters. (HIGH, MEDIUM, LOW, RUDY)

@@ -35,7 +35,12 @@ import flixel.system.debug.Icon;
 import lime.system.Clipboard;
 import flixel.animation.FlxAnimation;
 
-#if MODS_ALLOWED
+import animate.FlxAnimate;
+import animate.FlxAnimateFrames;
+
+
+#if sys
+import sys.io.File;
 import sys.FileSystem;
 #end
 
@@ -726,10 +731,33 @@ class CharacterEditorState extends MusicBeatState
 				offsets: lastOffsets
 			};
 			if(indices != null && indices.length > 0) {
-				char.anim.addByIndices(newAnim.anim, newAnim.name, newAnim.indices, "", newAnim.fps, newAnim.loop);
-			} else {
-				char.anim.addByPrefix(newAnim.anim, newAnim.name, newAnim.fps, newAnim.loop);
+				if (char.spriteType == "texture"){
+					if(char.timeline !=null){
+						char.anim.addByTimelineIndices(newAnim.name, char.library.timeline, newAnim.indices, newAnim.fps,newAnim.loop);
+						}
+						else{
+							char.anim.addBySymbolIndices(newAnim.anim, newAnim.name, newAnim.indices, newAnim.fps, newAnim.loop);
+						}
+					}
+				else{
+					char.anim.addByIndices(newAnim.anim, newAnim.name, newAnim.indices, "", newAnim.fps, newAnim.loop);
+				}
 			}
+			else {
+				if (char.spriteType == "texture"){
+					if(char.timeline!=null){
+							char.anim.addByTimeline(newAnim.name, char.library.timeline, newAnim.fps, newAnim.loop);
+						}
+						else{
+							
+							char.anim.addBySymbol(newAnim.anim, newAnim.name, newAnim.fps, newAnim.loop);
+						}
+				}
+				else{
+					char.anim.addByPrefix(newAnim.anim, newAnim.name, newAnim.fps, newAnim.loop);
+				}
+			}
+		
 
 			if(!char.animOffsets.exists(newAnim.anim)) {
 				char.addOffset(newAnim.anim, 0, 0);
@@ -885,7 +913,16 @@ class CharacterEditorState extends MusicBeatState
 		}
 		var anims:Array<AnimArray> = char.animationsArray.copy();
 		if(Paths.fileExists('images/' + char.imageFile + '/Animation.json', TEXT)) {
-			char.frames = AtlasFrameMaker.construct(char.imageFile);
+			trace('load atlas');
+
+			if(FileSystem.exists(Paths.mods('images/' + char.imageFile + '/Animation.json'))){
+				char.frames = FlxAnimateFrames.fromAnimate(Paths.mods('images/' + char.imageFile));
+				char.spriteType = 'texture';
+				trace(char.frames);
+			}
+			else{
+				char.frames = FlxAnimateFrames.fromAnimate('images/' + char.imageFile);
+			}
 		} else if(Paths.fileExists('images/' + char.imageFile + '.txt', TEXT)) {
 			char.frames = Paths.getPackerAtlas(char.imageFile);
 		} else {
