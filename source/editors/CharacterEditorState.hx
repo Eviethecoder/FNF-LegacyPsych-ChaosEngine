@@ -448,6 +448,7 @@ class CharacterEditorState extends MusicBeatState
 			loadChar(!check_player.checked);
 			updatePresence();
 			reloadCharacterDropDown();
+			reloadCharacterImage();
 		});
 		charDropDown.selectedLabel = daAnim;
 		reloadCharacterDropDown();
@@ -733,9 +734,11 @@ class CharacterEditorState extends MusicBeatState
 			if(indices != null && indices.length > 0) {
 				if (char.spriteType == "texture"){
 					if(char.timeline !=null){
-						char.anim.addByTimelineIndices(newAnim.name, char.library.timeline, newAnim.indices, newAnim.fps,newAnim.loop);
+						
+						char.anim.addByFrameLabelIndices(newAnim.anim, newAnim.name, newAnim.indices, newAnim.fps, newAnim.loop);
 						}
 						else{
+							trace('symbol');
 							char.anim.addBySymbolIndices(newAnim.anim, newAnim.name, newAnim.indices, newAnim.fps, newAnim.loop);
 						}
 					}
@@ -746,10 +749,12 @@ class CharacterEditorState extends MusicBeatState
 			else {
 				if (char.spriteType == "texture"){
 					if(char.timeline!=null){
-							char.anim.addByTimeline(newAnim.name, char.library.timeline, newAnim.fps, newAnim.loop);
+						
+							char.anim.addByFrameLabel(newAnim.anim, newAnim.name, newAnim.fps, newAnim.loop);
+						
 						}
 						else{
-							
+							trace('symbol');
 							char.anim.addBySymbol(newAnim.anim, newAnim.name, newAnim.fps, newAnim.loop);
 						}
 				}
@@ -918,7 +923,9 @@ class CharacterEditorState extends MusicBeatState
 			if(FileSystem.exists(Paths.mods('images/' + char.imageFile + '/Animation.json'))){
 				char.frames = FlxAnimateFrames.fromAnimate(Paths.mods('images/' + char.imageFile));
 				char.spriteType = 'texture';
-				trace(char.frames);
+				trace(char.library);
+				trace(char.library.timeline.libraryItem);
+				trace(char.library.timeline.name);
 			}
 			else{
 				char.frames = FlxAnimateFrames.fromAnimate('images/' + char.imageFile);
@@ -959,12 +966,41 @@ class CharacterEditorState extends MusicBeatState
 				var animLoop:Bool = !!anim.loop; //Bruh
 				var animIndices:Array<Int> = anim.indices;
 				if(animIndices != null && animIndices.length > 0) {
-					char.anim.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
-				} else {
-					char.anim.addByPrefix(animAnim, animName, animFps, animLoop);
+					if (char.spriteType == "texture"){
+
+					if(char.timeline !=null){
+						
+						char.anim.addByFrameLabelIndices(animAnim, animName, animIndices, animFps, animLoop);
+						}
+						else{
+							
+							char.anim.addBySymbolIndices(animAnim, animName, animIndices, animFps, animLoop);
+						}
+					}
+					else{
+						char.anim.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
+					}
+				} 
+				else {
+					if (char.spriteType == "texture"){
+						if(char.timeline!=null){
+							
+								char.anim.addByFrameLabel(animAnim, animName, animFps, animLoop);
+							
+							}
+							else{
+								trace('symbol');
+								char.anim.addBySymbol(animAnim, animName, animFps, animLoop);
+							}
+					}
+					else{
+						char.anim.addByPrefix(animAnim, animName, animFps, animLoop);	
+					}
+			}
+					
 				}
 			}
-		} else {
+		else {
 			char.quickAnimAdd('idle', 'BF idle dance');
 		}
 
@@ -976,7 +1012,6 @@ class CharacterEditorState extends MusicBeatState
 		ghostDropDown.selectedLabel = '';
 		reloadGhost();
 	}
-
 	function genBoyOffsets():Void
 	{
 		var daLoop:Int = 0;
@@ -1041,15 +1076,6 @@ class CharacterEditorState extends MusicBeatState
 		charLayer.add(char);
 
 		char.setPosition(char.positionArray[0] + OFFSET_X + 100, char.positionArray[1]);
-
-		/* THIS FUNCTION WAS USED TO PUT THE .TXT OFFSETS INTO THE .JSON
-
-		for (anim => offset in char.animOffsets) {
-			var leAnim:AnimArray = findAnimationByName(anim);
-			if(leAnim != null) {
-				leAnim.offsets = [offset[0], offset[1]];
-			}
-		}*/
 
 		if(blahBlahBlah) {
 			genBoyOffsets();
@@ -1129,9 +1155,9 @@ class CharacterEditorState extends MusicBeatState
 			var animLoop:Bool = !!anim.loop; //Bruh
 			var animIndices:Array<Int> = anim.indices;
 			if(animIndices != null && animIndices.length > 0) {
-				ghostChar.anim.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
+				ghostChar.animation.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
 			} else {
-				ghostChar.anim.addByPrefix(animAnim, animName, animFps, animLoop);
+				ghostChar.animation.addByPrefix(animAnim, animName, animFps, animLoop);
 			}
 
 			if(anim.offsets != null && anim.offsets.length > 1) {
