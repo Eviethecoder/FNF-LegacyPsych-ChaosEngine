@@ -53,8 +53,8 @@ class FunkinSoundTray extends FlxSoundTray
     for (i in 1...11)
     {
       var bar:Bitmap = new Bitmap(Assets.getBitmapData(Paths.vsliceimage("soundtray/bars_" + i)));
-       bar.x = 6;
-      bar.y = 11;
+      bar.x = bg.x +8;
+      bar.y = bg.y;
       bar.scaleX = graphicScale;
       bar.scaleY = graphicScale;
       bar.smoothing = true;

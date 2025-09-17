@@ -5,6 +5,10 @@ import Sys.sleep;
 import lime.app.Application;
 import hxdiscord_rpc.Discord;
 import hxdiscord_rpc.Types;
+#if LUA_ALLOWED
+import llua.Lua;
+import llua.State;
+#end
 
 class DiscordClient
 {
@@ -119,6 +123,17 @@ class DiscordClient
 		return newID;
 	}
 
+	#if LUA_ALLOWED
+	public static function addLuaCallbacks(lua:State) {
+		Lua_helper.add_callback(lua, "changeDiscordPresence", function(details:String, state:Null<String>, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float) {
+			changePresence(details, state, smallImageKey, hasStartTimestamp, endTimestamp);
+		});
 
+		Lua_helper.add_callback(lua, "changeDiscordClientID", function(?newID:String = null) {
+			if(newID == null) newID = _defaultID;
+			clientID = newID;
+		});
+	}
+	#end
 }
 #end
