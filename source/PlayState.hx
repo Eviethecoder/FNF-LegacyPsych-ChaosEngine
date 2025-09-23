@@ -1149,6 +1149,7 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 		uiGroup.cameras = [camHUD];
 		noteGroup.cameras = [camHUD];
 		comboGroup.cameras = [camHUD];
+		debugGroup.cameras = [camOther];
 
 		startingSong = true;
 

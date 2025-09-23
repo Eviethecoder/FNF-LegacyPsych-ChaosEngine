@@ -27,6 +27,7 @@ using StringTools;
 //curently this is just me and NoclueBros hscript interpreter -kuru
 class HaxeScript {
     public var interpreter:Interp;
+	public static var imports:Array<String> = [];
     public var parser:Parser;
     public var onError:(Dynamic, String, String)->Void = null;
     public var filePath:String = '';
@@ -49,15 +50,26 @@ class HaxeScript {
     }
 
     public function new(code:String, obj:Dynamic,runautocreate:Bool) {
-        interpreter = new Interp();
-        parser = new Parser();
+
+        
+        var processed = preprocess(code, imports);
+		
+
+	
+        var parser = new Parser();
+    
 
         this.obj = obj;
         parser.resumeErrors = true;
         parser.allowTypes = true;
+
+		var expr = parser.parseString(processed);
+		interpreter = new Interp();
+
+
          
         __default_stuff(this);
-        interpreter.execute(parser.parseString(code));
+        interpreter.execute(expr);
         if(runautocreate){
             this.runFunction('onCreate', []);
         }
@@ -89,6 +101,45 @@ class HaxeScript {
         return interpreter.variables[id];
     }
 
+
+	static function preprocess(script:String, imports:Array<String>):String {
+		var lines = script.split("\n");
+		var out = new Array<String>();
+
+		for (l in lines) {
+			var trimmed = l.trim();
+			if (StringTools.startsWith(trimmed, "import ")) {
+				var cname = trimmed.substr(7).split(";")[0].trim();
+				imports.push(cname);
+			} else {
+				out.push(l);
+			}
+		}
+
+		return out.join("\n");
+}
+
+	// Register all collected imports into the interpreter
+	static function registerImports(script:HaxeScript, imports:Array<String>) {
+		for (cname in imports) {
+			
+
+			// Extract the short name (last segment of the path)
+			var shortName = cname.split(".").pop();
+
+			var cls = Type.resolveClass(cname);
+			
+
+			if (cls == null) {
+				trace('Warning: could not resolve class $cname');
+			} else {
+				// Bind the short name instead of the full path
+				adddvar(script, shortName, cls);
+			}
+		}
+}
+
+
     public static function __default_stuff(script:HaxeScript):Void {   
        
          script.interpreter.variables["Cool"] = {
@@ -97,22 +148,7 @@ class HaxeScript {
             }
         }; 
 
-        adddvar(script,"import", function(path:String, id:Null<String> = null) {
-            var cls:Dynamic = Type.resolveClass(path);
-            if(cls == null) {
-                Sys.println("[ Warning ] class " + path + " could not be resolved!");
-                return;
-            }
-
-            if(id != null) 
-                adddvar(script, id, cls);
-            else {
-                var className:String = path.substring(path.lastIndexOf('.') + 1, path.length);
-                //Sys.println("[ Hscript ] importing class " + className);
-                adddvar(script, className, cls);
-            }
-        });
-		
+        registerImports(script,imports);		
         adddvar(script,"controls",function(){ return Controls;});
         adddvar(script,"this", script.obj);
 		adddvar(script, "FlxGroup", flixel.group.FlxGroup);

@@ -21,6 +21,7 @@ class CustomFadeTransition extends MusicBeatSubstate {
 	var isTransIn:Bool = false;
 	var transBlack:FlxSprite;
 	var transGradient:FlxSprite;
+	var didcallback:Bool = false;
 
 	public function new(duration:Float, isTransIn:Bool) {
 		super();
@@ -53,6 +54,8 @@ class CustomFadeTransition extends MusicBeatSubstate {
 			leTween = FlxTween.tween(transGradient, {y: transGradient.height + 50}, duration, {
 				onComplete: function(twn:FlxTween) {
 					if(finishCallback != null) {
+
+						didcallback = true;
 						finishCallback();
 					}
 				},
@@ -82,7 +85,12 @@ class CustomFadeTransition extends MusicBeatSubstate {
 
 	override function destroy() {
 		if(leTween != null) {
-			finishCallback();
+			if(!didcallback){
+				finishCallback();
+			}
+			else{
+				didcallback = false;
+			}
 			leTween.cancel();
 		}
 		super.destroy();

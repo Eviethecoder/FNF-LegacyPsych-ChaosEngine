@@ -3,13 +3,7 @@ package;
 
 
 import flixel.FlxG;
-
-
-import animate.FlxAnimateController;
-import animate.internal.Timeline;
-
-
-
+import animateatlas.AtlasFrameMaker;
 import flixel.addons.effects.FlxTrail;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.tweens.FlxTween;
@@ -189,7 +183,7 @@ class Character extends FlxAnimate
 				#end
 				{
 					spriteType = "texture";
-					trace('istexture');
+					
 				}
 
 				switch (spriteType){
@@ -210,7 +204,7 @@ class Character extends FlxAnimate
 						}
 							var atlas = Paths.getSparrowAtlas(json.image);
 							theFrames.addAtlas(atlas);
-							trace(theFrames);
+							
 							frames = theFrames;
 						}
 						else
@@ -219,18 +213,7 @@ class Character extends FlxAnimate
 						}
 					
 					case "texture":
-
-							if(FileSystem.exists(Paths.mods('images/' + json.image + '/Animation.json'))){
-								trace('mods');
-								var frames = FlxAnimateFrames.fromAnimate(Paths.mods('images/' + json.image));
-								trace(frames);
-
-							}
-							else{
-								trace('default');
-								var frames = FlxAnimateFrames.fromAnimate('images/' + json.image);
-
-							}
+						frames = AtlasFrameMaker.construct(json.image);
 				}
 				imageFile = json.image;
 				if(json.images == null){
@@ -274,9 +257,9 @@ class Character extends FlxAnimate
 						var animFps:Int = anims.fps;
 						var animLoop:Bool = !!anims.loop; //Bruh
 						var animIndices:Array<Int> = anims.indices;
-						trace(animName);
+						
 						switch(spriteType){
-							case 'packer' | 'sparrow':
+							case 'packer' | 'sparrow' | 'texture' : //edited for future use
 								trace('SPARROW OR PACKER');
 								if(animIndices != null && animIndices.length > 0) {
 									
@@ -284,20 +267,7 @@ class Character extends FlxAnimate
 								} else {
 									anim.addByPrefix(animAnim, animName, animFps, animLoop);
 								}
-
-							case 'texture':
-								trace('TEXTURE');
-								if(animIndices != null && animIndices.length > 0) {
-								
-									
-									anim.addByFrameLabelIndices(animAnim, animName, animIndices, animFps, animLoop);
-									
-									
-									
-								} 
-									
-									anim.addByFrameLabel(animAnim, animName, animFps, animLoop);
-								}
+							}
 						
 						if(anims.offsets != null && anims.offsets.length > 1) {
 							addOffset(anims.anim, anims.offsets[0], anims.offsets[1]);
@@ -340,9 +310,10 @@ class Character extends FlxAnimate
 				}
 			}*/
 		}
-
+		var classname:String = Type.getClassName(Type.getClass(FlxG.state));
 		
-		if(sys.FileSystem.exists(Paths.getPreloadPath(characterscriptPath)) && PlayState.instance!=null ){
+		if(classname == 'PlayState'){
+			if(sys.FileSystem.exists(Paths.getPreloadPath(characterscriptPath)) && PlayState.instance!=null ){
 
 			try{
 				trace('script found!! '+ characterscriptPath );
@@ -350,7 +321,7 @@ class Character extends FlxAnimate
 				__hscript = HaxeScript.HaxeScript.FromFile(Paths.getPreloadPath(characterscriptPath), this); 
 				__hscript.onError = PlayState.instance.hscriptError;
 				hasscript = true;
-				__hscript.adddvar('Section', Section);
+				
 				#end 
 			}
 			catch(e:Dynamic){  
@@ -367,7 +338,7 @@ class Character extends FlxAnimate
 				__hscript = HaxeScript.HaxeScript.FromFile(Paths.modFolders(characterscriptPath), this); 
 				__hscript.onError = PlayState.instance.hscriptError;
 				hasscript = true;
-				__hscript.adddvar('Section', Section);
+				
 				#end 
 			}
 			catch(e:Dynamic){  
@@ -379,6 +350,9 @@ class Character extends FlxAnimate
 		else{
 			hasscript = false;  
 		}
+
+		}
+		
 	
 	}
 
