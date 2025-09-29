@@ -40,6 +40,7 @@ import animateatlas.AtlasFrameMaker;
 import StageData;
 import HaxeScript;
 import DialogueBoxPsych;
+import scriptobjects.ScriptableMusicBeatSubState;
 #if !flash
 import flixel.addons.display.FlxRuntimeShader;
 import openfl.filters.ShaderFilter;
@@ -312,6 +313,8 @@ class PlayState extends MusicBeatState
 
 
 	public var introSoundsSuffix:String = '';
+	public var pauseScript:String = '';
+	public var gameoverScript:String = '';
 
 	// Debug buttons
 	private var debugKeysChart:Array<FlxKey>;
@@ -2237,24 +2240,44 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 			--i;
 		}
 	}
-	public function songtime(song:String){
-
-
-		switch(song){
-			default:
-				//trace(Conductor.stepLengthMs * 4 / 1000); 
-				return Conductor.stepLengthMs * 4 / 1000;
+	public function songtime(song:String):Dynamic{
+		var ret:Dynamic;
+		var func:Dynamic = null;
+		for (script in hscriptArray ){
+			func = script.interpreter.variables.get("songtime");
 			
-		
+			
 		}
+		if (func == null){
+				return Conductor.stepLengthMs * 4 / 1000;
+			}
+			else{
+				ret = cast Reflect.callMethod(null, func, []);
+				return ret;
+			}
 	}
 
 
-	public function songEase(song:String){
-		switch(song){
-			default: 
-				return FlxEase.smoothStepInOut;
+	public function songEase(song:String):Dynamic{
+		var ret:Dynamic;
+		var func:Dynamic = null;
+		for (script in hscriptArray ){
+			func = script.interpreter.variables.get("songEase");
+			
 		}
+		if (func == null){
+				return FlxEase.smoothStepInOut;
+				trace('func is null');
+			}
+		else{
+			ret = cast Reflect.callMethod(null, func, []);
+			trace('overidding cammove with ' + ret);
+			return ret;
+			
+		}
+		
+		
+		
 	}
 
 	public dynamic function updateScore(miss:Bool = false)
@@ -3156,15 +3179,8 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 
 		if (controls.PAUSE && startedCountdown && canPause)
 		{
-			var ret:Dynamic = false;
-			for (script in hscriptArray ){
-				var func = script.interpreter.variables.get("onPause");
-				if(func !=null){
-					ret  = cast Reflect.callMethod(null, func, []);
-				}
-			}
-			if (ret != true)
-				openPauseMenu();
+			
+			openPauseMenu();
 		}
 
 		if (FlxG.keys.anyJustPressed(debugKeysChart) && !endingSong && !inCutscene)
@@ -3456,6 +3472,7 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 
 	function openPauseMenu()
 	{
+		setFunctionOnScripts('onGamePause', []);
 		persistentUpdate = false;
 		persistentDraw = true;
 		paused = true;
@@ -3466,7 +3483,13 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 			FlxG.sound.music.pause();
 			vocals.pause();
 		}
-		openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+		if(pauseScript !=''){
+			openSubState(new ScriptableMusicBeatSubState(pauseScript));
+		}
+		else{
+			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+		}
+		
 		
 
 		#if hxdiscord_rpc
@@ -4021,10 +4044,10 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 		
 	}
 
-	function moveCameraSection():Void
-	{
-		if (SONG.notes[curSection] == null)
-			return;
+	function moveCameraSection():Void {
+		if(SONG.notes[curSection] == null) return;
+
+		var focous:String = '';
 
 		if (gf != null && SONG.notes[curSection].gfSection)
 		{
@@ -4032,21 +4055,22 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 			camFollow.x += gf.cameraPosition[0] + girlfriendCameraOffset[0];
 			camFollow.y += gf.cameraPosition[1] + girlfriendCameraOffset[1];
 			tweenCamIn();
-			setFunctionOnScripts('onMoveCamera', ['gf']);
+			focous = 'gf';
+			
 			return;
 		}
 
 		if (!SONG.notes[curSection].mustHitSection)
 		{
 			moveCamera(true);
-			setFunctionOnScripts('onMoveCamera', ['dad']);
+			focous = 'dad';
 		}
 		else
 		{
 			moveCamera(false);
-			
-			setFunctionOnScripts('onMoveCamera', ['boyfriend']);
+			focous = 'boyfriend';
 		}
+		setFunctionOnScripts('onMoveCamera', [focous]);
 	}
 
 	var cameraTwn:FlxTween;

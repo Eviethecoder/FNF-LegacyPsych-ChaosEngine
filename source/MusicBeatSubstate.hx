@@ -5,6 +5,9 @@ import flixel.FlxG;
 import flixel.FlxSubState;
 import flixel.FlxBasic;
 import flixel.FlxSprite;
+import flixel.util.FlxColor;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import MusicBeatState.DebugText;
 
 class MusicBeatSubstate extends FlxSubState
 {
@@ -15,6 +18,7 @@ class MusicBeatSubstate extends FlxSubState
 
 	private var lastBeat:Float = 0;
 	private var lastStep:Float = 0;
+	private var debugGroup:FlxTypedGroup<DebugText>;
 
 	private var curStep:Int = 0;
 	private var curBeat:Int = 0;
@@ -60,6 +64,29 @@ class MusicBeatSubstate extends FlxSubState
 	{
 		if (curStep % 4 == 0)
 			beatHit();
+	}
+	public function addTextToDebug(text:String, color:FlxColor)
+	{
+		
+		debugGroup.forEachAlive(function(spr:DebugText)
+		{
+			spr.y += 20;
+		});
+
+		if (debugGroup.members.length > 34)
+		{
+			var blah = debugGroup.members[34];
+			blah.destroy();
+			debugGroup.remove(blah);
+		}
+		debugGroup.insert(0, new DebugText(text, debugGroup, color));
+	
+	}
+
+	public function hscriptError(e:Dynamic, funcName:String, fPath:String) { 
+		addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38));
+		addTextToDebug("[ ERROR ] Could not run function " + funcName + " (script: "+fPath+") ", FlxColor.RED); 
+		trace(e );
 	}
 
 	public function beatHit():Void

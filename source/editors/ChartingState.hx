@@ -12,6 +12,7 @@ import Section.SwagSection;
 import Song.SwagSong;
 import flixel.FlxG;
 import flixel.FlxObject;
+import objects.Cursor;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.transition.FlxTransitionableState;
@@ -163,6 +164,11 @@ class ChartingState extends MusicBeatState
 	var value1InputText:FlxUIInputText;
 	var value2InputText:FlxUIInputText;
 	var currentSongName:String;
+	var tab_group_note:FlxUI;
+	var tab_group_event:FlxUI;
+	var tab_group_song:FlxUI;
+	var tab_group_section:FlxUI;
+	var tab_group_chart:FlxUI;
 
 	var zoomTxt:FlxText;
 
@@ -326,7 +332,7 @@ class ChartingState extends MusicBeatState
 
 		if(curSec >= _song.notes.length) curSec = _song.notes.length - 1;
 
-		FlxG.mouse.visible = true;
+		Cursor.show();
 		//FlxG.save.bind('funkin', CoolUtil.getSavePath());
 
 		tempBpm = _song.bpm;
@@ -669,7 +675,7 @@ class ChartingState extends MusicBeatState
 			updateGrid();
 		});
 
-		var tab_group_song = new FlxUI(null, UI_box);
+		tab_group_song = new FlxUI(null, UI_box);
 		tab_group_song.name = "Song";
 		tab_group_song.add(UI_songTitle);
 
@@ -720,7 +726,7 @@ class ChartingState extends MusicBeatState
 
 	function addSectionUI():Void
 	{
-		var tab_group_section = new FlxUI(null, UI_box);
+		tab_group_section = new FlxUI(null, UI_box);
 		tab_group_section.name = 'Section';
 
 		check_mustHitSection = new FlxUICheckBox(10, 15, null, null, "Must hit section", 100);
@@ -735,7 +741,7 @@ class ChartingState extends MusicBeatState
 		check_altAnim = new FlxUICheckBox(check_gfSection.x + 120, check_gfSection.y, null, null, "Alt Animation", 100);
 		check_altAnim.checked = _song.notes[curSec].altAnim;
 
-		stepperBeats = new FlxUINumericStepper(10, 100, 1, 4, 1, 6, 2);
+		stepperBeats = new FlxUINumericStepper(10, 100, 1, 4, 1, 80, 2);
 		stepperBeats.value = getSectionBeats();
 		stepperBeats.name = 'section_beats';
 		blockPressWhileTypingOnStepper.push(stepperBeats);
@@ -985,7 +991,7 @@ class ChartingState extends MusicBeatState
 
 	function addNoteUI():Void
 	{
-		var tab_group_note = new FlxUI(null, UI_box);
+		tab_group_note = new FlxUI(null, UI_box);
 		tab_group_note.name = 'Note';
 
 		stepperSusLength = new FlxUINumericStepper(10, 25, Conductor.stepCrochet / 2, 0, 0, Conductor.stepCrochet * 64);
@@ -1072,7 +1078,7 @@ class ChartingState extends MusicBeatState
 	var selectedEventText:FlxText;
 	function addEventsUI():Void
 	{
-		var tab_group_event = new FlxUI(null, UI_box);
+		tab_group_event = new FlxUI(null, UI_box);
 		tab_group_event.name = 'Events';
 
 		#if LUA_ALLOWED
@@ -1258,7 +1264,7 @@ class ChartingState extends MusicBeatState
 	var instVolume:FlxUINumericStepper;
 	var voicesVolume:FlxUINumericStepper;
 	function addChartingUI() {
-		var tab_group_chart = new FlxUI(null, UI_box);
+		tab_group_chart = new FlxUI(null, UI_box);
 		
 		tab_group_chart.name = 'Charting';
 
@@ -1647,7 +1653,7 @@ class ChartingState extends MusicBeatState
 			strumLineNotes.members[i].y = strumLine.y;
 		}
 
-		FlxG.mouse.visible = true;//cause reasons. trust me
+		Cursor.show();
 		camPos.y = strumLine.y;
 		if(!disableAutoScrolling.checked) {
 			if (Math.ceil(strumLine.y) >= gridBG.height)
@@ -1683,15 +1689,31 @@ class ChartingState extends MusicBeatState
 		} else {
 			dummyArrow.visible = false;
 		}
+		if(FlxG.mouse.justPressedRight){
+			if (FlxG.mouse.overlaps(curRenderedNotes))
+			{
+				
+				curRenderedNotes.forEachAlive(function(note:Note)
+				{
+					if (FlxG.mouse.overlaps(note))
+					{
+						deleteNote(note);
+					}
+				});
+			}
+
+		}
 
 		if (FlxG.mouse.justPressed)
 		{
 			if (FlxG.mouse.overlaps(curRenderedNotes))
 			{
+				
 				curRenderedNotes.forEachAlive(function(note:Note)
 				{
 					if (FlxG.mouse.overlaps(note))
 					{
+						
 						if (FlxG.keys.pressed.CONTROL)
 						{
 							selectNote(note);
@@ -1702,11 +1724,7 @@ class ChartingState extends MusicBeatState
 							curSelectedNote[3] = noteTypeIntMap.get(currentType);
 							updateGrid();
 						}
-						else
-						{
-							//trace('tryin to delete note...');
-							deleteNote(note);
-						}
+						
 					}
 				});
 			}
@@ -1722,6 +1740,7 @@ class ChartingState extends MusicBeatState
 				}
 			}
 		}
+		doCursorlogic();
 
 		var blockInput:Bool = false;
 		for (inputText in blockPressWhileTypingOn) {
@@ -2530,6 +2549,104 @@ class ChartingState extends MusicBeatState
 		updateGrid();
 	}
 
+	function doCursorlogic(){
+
+
+		
+		for(item in tab_group_note.members){
+			if(UI_box.selected_tab ==2){
+				if (FlxG.mouse.overlaps(item))
+					{
+						
+						Cursor.set_cursorMode(Pointer);
+						
+
+					}
+					
+				}
+			
+
+		}
+		for(item in tab_group_song.members){
+			if(UI_box.selected_tab ==4){
+				
+
+				if (FlxG.mouse.overlaps(item))
+				{
+					 if (Std.isOfType(item, FlxUIInputText)) {
+						Cursor.set_cursorMode(Text);
+					 }
+					 else{
+						Cursor.set_cursorMode(Pointer);
+					 }
+
+					
+
+				}
+			}
+			
+
+		}
+		for(item in tab_group_event.members){
+			if(UI_box.selected_tab ==1){
+				if (FlxG.mouse.overlaps(item))
+				{
+
+					Cursor.set_cursorMode(Pointer);
+
+				}
+
+			}
+			
+
+		}
+		for(item in tab_group_section.members){
+			if(UI_box.selected_tab ==3){
+				if (FlxG.mouse.overlaps(item))
+				{
+
+					Cursor.set_cursorMode(Pointer);
+
+				}
+
+			}
+			
+
+		}
+		for(item in tab_group_chart.members){
+			if(UI_box.selected_tab ==0){
+				if (FlxG.mouse.overlaps(item))
+				{
+
+
+					
+					if (Std.isOfType(item, FlxUISlider) && FlxG.mouse.pressed ) {
+						Cursor.set_cursorMode(Grabbing);
+					}
+					else{
+						Cursor.set_cursorMode(Pointer);
+					}
+
+				}
+
+			}
+			
+
+		}
+		
+		if (FlxG.mouse.overlaps(gridBG))
+			{
+
+				Cursor.set_cursorMode(Cell);
+
+			}
+		if (FlxG.mouse.overlaps(curRenderedNotes))
+			{
+
+				Cursor.set_cursorMode(Pointer);
+
+			}
+	}
 	function recalculateSteps(add:Float = 0):Int
 	{
 		var lastChange:BPMChangeEvent = {

@@ -343,6 +343,13 @@ class PauseSubState extends MusicBeatSubstate
 		}
 	}
 
+	override function close():Void
+	{
+		PlayState.instance.setFunctionOnScripts('onUnPause', []);
+		super.close();
+		
+	}
+
 	function regenMenu():Void {
 		for (i in 0...grpMenuShit.members.length) {
 			var obj = grpMenuShit.members[0];

@@ -197,9 +197,9 @@ class Paths
 	{
 		return getPath('shaders/$key.vert', TEXT, library);
 	}
-	inline static public function lua(key:String, ?library:String)
+	inline static public function hscript(key:String, ?library:String)
 	{
-		return getPath('$key.lua', TEXT, library);
+		return getPath('$key.hx', TEXT, library);
 	}
 
 	public static function soundExists(path:String, key:String, ?library:String):Bool{ // for Vocals.hx

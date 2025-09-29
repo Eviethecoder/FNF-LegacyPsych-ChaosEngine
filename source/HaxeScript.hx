@@ -175,6 +175,7 @@ class HaxeScript {
         adddvar(script,"PlayState", PlayState.instance);
         adddvar(script,"BGSprite", BGSprite);
         adddvar(script,"Math", Math);
+		adddvar(script,"ScriptedSubState", ScriptableMusicBeatSubState);
         adddvar(script, 'persistantvariables', ScriptedStatehandler.persistantvariables);
 
         adddvar(script,"FlxBackdrop",FlxBackdrop);

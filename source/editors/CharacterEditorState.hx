@@ -14,6 +14,7 @@ import flixel.addons.display.FlxGridOverlay;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.FlxGraphic;
+import objects.Cursor;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.addons.ui.FlxInputText;
@@ -73,7 +74,9 @@ class CharacterEditorState extends MusicBeatState
 	private var camEditor:FlxCamera;
 	private var camHUD:FlxCamera;
 	private var camMenu:FlxCamera;
-
+	var tab_group:FlxUI;
+	var extra_group:FlxUI;
+	var anim_group:FlxUI;
 	var changeBGbutton:FlxButton;
 	var leHealthIcon:HealthIcon;
 	var characterList:Array<String> = [];
@@ -206,7 +209,7 @@ class CharacterEditorState extends MusicBeatState
 		addExtrasUI();
 		UI_characterbox.selected_tab_id = 'Character';
 
-		FlxG.mouse.visible = true;
+		Cursor.show();
 		reloadCharacterOptions();
 
 		super.create();
@@ -519,8 +522,8 @@ class CharacterEditorState extends MusicBeatState
 	var healthColorStepperG:FlxUINumericStepper;
 	var healthColorStepperB:FlxUINumericStepper;
 	function addExtrasUI() {
-		var tab_group = new FlxUI(null, UI_box);
-		tab_group.name = "Extras";
+		extra_group = new FlxUI(null, UI_box);
+		extra_group.name = "Extras";
 
 		imagesInputText = new FlxUIInputText(15, 30, 200, '', 8);
 		var reloadImage:FlxButton = new FlxButton(imagesInputText.x + 210, imagesInputText.y - 3, "Load all images", function()
@@ -545,16 +548,16 @@ class CharacterEditorState extends MusicBeatState
 		{
 			char.animstyle = animtype.selectedLabel;
 		});
-		tab_group.add(new FlxText(15, imagesInputText.y - 18, 0, 'Image files'));
-		tab_group.add(imagesInputText);
-		tab_group.add(reloadImage);
-		tab_group.add(animtype);
-		UI_characterbox.addGroup(tab_group);
+		extra_group.add(new FlxText(15, imagesInputText.y - 18, 0, 'Image files'));
+		extra_group.add(imagesInputText);
+		extra_group.add(reloadImage);
+		extra_group.add(animtype);
+		UI_characterbox.addGroup(extra_group);
 		trace('should be added');
 	}
 	function addCharacterUI() {
-		var tab_group = new FlxUI(null, UI_box);
-		tab_group.name = "Character";
+		var char_group = new FlxUI(null, UI_box);
+		char_group.name = "Character";
 
 		imageInputText = new FlxUIInputText(15, 30, 200, 'characters/BOYFRIEND', 8);
 		var reloadImage:FlxButton = new FlxButton(imageInputText.x + 210, imageInputText.y - 3, "Reload Image", function()
@@ -622,31 +625,31 @@ class CharacterEditorState extends MusicBeatState
 		healthColorStepperG = new FlxUINumericStepper(singDurationStepper.x + 65, saveCharacterButton.y, 20, char.healthColorArray[1], 0, 255, 0);
 		healthColorStepperB = new FlxUINumericStepper(singDurationStepper.x + 130, saveCharacterButton.y, 20, char.healthColorArray[2], 0, 255, 0);
 
-		tab_group.add(new FlxText(15, imageInputText.y - 18, 0, 'Image file name:'));
-		tab_group.add(new FlxText(15, healthIconInputText.y - 18, 0, 'Health icon name:'));
-		tab_group.add(new FlxText(15, singDurationStepper.y - 18, 0, 'Sing Animation length:'));
-		tab_group.add(new FlxText(15, scaleStepper.y - 18, 0, 'Scale:'));
-		tab_group.add(new FlxText(positionXStepper.x, positionXStepper.y - 18, 0, 'Character X/Y:'));
-		tab_group.add(new FlxText(positionCameraXStepper.x, positionCameraXStepper.y - 18, 0, 'Camera X/Y:'));
-		tab_group.add(new FlxText(healthColorStepperR.x, healthColorStepperR.y - 18, 0, 'Health bar R/G/B:'));
-		tab_group.add(imageInputText);
-		tab_group.add(reloadImage);
-		tab_group.add(decideIconColor);
-		tab_group.add(healthIconInputText);
+		char_group.add(new FlxText(15, imageInputText.y - 18, 0, 'Image file name:'));
+		char_group.add(new FlxText(15, healthIconInputText.y - 18, 0, 'Health icon name:'));
+		char_group.add(new FlxText(15, singDurationStepper.y - 18, 0, 'Sing Animation length:'));
+		char_group.add(new FlxText(15, scaleStepper.y - 18, 0, 'Scale:'));
+		char_group.add(new FlxText(positionXStepper.x, positionXStepper.y - 18, 0, 'Character X/Y:'));
+		char_group.add(new FlxText(positionCameraXStepper.x, positionCameraXStepper.y - 18, 0, 'Camera X/Y:'));
+		char_group.add(new FlxText(healthColorStepperR.x, healthColorStepperR.y - 18, 0, 'Health bar R/G/B:'));
+		char_group.add(imageInputText);
+		char_group.add(reloadImage);
+		char_group.add(decideIconColor);
+		char_group.add(healthIconInputText);
 		
-		tab_group.add(singDurationStepper);
-		tab_group.add(scaleStepper);
-		tab_group.add(flipXCheckBox);
-		tab_group.add(noAntialiasingCheckBox);
-		tab_group.add(positionXStepper);
-		tab_group.add(positionYStepper);
-		tab_group.add(positionCameraXStepper);
-		tab_group.add(positionCameraYStepper);
-		tab_group.add(healthColorStepperR);
-		tab_group.add(healthColorStepperG);
-		tab_group.add(healthColorStepperB);
-		tab_group.add(saveCharacterButton);
-		UI_characterbox.addGroup(tab_group);
+		char_group.add(singDurationStepper);
+		char_group.add(scaleStepper);
+		char_group.add(flipXCheckBox);
+		char_group.add(noAntialiasingCheckBox);
+		char_group.add(positionXStepper);
+		char_group.add(positionYStepper);
+		char_group.add(positionCameraXStepper);
+		char_group.add(positionCameraYStepper);
+		char_group.add(healthColorStepperR);
+		char_group.add(healthColorStepperG);
+		char_group.add(healthColorStepperB);
+		char_group.add(saveCharacterButton);
+		UI_characterbox.addGroup(char_group);
 	}
 
 	var ghostDropDown:FlxUIDropDownMenuCustom;
@@ -657,8 +660,8 @@ class CharacterEditorState extends MusicBeatState
 	var animationNameFramerate:FlxUINumericStepper;
 	var animationLoopCheckBox:FlxUICheckBox;
 	function addAnimationsUI() {
-		var tab_group = new FlxUI(null, UI_box);
-		tab_group.name = "Animations";
+		anim_group = new FlxUI(null, UI_box);
+		anim_group.name = "Animations";
 
 		animationInputText = new FlxUIInputText(15, 85, 80, '', 8);
 		animationNameInputText = new FlxUIInputText(animationInputText.x, animationInputText.y + 35, 150, '', 8);
@@ -784,23 +787,23 @@ class CharacterEditorState extends MusicBeatState
 			}
 		});
 
-		tab_group.add(new FlxText(animationDropDown.x, animationDropDown.y - 18, 0, 'Animations:'));
-		tab_group.add(new FlxText(ghostDropDown.x, ghostDropDown.y - 18, 0, 'Animation Ghost:'));
-		tab_group.add(new FlxText(animationInputText.x, animationInputText.y - 18, 0, 'Animation name:'));
-		tab_group.add(new FlxText(animationNameFramerate.x, animationNameFramerate.y - 18, 0, 'Framerate:'));
-		tab_group.add(new FlxText(animationNameInputText.x, animationNameInputText.y - 18, 0, 'Animation on .XML/.TXT file:'));
-		tab_group.add(new FlxText(animationIndicesInputText.x, animationIndicesInputText.y - 18, 0, 'ADVANCED - Animation Indices:'));
+		anim_group.add(new FlxText(animationDropDown.x, animationDropDown.y - 18, 0, 'Animations:'));
+		anim_group.add(new FlxText(ghostDropDown.x, ghostDropDown.y - 18, 0, 'Animation Ghost:'));
+		anim_group.add(new FlxText(animationInputText.x, animationInputText.y - 18, 0, 'Animation name:'));
+		anim_group.add(new FlxText(animationNameFramerate.x, animationNameFramerate.y - 18, 0, 'Framerate:'));
+		anim_group.add(new FlxText(animationNameInputText.x, animationNameInputText.y - 18, 0, 'Animation on .XML/.TXT file:'));
+		anim_group.add(new FlxText(animationIndicesInputText.x, animationIndicesInputText.y - 18, 0, 'ADVANCED - Animation Indices:'));
 
-		tab_group.add(animationInputText);
-		tab_group.add(animationNameInputText);
-		tab_group.add(animationIndicesInputText);
-		tab_group.add(animationNameFramerate);
-		tab_group.add(animationLoopCheckBox);
-		tab_group.add(addUpdateButton);
-		tab_group.add(removeButton);
-		tab_group.add(ghostDropDown);
-		tab_group.add(animationDropDown);
-		UI_characterbox.addGroup(tab_group);
+		anim_group.add(animationInputText);
+		anim_group.add(animationNameInputText);
+		anim_group.add(animationIndicesInputText);
+		anim_group.add(animationNameFramerate);
+		anim_group.add(animationLoopCheckBox);
+		anim_group.add(addUpdateButton);
+		anim_group.add(removeButton);
+		anim_group.add(ghostDropDown);
+		anim_group.add(animationDropDown);
+		UI_characterbox.addGroup(anim_group);
 	}
 
 	override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>) {
@@ -976,6 +979,78 @@ class CharacterEditorState extends MusicBeatState
 		}
 	}
 
+
+	function doCursorlogic(){
+		
+		Cursor.set_cursorMode(Default);
+		trace(UI_characterbox.selected_tab);
+		for(item in char_group.members){
+			if(UI_characterbox.selected_tab ==1){
+				if (FlxG.mouse.overlaps(item))
+					{
+						
+						if (!Std.isOfType(item, FlxUIInputText)) {
+							Cursor.set_cursorMode(Pointer);
+							
+						}
+						else{
+							Cursor.set_cursorMode(Text);
+							trace('pointer is textS');
+						}
+							
+
+					}
+					
+				}
+			
+
+		}
+		for(item in extra_group.members){
+			if(UI_characterbox.selected_tab ==2){
+				
+
+				if (FlxG.mouse.overlaps(item))
+				{
+					 if (!Std.isOfType(item, FlxUIInputText)) {
+							Cursor.set_cursorMode(Pointer);
+							
+						}
+						else{
+							Cursor.set_cursorMode(Text);
+							trace('pointer is textS');
+						}
+
+					
+
+				}
+			}
+			
+
+		}
+		for(item in anim_group.members){
+			if(UI_characterbox.selected_tab ==0){
+				
+
+				if (FlxG.mouse.overlaps(item))
+				{
+					if (!Std.isOfType(item, FlxUIInputText)) {
+							Cursor.set_cursorMode(Pointer);
+							
+						}
+						else{
+							Cursor.set_cursorMode(Text);
+							trace('pointer is textS');
+						}
+					
+
+				}
+			}
+			
+
+		}
+
+		
+	}
 	function loadChar(isDad:Bool, blahBlahBlah:Bool = true) {
 		var i:Int = charLayer.members.length-1;
 		while(i >= 0) {
@@ -1179,6 +1254,7 @@ class CharacterEditorState extends MusicBeatState
 				return;
 			}
 		}
+		doCursorlogic();
 		FlxG.sound.muteKeys = TitleState.muteKeys;
 		FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 		FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
@@ -1191,7 +1267,7 @@ class CharacterEditorState extends MusicBeatState
 					MusicBeatState.switchState(new editors.MasterEditorMenu());
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				}
-				FlxG.mouse.visible = false;
+				
 				return;
 			}
 

@@ -132,7 +132,8 @@
 	<haxelib name="hscript" />
 	<define name="hscriptPos" />
 	<haxelib name="openfl" />
-
+	<haxelib name="haxeui-flixel" />
+	<haxelib name="haxeui-core" />
 	<!--In case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
 	<haxelib name="flixel-animate" />

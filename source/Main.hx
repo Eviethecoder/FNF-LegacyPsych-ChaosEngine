@@ -61,6 +61,7 @@ class Main extends Sprite
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
 		var game:FlxGame =new FlxGame(gameWidth, gameHeight, InitState, #if (flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen);
+		objects.Cursor.registerHaxeUICursors();
 		@:privateAccess
 		game._customSoundTray = FunkinSoundTray;
 		addChild(game);
