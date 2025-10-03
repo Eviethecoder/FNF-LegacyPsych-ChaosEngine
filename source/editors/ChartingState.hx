@@ -407,6 +407,7 @@ class ChartingState extends MusicBeatState
 		\nHold Control and click on an arrow to select it
 		\nZ/X - Zoom in/out
 		\n
+		\nright click to remove notes/events. left click to place
 		\nEsc - Test your chart inside Chart Editor
 		\nEnter - Play your chart
 		\nQ/E - Decrease/Increase Note Sustain Length
@@ -459,9 +460,9 @@ class ChartingState extends MusicBeatState
 	var playSoundBf:FlxUICheckBox = null;
 	var playSoundDad:FlxUICheckBox = null;
 	var UI_songTitle:FlxUIInputText;
-	var noteSkinInputText:FlxUIInputText;
+
 	var hudSkinInputText:FlxUIInputText;
-	var noteSplashesInputText:FlxUIInputText;
+
 	var stageDropDown:FlxUIDropDownMenuCustom;
 	#if FLX_PITCH
 	var sliderRate:FlxUISlider;
@@ -657,20 +658,16 @@ class ChartingState extends MusicBeatState
 
 		var skin = PlayState.SONG.arrowSkin;
 		if(skin == null) skin = '';
-		noteSkinInputText = new FlxUIInputText(player2DropDown.x, player2DropDown.y + 50, 150, skin, 8);
-		blockPressWhileTypingOn.push(noteSkinInputText);
+		
 		
 		
 
-		noteSplashesInputText = new FlxUIInputText(noteSkinInputText.x, noteSkinInputText.y + 35, 150, _song.splashSkin, 8);
-		blockPressWhileTypingOn.push(noteSplashesInputText);
 
 		var hudskin = PlayState.SONG.hudSkin;
-		hudSkinInputText = new FlxUIInputText(noteSplashesInputText.x, noteSplashesInputText.y + 50, 150, hudskin, 8);
+		hudSkinInputText = new FlxUIInputText(player2DropDown.x, player2DropDown.y + 50, 150, hudskin, 8);
 		blockPressWhileTypingOn.push(hudSkinInputText);
 
-		var reloadNotesButton:FlxButton = new FlxButton(noteSplashesInputText.x + 5, noteSplashesInputText.y + 20, 'Change Notes', function() {
-			_song.arrowSkin = noteSkinInputText.text;
+		var reloadNotesButton:FlxButton = new FlxButton(hudSkinInputText.x + 5, hudSkinInputText.y + 20, 'Change Notes', function() {
 			_song.hudSkin = hudSkinInputText.text;
 			updateGrid();
 		});
@@ -691,9 +688,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(stepperBPM);
 		tab_group_song.add(stepperSpeed);
 		tab_group_song.add(reloadNotesButton);
-		tab_group_song.add(noteSkinInputText);
 		tab_group_song.add(hudSkinInputText);
-		tab_group_song.add(noteSplashesInputText);
 		tab_group_song.add(new FlxText(stepperBPM.x, stepperBPM.y - 15, 0, 'Song BPM:'));
 		tab_group_song.add(new FlxText(stepperBPM.x + 100, stepperBPM.y - 15, 0, 'Song Offset:'));
 		tab_group_song.add(new FlxText(stepperSpeed.x, stepperSpeed.y - 15, 0, 'Song Speed:'));
@@ -701,9 +696,9 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(new FlxText(gfVersionDropDown.x, gfVersionDropDown.y - 15, 0, 'Girlfriend:'));
 		tab_group_song.add(new FlxText(player1DropDown.x, player1DropDown.y - 15, 0, 'Boyfriend:'));
 		tab_group_song.add(new FlxText(stageDropDown.x, stageDropDown.y - 15, 0, 'Stage:'));
-		tab_group_song.add(new FlxText(noteSkinInputText.x, noteSkinInputText.y - 15, 0, 'Note Texture:'));
+
 		tab_group_song.add(new FlxText(hudSkinInputText.x, hudSkinInputText.y - 15, 0, 'Hud Texture:'));
-		tab_group_song.add(new FlxText(noteSplashesInputText.x, noteSplashesInputText.y - 15, 0, 'Note Splashes Texture:'));
+
 		tab_group_song.add(player2DropDown);
 		tab_group_song.add(gfVersionDropDown);
 		tab_group_song.add(player1DropDown);
@@ -1571,10 +1566,7 @@ class ChartingState extends MusicBeatState
 			}
 		}
 		else if(id == FlxUIInputText.CHANGE_EVENT && (sender is FlxUIInputText)) {
-			if(sender == noteSplashesInputText) {
-				_song.splashSkin = noteSplashesInputText.text;
-			}
-			else if(curSelectedNote != null)
+			if(curSelectedNote != null)
 			{
 				if(sender == value1InputText) {
 					if(curSelectedNote[1][curEventSelected] != null)
@@ -2558,11 +2550,13 @@ class ChartingState extends MusicBeatState
 				if (FlxG.mouse.overlaps(item))
 					{
 						
-						Cursor.set_cursorMode(Pointer);
 						
+						if (!Std.isOfType(item, FlxText)) {
+							Cursor.set_cursorMode(Pointer);
+					 	}
 
 					}
-					
+				
 				}
 			
 
@@ -2577,7 +2571,9 @@ class ChartingState extends MusicBeatState
 						Cursor.set_cursorMode(Text);
 					 }
 					 else{
-						Cursor.set_cursorMode(Pointer);
+						if (!Std.isOfType(item, FlxText)) {
+							Cursor.set_cursorMode(Pointer);
+					 	}
 					 }
 
 					
@@ -2592,7 +2588,9 @@ class ChartingState extends MusicBeatState
 				if (FlxG.mouse.overlaps(item))
 				{
 
-					Cursor.set_cursorMode(Pointer);
+					if (!Std.isOfType(item, FlxText)) {
+							Cursor.set_cursorMode(Pointer);
+					 	}
 
 				}
 
@@ -2605,7 +2603,9 @@ class ChartingState extends MusicBeatState
 				if (FlxG.mouse.overlaps(item))
 				{
 
-					Cursor.set_cursorMode(Pointer);
+					if (!Std.isOfType(item, FlxText)) {
+							Cursor.set_cursorMode(Pointer);
+					 	}
 
 				}
 
@@ -2624,7 +2624,9 @@ class ChartingState extends MusicBeatState
 						Cursor.set_cursorMode(Grabbing);
 					}
 					else{
-						Cursor.set_cursorMode(Pointer);
+						if (!Std.isOfType(item, FlxText)) {
+							Cursor.set_cursorMode(Pointer);
+					 	}
 					}
 
 				}

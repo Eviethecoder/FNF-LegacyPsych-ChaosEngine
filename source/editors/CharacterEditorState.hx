@@ -77,6 +77,7 @@ class CharacterEditorState extends MusicBeatState
 	var tab_group:FlxUI;
 	var extra_group:FlxUI;
 	var anim_group:FlxUI;
+	var char_group:FlxUI;
 	var changeBGbutton:FlxButton;
 	var leHealthIcon:HealthIcon;
 	var characterList:Array<String> = [];
@@ -556,7 +557,7 @@ class CharacterEditorState extends MusicBeatState
 		trace('should be added');
 	}
 	function addCharacterUI() {
-		var char_group = new FlxUI(null, UI_box);
+		char_group = new FlxUI(null, UI_box);
 		char_group.name = "Character";
 
 		imageInputText = new FlxUIInputText(15, 30, 200, 'characters/BOYFRIEND', 8);
@@ -618,7 +619,7 @@ class CharacterEditorState extends MusicBeatState
 		positionCameraYStepper = new FlxUINumericStepper(positionYStepper.x, positionYStepper.y + 40, 10, char.cameraPosition[1], -9000, 9000, 0);
 
 		var saveCharacterButton:FlxButton = new FlxButton(reloadImage.x, noAntialiasingCheckBox.y + 40, "Save Character", function() {
-	saveCharacter();
+		saveCharacter();
 		});
 
 		healthColorStepperR = new FlxUINumericStepper(singDurationStepper.x, saveCharacterButton.y, 20, char.healthColorArray[0], 0, 255, 0);
@@ -983,7 +984,7 @@ class CharacterEditorState extends MusicBeatState
 	function doCursorlogic(){
 		
 		Cursor.set_cursorMode(Default);
-		trace(UI_characterbox.selected_tab);
+		
 		for(item in char_group.members){
 			if(UI_characterbox.selected_tab ==1){
 				if (FlxG.mouse.overlaps(item))
@@ -995,7 +996,7 @@ class CharacterEditorState extends MusicBeatState
 						}
 						else{
 							Cursor.set_cursorMode(Text);
-							trace('pointer is textS');
+							
 						}
 							
 
@@ -1017,7 +1018,7 @@ class CharacterEditorState extends MusicBeatState
 						}
 						else{
 							Cursor.set_cursorMode(Text);
-							trace('pointer is textS');
+							
 						}
 
 					
@@ -1039,7 +1040,7 @@ class CharacterEditorState extends MusicBeatState
 						}
 						else{
 							Cursor.set_cursorMode(Text);
-							trace('pointer is textS');
+							
 						}
 					
 

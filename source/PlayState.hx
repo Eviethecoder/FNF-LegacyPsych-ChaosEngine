@@ -935,7 +935,7 @@ class PlayState extends MusicBeatState
 
 		if (!stageData.hide_girlfriend)
 		{
-			gf = new Character(0, 0, gfVersion);
+			gf = new Character(0, 0, gfVersion,'gf');
 			startCharacterPos(gf);
 			gf.scrollFactor.set(0.95, 0.95);
 			gfGroup.add(gf);
@@ -964,12 +964,12 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		dad = new Character(0, 0, SONG.player2);
+		dad = new Character(0, 0, SONG.player2,'dad');
 		startCharacterPos(dad, true);
 		dadGroup.add(dad);
 		
 
-		boyfriend = new Character(0, 0, SONG.player1, true);
+		boyfriend = new Character(0, 0, SONG.player1, 'bf',true);
 		startCharacterPos(boyfriend);
 		boyfriendGroup.add(boyfriend);
 
@@ -1335,7 +1335,20 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 					tankIntro();
 
 				default:
-					startCountdown();
+					var ret:Dynamic;
+					var func:Dynamic = null;
+					for (script in hscriptArray ){
+						func = script.interpreter.variables.get("songEase");
+						
+					}
+					if (func == null){
+							startCountdown();
+						}
+					else{
+						ret = cast Reflect.callMethod(null, func, []);
+						
+						
+					}
 			}
 			seenCutscene = true;
 		}
@@ -4994,8 +5007,11 @@ public function moveCamera(isDad:Bool,? isGf:Bool)
 	public function spawnNoteSplash(x:Float, y:Float, data:Int, ?note:Note = null)
 	{
 		var skin:String = 'noteSplashes';
-		if (PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0)
-			skin = PlayState.SONG.splashSkin;
+		if ( hud.getNotesplash() != null ||  hud.getNotesplash() != '' ){
+			skin = hud.getNotesplash();
+
+
+		}
 
 		var hue:Float = 0;
 		var sat:Float = 0;

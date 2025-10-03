@@ -27,7 +27,7 @@ using StringTools;
 //curently this is just me and NoclueBros hscript interpreter -kuru
 class HaxeScript {
     public var interpreter:Interp;
-	public static var imports:Array<String> = [];
+	public static var imports:Array<{original:String, alias:String}> = [];
     public var parser:Parser;
     public var onError:(Dynamic, String, String)->Void = null;
     public var filePath:String = '';
@@ -102,42 +102,56 @@ class HaxeScript {
     }
 
 
-	static function preprocess(script:String, imports:Array<String>):String {
-		var lines = script.split("\n");
-		var out = new Array<String>();
+static function preprocess(script:String, imports:Array<{original:String, alias:String}>):String {
+    var lines = script.split("\n");
+    var out = new Array<String>();
 
-		for (l in lines) {
-			var trimmed = l.trim();
-			if (StringTools.startsWith(trimmed, "import ")) {
-				var cname = trimmed.substr(7).split(";")[0].trim();
-				imports.push(cname);
-			} else {
-				out.push(l);
-			}
-		}
+    for (l in lines) {
+        var trimmed = l.trim();
+        if (StringTools.startsWith(trimmed, "import ")) {
+            var classname = trimmed.substr(7).split(";")[0].trim();
 
-		return out.join("\n");
+            // Check for alias
+            var alias:String = null;
+            var original:String = null;
+
+            if (classname.indexOf(" as ") != -1) {
+                var parts = classname.split(" as ");
+                original = parts[0].trim();
+                alias = parts[1].trim();
+            } else {
+                original = classname;
+                // Default alias is last part of class path
+                alias = classname.split(".").pop();
+            }
+
+            imports.push({ original: original, alias: alias });
+
+        } else {
+            out.push(l);
+        }
+    }
+
+    return out.join("\n");
 }
 
-	// Register all collected imports into the interpreter
-	static function registerImports(script:HaxeScript, imports:Array<String>) {
-		for (cname in imports) {
-			
 
-			// Extract the short name (last segment of the path)
-			var shortName = cname.split(".").pop();
 
-			var cls = Type.resolveClass(cname);
-			
+	static function registerImports(script:HaxeScript, imports:Array<{ original:String, alias:String }>) {
+		for (imp in imports) {
+			var classname = imp.original;
+			var alias = imp.alias;
+
+			var cls = Type.resolveClass(classname);
 
 			if (cls == null) {
-				trace('Warning: could not resolve class $cname');
+				trace('Warning: could not resolve class $classname');
 			} else {
-				// Bind the short name instead of the full path
-				adddvar(script, shortName, cls);
+				// Bind using the alias (custom name or last path segment)
+				adddvar(script, alias, cls);
 			}
 		}
-}
+	}
 
 
     public static function __default_stuff(script:HaxeScript):Void {   
@@ -230,6 +244,8 @@ class HaxeScript {
 				}));
 			}
 		});
+
+		adddvar(script,'FlxColor',Flxcolorscript);
 		adddvar(script, "noteTweenAngle", function(tag:String, note:Int, value:Dynamic, duration:Float, ease:String) {
 			cancelTween(tag);
 			if(note < 0) note = 0;
@@ -440,4 +456,32 @@ class ModchartText extends FlxText
 		scrollFactor.set();
 		borderSize = 2;
 	}
+}
+
+//flxcolor passthrough
+class Flxcolorscript {
+	public static var BLACK:Int = FlxColor.BLACK;
+	public static var BLUE:Int = FlxColor.BLUE;
+	public static var CYAN:Int = FlxColor.CYAN;
+	public static var GRAY:Int = FlxColor.GRAY;
+	public static var GREEN:Int = FlxColor.GREEN;
+	public static var LIME:Int = FlxColor.LIME;
+	public static var MAGENTA:Int = FlxColor.MAGENTA;
+	public static var ORANGE:Int = FlxColor.ORANGE;
+	public static var PINK:Int = FlxColor.PINK;
+	public static var PURPLE:Int = FlxColor.PURPLE;
+	public static var RED:Int = FlxColor.RED;
+	public static var TRANSPARENT:Int = FlxColor.TRANSPARENT;
+	public static var WHITE:Int = FlxColor.WHITE;
+	public static var YELLOW:Int = FlxColor.YELLOW;
+
+	public static function fromCMYK(cyan:Float,magenta:Float,yellow:Float,black:Float,alpha:Float = 1):Int return FlxColor.fromCMYK(cyan,magenta,yellow,black,alpha);
+	public static function fromHSB(hue:Float,saturation:Float,brightness:Float,alpha:Float = 1):Int return FlxColor.fromHSB(hue,saturation,brightness,alpha);
+	public static function fromInt(num:Int):Int return cast FlxColor.fromInt(num);
+	public static function fromRGBFloat(red:Float,green:Float,blue:Float,alpha:Float = 1):Int return FlxColor.fromRGBFloat(red,green,blue,alpha);
+	public static function fromRGB(red:Int,green:Int,blue:Int,alpha:Int = 255):Int return FlxColor.fromRGB(red,green,blue,alpha);
+	public static function getHSBColorWheel(alpha:Int = 255):Array<Int> return cast FlxColor.getHSBColorWheel(alpha);
+	public static function gradient(color1:FlxColor, color2:FlxColor, steps:Int, ?ease:Float->Float):Array<Int> return FlxColor.gradient(color1,color2,steps,ease);
+	public static function interpolate(color1:FlxColor, color2:FlxColor, factor:Float = 0.5):Int return FlxColor.interpolate(color1,color2,factor);
+	public static function fromString(string:String):Int return FlxColor.fromString(string);
 }

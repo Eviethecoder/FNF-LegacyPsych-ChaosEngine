@@ -61,12 +61,12 @@ class Character extends FlxAnimate
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
 	public var spriteType:String ='sparrow';
-
+	public var charactertype:String ='unknown';
 	
 	public var isPlayer:Bool = false;
 	public var curCharacter:String = DEFAULT_CHARACTER;
 
-	public var animstyle:String = 'psych';
+	public var animstyle:String = 'v-slice';
 
 	public var colorTween:FlxTween;
 	public var holdTimer:Float = 0;
@@ -107,9 +107,11 @@ class Character extends FlxAnimate
 	public var healthColorArray:Array<Int> = [255, 0, 0];
 
 	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
-	public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false)
+	public function new(x:Float, y:Float, ?character:String = 'bf',charactertype:String = 'unknown' ,?isPlayer:Bool = false,)
 	{
 		super(x, y);
+
+		this.charactertype = charactertype;
 
 		#if (haxe >= "4.0.0")
 		animOffsets = new Map();
@@ -396,7 +398,7 @@ class Character extends FlxAnimate
 			}
 			
 
-			if(animation.curAnim.finished && animation.getByName(animation.curAnim.name + '-loop') != null)
+			if(animation.curAnim.finished && animation.getByName(animation.curAnim.name + '-loop') != null )
 			{
 				playAnim(animation.curAnim.name + '-loop');
 			}
@@ -469,6 +471,15 @@ class Character extends FlxAnimate
 								else{
 									this.animation.curAnim.paused = true;
 								}
+							case('v-slice'):
+								if(note.endnote){
+									if(animation.getByName(animation.curAnim.name + '-end') != null && animation.curAnim.name != AnimName + '-end')
+										{
+											playAnim(animation.curAnim.name + '-end');
+										}
+								}
+								
+							
 						}
 
 					}

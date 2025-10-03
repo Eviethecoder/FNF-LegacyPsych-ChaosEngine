@@ -36,6 +36,8 @@ typedef Hudstyle = {
     @:optional
     var noteskin:String;
     @:optional
+    var notesplash:String;
+    @:optional
     var falback:String;
     
 }
@@ -217,6 +219,9 @@ class HudHandler extends FlxGroup{
         if(bars.noteskin == null){
             bars.noteskin = 'NOTE_assets';
         }
+        if(bars.notesplash == null){
+            bars.notesplash = 'noteSplashes';
+        }
 
     }
 
@@ -280,6 +285,34 @@ public function getNoteskin(player:Bool):String {
     } else {
         // No script loaded, use fallback
         return bars.noteskin;
+    }
+}
+public function getNotesplash():String {
+    if (script != null) {
+        
+
+        // Grab the function from the script
+        var func = script.interpreter.variables.get("getNotesplash");
+
+        if (func != null) {
+            var notesplash:String = cast Reflect.callMethod(null, func, []);
+           
+
+            if (notesplash != null) {
+                return notesplash;
+            } else {
+             
+                return bars.notesplash;
+            }
+        } 
+        else {
+           
+            
+            return bars.notesplash;
+        }
+    } else {
+        // No script loaded, use fallback
+        return bars.notesplash;
     }
 }
 public function gettimebargraphics(barnum:Int):String {
