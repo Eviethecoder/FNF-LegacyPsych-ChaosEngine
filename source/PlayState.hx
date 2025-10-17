@@ -49,17 +49,8 @@ import openfl.filters.ShaderFilter;
 import sys.FileSystem;
 import sys.io.File;
 #end
-#if VIDEOS_ALLOWED
-#if (hxCodec >= "3.0.0")
-import hxcodec.flixel.FlxVideo as VideoPlayer;
-#elseif (hxCodec >= "2.6.1")
-import hxcodec.VideoHandler as VideoPlayer;
-#elseif (hxCodec == "2.6.0")
-import VideoPlayer;
-#else
-import vlc.MP4Handler as VideoPlayer;
-#end
-#end
+import objects.VideoSprite;
+
 using StringTools;
 
 class PlayState extends MusicBeatState
@@ -486,6 +477,7 @@ class PlayState extends MusicBeatState
 
 		stageBackground= new FlxSpriteGroup(0, 0);
 		boyfriendGroup = new FlxSpriteGroup(BF_X, BF_Y);
+		
 		dadGroup = new FlxSpriteGroup(DAD_X, DAD_Y);
 		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
 		stageForground= new FlxSpriteGroup(0, 0);
@@ -1531,36 +1523,65 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 		char.y += char.positionArray[1];
 	}
 
-	public function startVideo(name:String)
+	public var videoCutscene:VideoSprite = null;
+	public function startVideo(name:String, forMidSong:Bool = false, canSkip:Bool = true, loop:Bool = false, playOnLoad:Bool = true)
 	{
 		#if VIDEOS_ALLOWED
-		inCutscene = true;
+		inCutscene = !forMidSong;
+		canPause = forMidSong;
 
-		var filepath:String = Paths.video(name);
+		var foundFile:Bool = false;
+		var fileName:String = Paths.video(name);
+
 		#if sys
-		if (!FileSystem.exists(filepath))
+		if (FileSystem.exists(fileName))
 		#else
-		if (!OpenFlAssets.exists(filepath))
+		if (OpenFlAssets.exists(fileName))
 		#end
-		{
-			FlxG.log.warn('Couldnt find video file: ' + name);
-			startAndEnd();
-			return;
-		}
+		foundFile = true;
 
-		var video:VideoPlayer = new VideoPlayer();
-		video.playVideo(filepath);
-		video.finishCallback = function()
+		if (foundFile)
 		{
-			startAndEnd();
-			return;
+			videoCutscene = new VideoSprite(fileName, forMidSong, canSkip, loop);
+			if(forMidSong) videoCutscene.videoSprite.bitmap.rate = playbackRate;
+
+			// Finish callback
+			if (!forMidSong)
+			{
+				function onVideoEnd()
+				{
+					if (!isDead && generatedMusic && PlayState.SONG.notes[Std.int(curStep / 16)] != null && !endingSong && !isCameraOnForcedPos)
+					{
+						moveCameraSection();
+						FlxG.camera.snapToTarget();
+					}
+					videoCutscene = null;
+					canPause = true;
+					inCutscene = false;
+					startAndEnd();
+				}
+				videoCutscene.finishCallback = onVideoEnd;
+				videoCutscene.onSkip = onVideoEnd;
+			}
+			if (GameOverSubstate.instance != null && isDead) GameOverSubstate.instance.add(videoCutscene);
+			else add(videoCutscene);
+
+			if (playOnLoad)
+				videoCutscene.play();
+			return videoCutscene;
 		}
+		#if (LUA_ALLOWED || HSCRIPT_ALLOWED)
+		else addTextToDebug("Video not found: " + fileName, FlxColor.RED);
+		#else
+		else FlxG.log.error("Video not found: " + fileName);
+		#end
 		#else
 		FlxG.log.warn('Platform not supported!');
 		startAndEnd();
-		return;
 		#end
+		return null;
 	}
+
 
 	function startAndEnd()
 	{
@@ -5009,6 +5030,7 @@ public function moveCamera(isDad:Bool,? isGf:Bool)
 		var skin:String = 'noteSplashes';
 		if ( hud.getNotesplash() != null ||  hud.getNotesplash() != '' ){
 			skin = hud.getNotesplash();
+			
 
 
 		}
@@ -5030,6 +5052,7 @@ public function moveCamera(isDad:Bool,? isGf:Bool)
 			}
 		}
 
+		
 		var splash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
 		splash.setupNoteSplash(x, y, data, skin, hue, sat, brt);
 		grpNoteSplashes.add(splash);

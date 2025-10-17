@@ -2,10 +2,11 @@ package scriptobjects;
 
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
+import objects.FlxSprite;
 import HaxeScript;
 
 
-class ScriptedFlxSprite extends FlxSprite {
+class ScriptedFunkinSprite extends FlxSprite {
     public var scriptpath:String;
     public var script:HaxeScript;
     public var hasscript:Bool;  
@@ -89,6 +90,15 @@ class ScriptedFlxSprite extends FlxSprite {
 		return script.runFunction(id, params);
 	}
 	
+    public function callFunctionWithScripts(name:String,  params:Array<String>){
+		if(hasscript){
+			__hscript.runFunction(name, params);
+		}
+		else{
+			
+		}
+
+	}
 	
 	 public function addvar(name:String, value:Dynamic) {
         if (script != null) {

@@ -10,6 +10,7 @@ import debug.FPSCounter;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.display.StageScaleMode;
+import winapi.WindowsAPI;
 
 //crash handler stuff
 #if CRASH_HANDLER
@@ -64,6 +65,7 @@ class Main extends Sprite
 		objects.Cursor.registerHaxeUICursors();
 		@:privateAccess
 		game._customSoundTray = FunkinSoundTray;
+		FlxG.signals.postUpdate.add(function() { if(FlxG.keys.justPressed.F1) { trace('window'); WindowsAPI.allocConsole(); }});
 		addChild(game);
 
 		#if !mobile

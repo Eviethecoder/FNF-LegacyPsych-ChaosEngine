@@ -102,6 +102,8 @@ class HaxeScript {
     }
 
 
+	
+
 static function preprocess(script:String, imports:Array<{original:String, alias:String}>):String {
     var lines = script.split("\n");
     var out = new Array<String>();
@@ -209,7 +211,7 @@ static function preprocess(script:String, imports:Array<{original:String, alias:
 			}
 		});
 
-        adddvar(script, "ScriptedFlxSprite",  ScriptedFlxSprite);
+        adddvar(script, "ScriptedFunkinSprite",  ScriptedFunkinSprite);
 
         adddvar(script, "switchscriptedstate",  function(name:String){
             MusicBeatState.switchscriptedstate(name);

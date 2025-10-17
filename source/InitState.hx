@@ -4,7 +4,7 @@ import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxG;
 import Discord.DiscordClient;
 import lime.app.Application;
-
+import utility.Systeminfo;
 /**
  * Handles initialization of variables when first opening the game.
 **/
@@ -13,6 +13,9 @@ class InitState extends flixel.FlxState {
         super.create();
 
         // -- FLIXEL STUFF -- //
+         #if FEATURE_DEBUG_TRACY
+            Systeminfo.initTracy();
+        #end
 
         FlxG.game.focusLostFramerate = 60;
 		FlxG.sound.muteKeys = TitleState.muteKeys;
@@ -31,9 +34,8 @@ class InitState extends flixel.FlxState {
         ClientPrefs.loadDefaultKeys();
 		ClientPrefs.loadPrefs();
 
-        #if ACHIEVEMNTS_ALLOWED
-        Achievements.init();
-        #end
+      
+
 
         // -- MODS -- //
 

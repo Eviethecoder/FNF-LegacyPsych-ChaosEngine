@@ -19,6 +19,7 @@ import openfl.utils.AssetType;
 import openfl.utils.Assets;
 import haxe.Json;
 import haxe.format.JsonParser;
+import objects.FunkinSprite;
 
 import animate.FlxAnimate;
 import animate.FlxAnimateFrames;
@@ -56,7 +57,7 @@ typedef AnimArray = {
 }
 
 @:build(macros.TestMacro.build())
-class Character extends FlxAnimate 
+class Character extends FunkinSprite 
 {
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
@@ -67,11 +68,12 @@ class Character extends FlxAnimate
 	public var curCharacter:String = DEFAULT_CHARACTER;
 
 	public var animstyle:String = 'v-slice';
+	public var forceanim:Bool = false; //used for extra anims that arnt sing or dance.
 
 	public var colorTween:FlxTween;
 	public var holdTimer:Float = 0;
 	public var heyTimer:Float = 0;
-	var holdtimer:FlxTimer;
+	var singHoldTimer:FlxTimer;
 	public var specialAnim:Bool = false;
 	public var animationNotes:Array<Dynamic> = [];
 	public var stunned:Bool = false;
@@ -88,7 +90,7 @@ class Character extends FlxAnimate
 	public var cameraPosition:Array<Float> = [0, 0];
 
 	public var hasMissAnimations:Bool = false;
-	var holdnote:Bool = false;
+	var singHoldNote:Bool = false;
 	var theFrames:FlxAtlasFrames;
 	var hasscript:Bool;
 
@@ -119,6 +121,9 @@ class Character extends FlxAnimate
 		animOffsets = new Map<String, Array<Dynamic>>();
 		#end
 		curCharacter = character;
+		#if FEATURE_DEBUG_TRACY
+		cpp.vm.tracy.TracyProfiler.zoneScoped('Character.create(${this.curCharacter})');
+		#end
 		this.isPlayer = isPlayer;
 		antialiasing = ClientPrefs.data.globalAntialiasing;
 		var library:String = null;
@@ -265,9 +270,9 @@ class Character extends FlxAnimate
 								trace('SPARROW OR PACKER');
 								if(animIndices != null && animIndices.length > 0) {
 									
-								anim.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
+								animation.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
 								} else {
-									anim.addByPrefix(animAnim, animName, animFps, animLoop);
+									animation.addByPrefix(animAnim, animName, animFps, animLoop);
 								}
 							}
 						
@@ -406,6 +411,16 @@ class Character extends FlxAnimate
 		super.update(elapsed);
 	}
 
+
+	override function onAnimationFinished(name:String)
+    {
+		setFunctionOnScripts('onAnimationFinished', [name]);
+        if(forceanim){
+			forceanim = false;
+		}
+    
+    }
+
 	public var danced:Bool = false;
 
 	/**
@@ -442,24 +457,33 @@ class Character extends FlxAnimate
 
 	}
 
-	public function playSingAnim(note:Note,AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0 ):Void
+		public function playSingAnim(note:Note,AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0 ):Void
 		{
 			
 			specialAnim = false;
 			if(note.animSuffix != '' ){
-				alt += note.animSuffix;
+				if(alt == ''){
+					alt = note.animSuffix;
+				}
+				else{
+					alt += note.animSuffix; 
+				}
+				
 			}
 			setFunctionOnScripts('playSingAnim', [note, AnimName, Force, Reversed, Frame]);
-			if (!note.noAnimation){
+			if (!note.noAnimation && !forceanim){
 				
 				if (note.isSustainNote == true && animstyle != 'psych'){
-					holdnote = note.isSustainNote;
+					singHoldNote = note.isSustainNote;
 
 					
-					holdtimer = new FlxTimer().start(1, function(tmr:FlxTimer)
-						{
-							holdnote = false;
+					if (singHoldTimer == null) {
+						singHoldTimer = new FlxTimer().start(1, function(tmr:FlxTimer) {
+						singHoldNote = false;
 						});
+					} else {
+						singHoldTimer.reset(1);
+					}
 
 					if (isSinging() && AnimName == getCurrentAnimation()){
 						switch(animstyle){
@@ -478,16 +502,24 @@ class Character extends FlxAnimate
 											playAnim(animation.curAnim.name + '-end');
 										}
 								}
+								else{
+									if(isAnimationFinished() && animation.getByName(animation.curAnim.name + '-hold') != null && animation.curAnim.name != AnimName + '-hold')
+									{
+
+										
+										playAnim(animation.curAnim.name + '-hold');
+										trace('holdanim: ' + animation.curAnim.name);
+									}
+								}
 								
 							
 						}
 
 					}
 					else{
-						if (holdtimer !=null){
-							holdtimer.cancel();
-							holdtimer = null;
-							holdnote = false;
+						if (singHoldTimer != null){
+							singHoldTimer.active = false;
+							singHoldNote = false;
 						}
 
 						playAnim(AnimName + alt, Force, Reversed, Frame); 
@@ -502,17 +534,6 @@ class Character extends FlxAnimate
 			
 		
 
-		 /**
-   * Returns the name of the animation that is currently playing.
-   * If no animation is playing (usually this means the character is BROKEN!),
-   *   returns an empty string to prevent NPEs.
-   */
-   public function getCurrentAnimation():String
-	{
-	  if (this.animation == null || this.animation.curAnim == null) return "";
-	  return this.animation.curAnim.name;
-	}
-
 	public function isSinging():Bool
 		{
 		  return getCurrentAnimation().startsWith('sing');
@@ -522,20 +543,21 @@ class Character extends FlxAnimate
 	{
 		setFunctionOnScripts('playAnim',[AnimName, Force, Reversed, Frame]);
 		specialAnim = false;
-			
-		anim.play(AnimName, Force, Reversed, Frame);
+		if(AnimName.startsWith('sing')){
+
+		}
+		else{
+			forceanim = Force;
+		}
+		animation.play(AnimName, Force, Reversed, Frame);
 
 		var daOffset = animOffsets.get(AnimName);
 		if (animOffsets.exists(AnimName))
 		{
-
-			this.offset.set(daOffset[0], daOffset[1]);
-		
+			offset.set(daOffset[0], daOffset[1]);
 		}
 		else
-			this.offset.set(0, 0);
-
-	
+			offset.set(0, 0);
 
 		if (curCharacter.startsWith('gf'))
 		{
@@ -595,6 +617,21 @@ class Character extends FlxAnimate
 		}
 		settingCharacterUp = false;
 	}
+	public function callFunctionWithScripts(name:String,  params:Array<String>){
+		if(hasscript){
+			__hscript.runFunction(name, params);
+		}
+		else{
+			
+		}
+
+	}
+	public override function destroy():Void
+    {
+        
+        setFunctionOnScripts('destroy',[]);
+        super.destroy();
+    }
 
 	public function addOffset(name:String, x:Float = 0, y:Float = 0)
 	{

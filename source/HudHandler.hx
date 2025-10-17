@@ -40,6 +40,7 @@ typedef Hudstyle = {
     @:optional
     var falback:String;
     
+    
 }
 
 typedef BarInfo = {
