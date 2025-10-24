@@ -7,6 +7,7 @@ import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import flash.display.BitmapData;
 import editors.ChartingState;
+import haxe.ds.StringMap;
 
 using StringTools;
 
@@ -20,7 +21,7 @@ typedef EventNote =
 
 class Note extends FlxSprite
 {
-	public var extraData:Map<String, Dynamic> = [];
+	public var extraData:StringMap<Dynamic> = new StringMap<Dynamic>(); //for extra data in scripts 
 
 	public var strumTime:Float = 0;
 	public var mustPress:Bool = false;
@@ -163,6 +164,9 @@ class Note extends FlxSprite
 					animSuffix = '-alt';
 				case 'GF Sing':
 					gfNote = true;
+				case 'No Animation':
+					noAnimation = true;
+					noMissAnimation = true;
 			}
 			noteType = value;
 		}
@@ -227,7 +231,12 @@ class Note extends FlxSprite
 			alpha = 0.6;
 			multAlpha = 0.6;
 			hitsoundDisabled = true;
-			if (ClientPrefs.data.downScroll)
+			if (ClientPrefs.data.downScroll && player == true)
+				flipY = true;
+
+
+			if (!ClientPrefs.data.downScroll && player == false)
+				flipY = true;
 				flipY = true;
 
 			offsetX += width / 2;

@@ -19,6 +19,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
+import flixel.effects.FlxFlicker;
 import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
@@ -28,6 +29,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSort;
 import flixel.util.FlxStringUtil;
 import flixel.util.FlxTimer;
+
 import openfl.utils.Assets as OpenFlAssets;
 import editors.ChartingState;
 import editors.CharacterEditorState;
@@ -40,7 +42,6 @@ import animateatlas.AtlasFrameMaker;
 import StageData;
 import HaxeScript;
 import DialogueBoxPsych;
-import scriptobjects.ScriptableMusicBeatSubState;
 #if !flash
 import flixel.addons.display.FlxRuntimeShader;
 import openfl.filters.ShaderFilter;
@@ -50,7 +51,6 @@ import sys.FileSystem;
 import sys.io.File;
 #end
 import objects.VideoSprite;
-
 using StringTools;
 
 class PlayState extends MusicBeatState
@@ -150,6 +150,7 @@ class PlayState extends MusicBeatState
 
 	public var gfSpeed:Int = 1;
 	public var health:Float = 1;
+
 	public var combo:Int = 0;
 
 	public var stagescript:HaxeScript;
@@ -270,6 +271,11 @@ class PlayState extends MusicBeatState
 
 	public var defaultCamZoom:Float = 1.05;
 
+
+	public var notemissed:Bool =false;
+	
+ 	// shamelessly stolen from pico thank u ericc
+  	var iconFlicker:FlxFlicker = null;
 	// how big to stretch the pixel art assets
 	public static var daPixelZoom:Float = 6;
 
@@ -477,7 +483,6 @@ class PlayState extends MusicBeatState
 
 		stageBackground= new FlxSpriteGroup(0, 0);
 		boyfriendGroup = new FlxSpriteGroup(BF_X, BF_Y);
-		
 		dadGroup = new FlxSpriteGroup(DAD_X, DAD_Y);
 		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
 		stageForground= new FlxSpriteGroup(0, 0);
@@ -1092,6 +1097,7 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
 		iconP1.y = hud.healthBar.y - 75;
+		
 		if(hud.iconp1overide !=null){
 			iconP1.x =  hud.healthBar.x + hud.geticonP1Pos(0);
 			iconP1.y +=  hud.healthBar.y + hud.geticonP1Pos(1);
@@ -1102,7 +1108,6 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 		}
 		iconP1.visible = !ClientPrefs.data.hideHud;
 		iconP1.alpha = ClientPrefs.data.healthBarAlpha;
-	
 		iconP1.visible = hud.iconp1vis;
 		uiGroup.add(iconP1);
 
@@ -1117,7 +1122,7 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 			iconP2.y = hud.healthBar.y - 75;
 		}
 		
-		iconP2.visible = !ClientPrefs.data.hideHud;
+		iconP2.visible = hud.iconp2vis;
 		iconP2.alpha = ClientPrefs.data.healthBarAlpha;
 		uiGroup.add(iconP2);
 		hud.reloadHealthBarColors();
@@ -1144,7 +1149,6 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 		uiGroup.cameras = [camHUD];
 		noteGroup.cameras = [camHUD];
 		comboGroup.cameras = [camHUD];
-		debugGroup.cameras = [camOther];
 
 		startingSong = true;
 
@@ -1330,14 +1334,14 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 					var ret:Dynamic;
 					var func:Dynamic = null;
 					for (script in hscriptArray ){
-						func = script.interpreter.variables.get("songEase");
+						func = script.interpreter.variables.get("PreSongCutsceen");
 						
 					}
 					if (func == null){
 							startCountdown();
 						}
 					else{
-						ret = cast Reflect.callMethod(null, func, []);
+						ret = cast Reflect.callMethod(null, func, [isStoryMode]);
 						
 						
 					}
@@ -1346,7 +1350,20 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 		}
 		else
 		{
-			startCountdown();
+			var ret:Dynamic;
+			var func:Dynamic = null;
+			for (script in hscriptArray ){
+				func = script.interpreter.variables.get("PreSongCutsceen");
+				
+			}
+			if (func == null){
+					startCountdown();
+				}
+			else{
+				ret = cast Reflect.callMethod(null, func, [isStoryMode]);
+				
+				
+			}
 		}
 		RecalculateRating();
 
@@ -1581,7 +1598,6 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 		#end
 		return null;
 	}
-
 
 	function startAndEnd()
 	{
@@ -2221,7 +2237,14 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 	{
 		insert(members.indexOf(gfGroup), obj);
 	}
-
+	public function addInFrontOfGF(obj:FlxObject)
+	{
+		var gfIndex = members.indexOf(gfGroup);
+		if (gfIndex != -1)
+			insert(gfIndex + 1, obj);
+		else
+			add(obj); // fallback if gfGroup not found
+	}
 	public function addBehindBF(obj:FlxObject)
 	{
 		insert(members.indexOf(boyfriendGroup), obj);
@@ -2999,7 +3022,7 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
   function updateHealth():Void
   {
    
-      healthLerp = FlxMath.lerp(healthLerp, health, 0.15);
+      healthLerp = MathUtil.lerpDelta(healthLerp, health, 0.0075, FlxG.elapsed);
     
   }
 
@@ -3026,7 +3049,7 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 		}
 		setFunctionOnScripts('onUpdate', [elapsed]);
 		updateHealth();
-		hud.updatehealth(healthLerp);
+		hud.updatehealth(health);
 		hud.updateTime(songPercent);
 
 		switch (curStage)
@@ -3213,8 +3236,15 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 
 		if (controls.PAUSE && startedCountdown && canPause)
 		{
-			
-			openPauseMenu();
+			var ret:Dynamic = false;
+			for (script in hscriptArray ){
+				var func = script.interpreter.variables.get("onPause");
+				if(func !=null){
+					ret  = cast Reflect.callMethod(null, func, []);
+				}
+			}
+			if (ret != true)
+				openPauseMenu();
 		}
 
 		if (FlxG.keys.anyJustPressed(debugKeysChart) && !endingSong && !inCutscene)
@@ -3230,8 +3260,9 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 
 
 
-		if (health > 2)
-			health = 2;
+		if(health >2){
+			health =2; 
+		}
 
 
 		if (FlxG.keys.anyJustPressed(debugKeysCharacter) && !endingSong && !inCutscene)
@@ -3306,6 +3337,7 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 		// RESET = Quick Game Over Screen
 		if (!ClientPrefs.data.noReset && controls.RESET && canReset && !inCutscene && startedCountdown && !endingSong)
 		{
+	
 			health = 0;
 			trace("RESET = True");
 		}
@@ -3523,6 +3555,7 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 		else{
 			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 		}
+
 		
 		
 
@@ -4781,6 +4814,8 @@ public function moveCamera(isDad:Bool,? isGf:Bool)
 			}
 		});
 		combo = 0;
+
+
 		health -= daNote.missHealth * healthLoss;
 
 		if (instakillOnMiss)
@@ -5052,7 +5087,6 @@ public function moveCamera(isDad:Bool,? isGf:Bool)
 			}
 		}
 
-		
 		var splash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
 		splash.setupNoteSplash(x, y, data, skin, hue, sat, brt);
 		grpNoteSplashes.add(splash);

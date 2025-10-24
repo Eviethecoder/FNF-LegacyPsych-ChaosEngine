@@ -10,7 +10,7 @@ import hxdiscord_rpc.Types;
 class DiscordClient
 {
 	public static var isInitialized:Bool = false;
-	private static final _defaultID:String = "863222024192262205";
+	private static final _defaultID:String = "1426649194520907806";
 	public static var clientID(default, set):String = _defaultID;
 	private static var presence:DiscordRichPresence = DiscordRichPresence.create();
 
@@ -44,6 +44,8 @@ class DiscordClient
 			trace('(Discord) Connected to User (${cast(requestPtr.username, String)})');
 
 		changePresence();
+		Constants.curUser = cast(requestPtr.username, String);
+		Constants.debugcheck();
 	}
 
 	private static function onError(errorCode:Int, message:cpp.ConstCharStar):Void {
@@ -90,14 +92,20 @@ class DiscordClient
 		presence.details = details;
 		presence.state = state;
 		presence.largeImageKey = 'icon';
-		presence.largeImageText = "Engine Version: " + MainMenuState.psychEngineVersion;
-		presence.smallImageKey = smallImageKey;
+		presence.largeImageText = Constants.version;
+		if (smallImageKey.toLowerCase() == 'i am'){
+			presence.smallImageKey = 'i am';
+		}
+		else{
+			presence.smallImageKey = smallImageKey.toLowerCase();
+		}
+		trace('icon to find is: '+ smallImageKey.toLowerCase());
 		// Obtained times are in milliseconds so they are divided so Discord can use it
 		presence.startTimestamp = Std.int(startTimestamp / 1000);
 		presence.endTimestamp = Std.int(endTimestamp / 1000);
 		updatePresence();
 
-		trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
+		
 	}
 
 	public static function updatePresence()
@@ -119,5 +127,7 @@ class DiscordClient
 		}
 		return newID;
 	}
+
+	
 }
 #end

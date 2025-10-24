@@ -70,6 +70,7 @@ class HudHandler extends FlxGroup{
     public var script:HaxeScript = null;
     public var iconp1overide:Array<Float>; 
     public var iconp1vis:Bool = true;
+    public var iconp2vis:Bool = true;
     public var iconp2overide:Array<Float>;
     public var scorposs:Array<Float> =[0,0];
     var hudscriptpath:String;
@@ -213,6 +214,9 @@ class HudHandler extends FlxGroup{
         }
         if (bars.iconP1visible != null) {
             iconp1vis = bars.iconP1visible;
+        }
+        if (bars.iconP2visible != null) {
+            iconp2vis = bars.iconP2visible;
         }
         if (bars.scorpos != null) {
             scorposs = bars.scorpos;
