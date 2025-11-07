@@ -3550,7 +3550,7 @@ hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song);
 			vocals.pause();
 		}
 		if(pauseScript !=''){
-			openSubState(new ScriptableMusicBeatSubState(pauseScript));
+			//openSubState(new ScriptableMusicBeatSubState(pauseScript));
 		}
 		else{
 			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));

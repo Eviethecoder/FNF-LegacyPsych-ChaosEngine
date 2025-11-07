@@ -68,6 +68,7 @@ class Character extends FunkinSprite
 	public var curCharacter:String = DEFAULT_CHARACTER;
 
 	public var animstyle:String = 'v-slice';
+	var animtocheck:String;
 	public var forceanim:Bool = false; //used for extra anims that arnt sing or dance.
 
 	public var colorTween:FlxTween;
@@ -457,7 +458,7 @@ class Character extends FunkinSprite
 
 	}
 
-		public function playSingAnim(note:Note,AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0 ):Void
+	public function playSingAnim(note:Note,AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0 ):Void
 		{
 			
 			specialAnim = false;
@@ -479,10 +480,13 @@ class Character extends FunkinSprite
 					
 					if (singHoldTimer == null) {
 						singHoldTimer = new FlxTimer().start(1, function(tmr:FlxTimer) {
-						singHoldNote = false;
+							singHoldNote = false;
+							trace('reset');
 						});
 					} else {
+						
 						singHoldTimer.reset(1);
+						
 					}
 
 					if (isSinging() && AnimName == getCurrentAnimation()){
@@ -499,15 +503,41 @@ class Character extends FunkinSprite
 								if(note.endnote){
 									if(animation.getByName(animation.curAnim.name + '-end') != null && animation.curAnim.name != AnimName + '-end')
 										{
-											playAnim(animation.curAnim.name + '-end');
+										trace(animation.curAnim.name + 'compared to ' +animtocheck);
+										var animtoplay:String = AnimName + '-end';
+										trace(animtoplay);
+										if(animation.curAnim.name == animtocheck){
+											trace('dontloop');
+
+
 										}
+										else{
+											playAnim(animtoplay, Force, Reversed, Frame);
+										}
+										
+										animtocheck = animation.curAnim.name;
+										trace('holdanim: ' + animation.curAnim.name);
+									}
 								}
 								else{
-									if(isAnimationFinished() && animation.getByName(animation.curAnim.name + '-hold') != null && animation.curAnim.name != AnimName + '-hold')
+									if(isAnimationFinished() && animation.getByName(animation.curAnim.name + '-hold') != null && animation.curAnim.name != AnimName + '-hold' )
 									{
+										trace(animation.curAnim.name + 'compared to ' +animtocheck);
+										var animtoplay:String = AnimName + '-hold';
+										trace(animtoplay);
+										if(animation.curAnim.name == animtocheck){
+											trace('dontloop');
+
+
+										}
+										else{
+											playAnim(animtoplay, Force, Reversed, Frame);
+										}
+										
+										animtocheck = animation.curAnim.name;
+
 
 										
-										playAnim(animation.curAnim.name + '-hold');
 										trace('holdanim: ' + animation.curAnim.name);
 									}
 								}
@@ -516,14 +546,21 @@ class Character extends FunkinSprite
 						}
 
 					}
+					
 					else{
 						if (singHoldTimer != null){
 							singHoldTimer.active = false;
 							singHoldNote = false;
 						}
+						if(!getCurrentAnimation().endsWith('-hold') || !!getCurrentAnimation().endsWith('-end')){
+							playAnim(AnimName + alt, Force, Reversed, Frame);
+							trace('not holding anim sooo');
+						}
+						
 
-						playAnim(AnimName + alt, Force, Reversed, Frame); 
+						 
 					}
+					
 				}
 				else{
 					playAnim(AnimName+ alt, Force, Reversed, Frame);
