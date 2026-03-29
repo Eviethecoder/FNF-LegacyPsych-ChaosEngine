@@ -35,13 +35,13 @@ class ScriptableMusicBeatSubState extends MusicBeatSubstate
 				trace('script found!! '+ filepath );
 				
 				script = HaxeScript.HaxeScript.FromFile(Paths.getPreloadPath(filepath), this, false); 
-				script.onError = this.hscriptError;
+				script.onError = MusicBeatState.hscriptError;
 
 				
 			}
 			catch(e:Dynamic){  
-				this.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
-				this.addTextToDebug("[ ERROR ] Could not load state script " + Paths.getPreloadPath(filepath), FlxColor.RED);
+				MusicBeatState.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
+				MusicBeatState.addTextToDebug("[ ERROR ] Could not load state script " + Paths.getPreloadPath(filepath), FlxColor.RED);
 				
 			} 
 		}
@@ -53,13 +53,13 @@ class ScriptableMusicBeatSubState extends MusicBeatSubstate
 				trace('script found!! '+ filepath );
 				
 				script = HaxeScript.HaxeScript.FromFile(Paths.modFolders(filepath), this, false); 
-				script.onError = this.hscriptError;
+				script.onError = MusicBeatState.hscriptError;
 
 				
 			}
 			catch(e:Dynamic){  
-				this.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
-				this.addTextToDebug("[ ERROR ] Could not load character script " + Paths.modFolders(filepath), FlxColor.RED);
+				MusicBeatState.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
+				MusicBeatState.addTextToDebug("[ ERROR ] Could not load character script " + Paths.modFolders(filepath), FlxColor.RED);
 				
 			} 
 			
@@ -133,7 +133,7 @@ class ScriptableMusicBeatSubState extends MusicBeatSubstate
 	
 	 public function addvar(name:String, value:Dynamic) {
         if (script != null) {
-            script.interpreter.variables[name] = value;
+             script.iris.set(name, value);
         }
     }
 }

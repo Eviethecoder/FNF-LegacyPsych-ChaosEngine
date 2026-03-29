@@ -8,6 +8,9 @@ import flixel.util.FlxColor;
 import flash.display.BitmapData;
 import editors.ChartingState;
 import haxe.ds.StringMap;
+import utility.Scripthandler;
+import shaders.RGBPalette;
+import shaders.RGBPalette.RGBShaderReference;
 
 using StringTools;
 
@@ -18,15 +21,27 @@ typedef EventNote =
 	value1:String,
 	value2:String
 }
+typedef NoteSplashData = {
+	disabled:Bool,
+	texture:String,
+	useGlobalShader:Bool, //breaks r/g/b but makes it copy default colors for your custom note
+	useRGBShader:Bool,
+	antialiasing:Bool,
+	r:FlxColor,
+	g:FlxColor,
+	b:FlxColor,
+	a:Float
+}
 
 class Note extends FlxSprite
 {
-	public var extraData:StringMap<Dynamic> = new StringMap<Dynamic>(); //for extra data in scripts 
+	public var extraData:Map<String, Dynamic> = new Map<String, Dynamic>();
 
 	public var strumTime:Float = 0;
 	public var mustPress:Bool = false;
 	public var noteData:Int = 0;
 	public var canBeHit:Bool = false;
+		public static var globalRgbShaders:Array<RGBPalette> = [];
 	public var tooLate:Bool = false;
 	public var wasGoodHit:Bool = false;
 	public var ignoreNote:Bool = false;
@@ -35,6 +50,10 @@ class Note extends FlxSprite
 	public var prevNote:Note;
 	public var nextNote:Note;
 	public var isEvent:Bool = false;
+	public var isCameraEvent:Bool = false;
+	public var rgbShader:RGBShaderReference;
+	public  static var isplayer:Bool = false;
+
 
 	public var spawned:Bool = false;
 
@@ -57,13 +76,14 @@ class Note extends FlxSprite
 
 	public var animSuffix:String = '';
 	public var gfNote:Bool = false;
+		public var forceBf:Bool = false;
 	public var earlyHitMult:Float = 0.5;
 	public var lateHitMult:Float = 1;
 	public var lowPriority:Bool = false;
 
 	public static var swagWidth:Float = 160 * 0.7;
 
-	private var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
+	public static var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
 	private var pixelInt:Array<Int> = [0, 1, 2, 3];
 
 	// Lua shit
@@ -91,7 +111,17 @@ class Note extends FlxSprite
 	public var ratingDisabled:Bool = false;
 
 	public var texture(default, set):String = null;
-
+	public var noteSplashData:NoteSplashData = {
+		disabled: false,
+		texture: null,
+		antialiasing: true,
+		useGlobalShader: false,
+		useRGBShader: true,
+		r: -1,
+		g: -1,
+		b: -1,
+		a: 1
+	};
 	public var noAnimation:Bool = false;
 	public var noMissAnimation:Bool = false;
 	public var hitCausesMiss:Bool = false;
@@ -127,15 +157,32 @@ class Note extends FlxSprite
 		texture = value;
 		return value;
 	}
+	public function defaultRGB()
+	{
+		var arr:Array<Dynamic> = PlayState.instance.hud.hudData.getNoteskinrgb(mustPress)[noteData];
+
+		if (arr != null && noteData > -1 && noteData <= arr.length)
+		{
+			rgbShader.r = arr[0];
+			rgbShader.g = arr[1];
+			rgbShader.b = arr[2];
+		}
+		else
+		{
+			rgbShader.r = 0xFFFF0000;
+			rgbShader.g = 0xFF00FF00;
+			rgbShader.b = 0xFF0000FF;
+		}
+	}
 
 	private function set_noteType(value:String):String
 	{
-		noteSplashTexture = PlayState.SONG.splashSkin;
-		if (noteData > -1 && noteData < ClientPrefs.data.arrowHSV.length)
-		{
-			colorSwap.hue = ClientPrefs.data.arrowHSV[noteData][0] / 360;
-			colorSwap.saturation = ClientPrefs.data.arrowHSV[noteData][1] / 100;
-			colorSwap.brightness = ClientPrefs.data.arrowHSV[noteData][2] / 100;
+			defaultRGB();
+		if(PlayState.instance !=null){
+			noteSplashTexture = PlayState.instance.hud.hudData.getNotesplash();
+		}
+		else{
+			noteSplashTexture = 'Huds/Notesplashes/noteSplashes';
 		}
 
 		if (noteData > -1 && noteType != value)
@@ -144,8 +191,8 @@ class Note extends FlxSprite
 			{
 				case 'Hurt Note':
 					ignoreNote = mustPress;
-					reloadNote('HURT');
-					noteSplashTexture = 'HURTnoteSplashes';
+					reloadNote('Huds/NoteTypes/HURT','NOTE_assets');
+					noteSplashTexture = '"Huds/Notesplashes/HURTnoteSplashes';
 					colorSwap.hue = 0;
 					colorSwap.saturation = 0;
 					colorSwap.brightness = 0;
@@ -170,9 +217,7 @@ class Note extends FlxSprite
 			}
 			noteType = value;
 		}
-		noteSplashHue = colorSwap.hue;
-		noteSplashSat = colorSwap.saturation;
-		noteSplashBrt = colorSwap.brightness;
+
 		if(PlayState.instance != null){
 			loadNoteScript(this);
 			
@@ -192,8 +237,10 @@ class Note extends FlxSprite
 
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
-		if(player !=null){
+		if (player != null)
+		{
 			mustPress = player;
+			isplayer = player;
 		}
 		this.inEditor = inEditor;
 
@@ -208,9 +255,8 @@ class Note extends FlxSprite
 
 		if (noteData > -1)
 		{
+			rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData,mustPress));
 			texture = '';
-			colorSwap = new ColorSwap();
-			shader = colorSwap.shader;
 
 			x += swagWidth * (noteData);
 			if (!isSustainNote && noteData > -1 && noteData < 4)
@@ -231,13 +277,7 @@ class Note extends FlxSprite
 			alpha = 0.6;
 			multAlpha = 0.6;
 			hitsoundDisabled = true;
-			if (ClientPrefs.data.downScroll && player == true)
-				flipY = true;
-
-
-			if (!ClientPrefs.data.downScroll && player == false)
-				flipY = true;
-				flipY = true;
+			if(ClientPrefs.data.downScroll) flipY = true;
 
 			offsetX += width / 2;
 			copyAngle = false;
@@ -248,7 +288,7 @@ class Note extends FlxSprite
 
 			offsetX -= width / 2;
 
-			if (PlayState.isPixelStage)
+			if (PlayState.instance.stage.isPixelStage)
 				offsetX += 30;
 
 			if (prevNote.isSustainNote)
@@ -258,10 +298,16 @@ class Note extends FlxSprite
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
 				if (PlayState.instance != null)
 				{
-					prevNote.scale.y *= PlayState.instance.songSpeed;
+					if(player == true){
+						prevNote.scale.y *= PlayState.instance.songSpeed;
+					}
+					else{
+						prevNote.scale.y *= PlayState.instance.oppsongSpeed;
+					}
+					
 				}
 
-				if (PlayState.isPixelStage)
+				if (PlayState.instance.stage.isPixelStage)
 				{
 					prevNote.scale.y *= 1.19;
 					prevNote.scale.y *= (6 / height); // Auto adjust note size
@@ -270,7 +316,7 @@ class Note extends FlxSprite
 				// prevNote.setGraphicSize();
 			}
 
-			if (PlayState.isPixelStage)
+			if (PlayState.instance.stage.isPixelStage)
 			{
 				scale.y *= PlayState.daPixelZoom;
 				updateHitbox();
@@ -281,7 +327,41 @@ class Note extends FlxSprite
 			earlyHitMult = 1;
 		}
 		x += offsetX;
+		
 		runScriptFunction('new', []);
+	}
+
+public static function initializeGlobalRGBShader(noteData:Int, ?isPlayer:Bool = false)
+	{
+		var truenotedata:Int = noteData;
+		if (isPlayer)
+		{
+			truenotedata += 4;
+		}
+
+		if (globalRgbShaders[truenotedata] == null)
+		{
+			var newRGB:RGBPalette = new RGBPalette();
+			
+			var arr:Array<Dynamic>= PlayState.instance.hud.hudData.getNoteskinrgb(isPlayer)[noteData];
+			 //ClientPrefs.data.arrowRGB[noteData];
+			
+			if (arr != null && noteData > -1 && noteData <= arr.length)
+			{
+				newRGB.r = arr[0];
+				newRGB.g = arr[1];
+				newRGB.b = arr[2];
+			}
+			else
+			{
+				newRGB.r = 0xFFFF0000;
+				newRGB.g = 0xFF00FF00;
+				newRGB.b = 0xFF0000FF;
+			}
+			
+			globalRgbShaders[truenotedata] = newRGB;
+		}
+		return globalRgbShaders[truenotedata];
 	}
 
 	var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;
@@ -301,15 +381,16 @@ class Note extends FlxSprite
 		var skin:String = texture;
 		if (texture.length < 1)
 		{
-
-			if(PlayState.instance != null){
-				skin = PlayState.instance.hud.getNoteskin(mustPress);
+			if (PlayState.instance != null)
+			{
+				skin = PlayState.instance.hud.hudData.getNoteskinnotes(mustPress);
 				if (skin == null || skin.length < 1)
 				{
 					skin = 'NOTE_assets';
 				}
 			}
-			else{
+			else
+			{
 				skin = 'NOTE_assets';
 			}
 		}
@@ -325,9 +406,10 @@ class Note extends FlxSprite
 
 		var lastScaleY:Float = scale.y;
 		var blahblah:String = arraySkin.join('/');
-		if (PlayState.isPixelStage)
+		if (PlayState.instance!= null)
 		{
-			if (isSustainNote)
+			if(PlayState.instance.stage.isPixelStage){
+				if (isSustainNote)
 			{
 				loadGraphic(Paths.image('pixelUI/' + blahblah + 'ENDS'));
 				width = width / 4;
@@ -351,13 +433,6 @@ class Note extends FlxSprite
 				offsetX += lastNoteOffsetXForPixelAutoAdjusting;
 				lastNoteOffsetXForPixelAutoAdjusting = (width - 7) * (PlayState.daPixelZoom / 2);
 				offsetX -= lastNoteOffsetXForPixelAutoAdjusting;
-
-				/*if(animName != null && !animName.endsWith('end'))
-					{
-						lastScaleY /= lastNoteScaleToo;
-						lastNoteScaleToo = (6 / height);
-						lastScaleY *= lastNoteScaleToo;
-				}*/
 			}
 		}
 		else
@@ -381,6 +456,7 @@ class Note extends FlxSprite
 			updateHitbox();
 		}
 	}
+}
 
 	function loadNoteAnims()
 	{
@@ -490,69 +566,75 @@ class Note extends FlxSprite
 		return rect;
 	}
 
-	public function loadNoteScriptchart(note:Note):HaxeScript {
+public function loadNoteScriptchart(note:Note):HaxeScript
+	{
 		//Paths.getPreloadPath('custom_notetypes/'), Paths.modFolders('custom_notetypes/')
 
 		var type:String = note.noteType;
-		if(type.length == 0)
+		if (type.length == 0)
 			type = 'Note';
 		var path = Paths.getPreloadPath('custom_notetypes/' + type + '.hx'); 
-		
 
-		
-		try {
-			if(sys.FileSystem.exists(path)) 
-				script = HaxeScript.FromFile(path, note);
-			else {
+		try
+		{
+			if (sys.FileSystem.exists(path))
+				__hscript = HaxeScript.FromFile(path, note);
+			else
+			{
 				path = Paths.modFolders('custom_notetypes/' + type + '.hx'); 
-				if(sys.FileSystem.exists(path)) 
-					script = HaxeScript.FromFile(path, note);
+				if (sys.FileSystem.exists(path))
+					__hscript = HaxeScript.FromFile(path, note);
 			}
 		}
-		catch(e) { 
+		catch (e)
+		{
 			trace(e);
 		}
 
 
-		return script;
+		return __hscript;
 	}
 
-	public function loadNoteScript(note:Note):HaxeScript {
+	public function loadNoteScript(note:Note):HaxeScript
+	{
 		//Paths.getPreloadPath('custom_notetypes/'), Paths.modFolders('custom_notetypes/')
 
 		var type:String = note.noteType;
-		if(type.length == 0)
+		if (type.length == 0)
 			type = 'Note';
 		var path = Paths.getPreloadPath('custom_notetypes/' + type + '.hx'); 
-		
 
-		
-		try {
-			if(sys.FileSystem.exists(path)){
+		try
+		{
+			if (sys.FileSystem.exists(path))
+			{
 				script = HaxeScript.FromFile(path, note);
-				PlayState.instance.hscriptArray.push(script);
+				Scripthandler.gamescriptArray.push(script);
 			}
-			else {
+			else
+			{
 				path = Paths.modFolders('custom_notetypes/' + type + '.hx'); 
-				if(sys.FileSystem.exists(path)) 
+				if (sys.FileSystem.exists(path))
 					script = HaxeScript.FromFile(path, note);
 			}
 		}
-		catch(e) { 
-			PlayState.instance.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
-			PlayState.instance.addTextToDebug("[ ERROR ] Could not load note script " + path, FlxColor.RED);  
+		catch (e)
+		{
+			MusicBeatState.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
+			MusicBeatState.addTextToDebug("[ ERROR ] Could not load note script " + path, FlxColor.RED);  
 		}
 
-		if(script != null)
-			script.onError = PlayState.instance.hscriptError;
+		if (script != null)
+			script.onError = MusicBeatState.hscriptError;
 
 		return script;
 	}
 
-	public function runScriptFunction(id:String, params:Array<Dynamic>):Dynamic {
-		if(script == null) 
+	public function runScriptFunction(id:String, params:Array<Dynamic>):Dynamic
+	{
+		if (__hscript == null)
 			return null;
  
-		return script.runFunction(id, params);
+		return __hscript.runFunction(id, params);
 	}
 }

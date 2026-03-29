@@ -6,15 +6,13 @@ import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.math.FlxMath;
-
-#if hxvlc
 import hxvlc.flixel.FlxVideoSprite;
-#end
+
 
 
 //like usual support shadow mario this is backported from modern psych
 class VideoSprite extends FlxSpriteGroup {
-	#if VIDEOS_ALLOWED
+	#if FEATURE_VIDEO_PLAYBACK
 	public var finishCallback:Void->Void = null;
 	public var onSkip:Void->Void = null;
 

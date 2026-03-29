@@ -15,13 +15,14 @@ import flixel.util.FlxGradient;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxState;
 import flixel.FlxCamera;
+import utility.Scripthandler;
 import flixel.FlxBasic;
 
 class MusicBeatState extends FlxUIState
 {
 	private var curSection:Int = 0;
 	private var stepsToDo:Int = 0;
-	private var debugGroup:FlxTypedGroup<DebugText>;
+	private static var debugGroup:FlxTypedGroup<DebugText>;
 
 	private var curStep:Int = 0;
 	private var curBeat:Int = 0;
@@ -63,6 +64,7 @@ class MusicBeatState extends FlxUIState
 		//everyStep();
 		if (FlxG.keys.justPressed.F5) {
 			ScriptedStatehandler.reListStates();
+			Scripthandler.gamescriptArray = [];
 			FlxG.resetState();
 		}
 		var oldStep:Int = curStep;
@@ -223,25 +225,27 @@ class MusicBeatState extends FlxUIState
 		return leState;
 	}
 
-	public function addTextToDebug(text:String, color:FlxColor)
+	public static function addTextToDebug(text:String, color:FlxColor)
 	{
+		trace(text);
+		// debugGroup.insert(0, new DebugText(text, debugGroup, color));
+		// debugGroup.forEachAlive(function(spr:DebugText)
+		// {
+		// 	spr.y += 20;
+		// });
 		
-		debugGroup.forEachAlive(function(spr:DebugText)
-		{
-			spr.y += 20;
-		});
 
-		if (debugGroup.members.length > 34)
-		{
-			var blah = debugGroup.members[34];
-			blah.destroy();
-			debugGroup.remove(blah);
-		}
-		debugGroup.insert(0, new DebugText(text, debugGroup, color));
+		// if (debugGroup.members.length > 34)
+		// {
+		// 	var blah = debugGroup.members[34];
+		// 	blah.destroy();
+		// 	debugGroup.remove(blah);
+		// }
+		
 	
 	}
 
-	public function hscriptError(e:Dynamic, funcName:String, fPath:String) { 
+	public static function hscriptError(e:Dynamic, funcName:String, fPath:String) { 
 		addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38));
 		addTextToDebug("[ ERROR ] Could not run function " + funcName + " (script: "+fPath+") ", FlxColor.RED); 
 		trace(e );

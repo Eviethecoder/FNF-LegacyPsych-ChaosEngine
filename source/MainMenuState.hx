@@ -59,9 +59,8 @@ class MainMenuState extends MusicBeatState
 
 	override function create()
 	{
-		#if MODS_ALLOWED
 		Paths.pushGlobalMods();
-		#end
+	
 		WeekData.loadTheFirstEnabledMod();
 
 		#if desktop
@@ -231,7 +230,7 @@ class MainMenuState extends MusicBeatState
 								switch (daChoice)
 								{
 									case 'story_mode':
-										openSubState(new StickerSubState(null, (sticker) -> new StoryMenuState(sticker)));
+										MusicBeatState.switchState(new StoryMenuState());
 										
 									case 'freeplay':
 										MusicBeatState.switchState(new FreeplayState());

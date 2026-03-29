@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="Box.png">
+	<!-- Created with Adobe Animate version 23.0.1.70 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Disabled0000" x="5" y="5" width="740" height="165"/>
+	<SubTexture name="Idle0000" x="5" y="175" width="740" height="165"/>
+</TextureAtlas>

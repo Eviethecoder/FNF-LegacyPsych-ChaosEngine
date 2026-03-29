@@ -96,10 +96,6 @@ class Window extends FlxSpriteGroup
     }
 
     
-    /**
-     * Adds a button to the bar.
-     * @param dropdownItems Optional array of dropdown entries (label + onClick).
-     */
     public function addButton( label:String,onClick:Void->Void):FlxButton {
   
         var xPos:Float = buttonStartX;
@@ -132,6 +128,7 @@ class WindowButtons extends FlxButton
         onOver.callback = overlap;
         onOut.callback = onleave;
     }
+    
 
     public function setup(size:Array<Float>, color:FlxColor)
     {

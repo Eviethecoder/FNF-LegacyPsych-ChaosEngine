@@ -1,6 +1,6 @@
 package objects;
 
-import flixel.addons.effects.FlxSkewedSprite;
+import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.graphics.FlxGraphic;
 import flixel.tweens.FlxTween;
@@ -12,9 +12,12 @@ import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.FlxCamera;
 import openfl.system.System;
 
-class FunkinSprite extends FlxSkewedSprite {
-    public function new(x:Float = 0, y:Float = 0) {
-        super(x, y);
+class FunkinSprite extends FlxSprite {
+
+    public var zIndex:Int = 0;
+    public var id:String;
+    public function new(x:Float = 0, y:Float = 0, ?graphic:FlxGraphic = null) {
+        super(x, y, graphic);
         // Initialization code here
         this.animation.finishCallback = this.onAnimationFinished;
     }
@@ -52,6 +55,9 @@ class FunkinSprite extends FlxSkewedSprite {
     {
         // left blank for classes to add their own functionality
     
+    }
+    public function dance(?forceplay:Bool = false) {
+        // left blank for classes to add their own functionality
     }
     public override function clone():FunkinSprite
     {

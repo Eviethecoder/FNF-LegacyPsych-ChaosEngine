@@ -1,0 +1,36 @@
+{
+  "defaultZoom": 0.89,
+  "isPixelStage": false,
+  "characters": {
+	"dad": {
+      "zIndex": 13,
+      "position": [-350, 300],
+      "scroll": [1, 1],
+      "alpha": 1,
+      "angle": 0
+    },
+    "boyfriend": {
+      "zIndex": 12,
+      "position": [600, 300],
+      "scroll": [1, 1]
+    },
+
+    "girlfriend": {
+      "zIndex": 11,
+      "position": [70, 0],
+      "scroll": [1, 1]
+    }
+  },
+  "hide_girlfriend": false,
+  "props": [
+    {
+      "name": "editor stage",
+    "path": "stages/editor/editor stage",
+      "zIndex": 10,
+      "PropType": "BGSprite",
+      "position": [-600, -300],
+      "repeatAxes": "x",
+      "scroll": [0.1, 0.1]
+    }
+  ]
+}

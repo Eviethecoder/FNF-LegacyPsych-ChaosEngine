@@ -413,7 +413,7 @@ class EditorPlayState extends MusicBeatState
 							if (daNote.animation.curAnim.name.endsWith('end')) {
 								daNote.y += 10.5 * (fakeCrochet / 400) * 1.5 * PlayState.SONG.speed + (46 * (PlayState.SONG.speed - 1));
 								daNote.y -= 46 * (1 - (fakeCrochet / 600)) * PlayState.SONG.speed;
-								if(PlayState.isPixelStage) {
+								if(PlayState.instance.stage.isPixelStage) {
 									daNote.y += 8;
 								} else {
 									daNote.y -= 19;
@@ -803,7 +803,7 @@ class EditorPlayState extends MusicBeatState
 		var pixelShitPart1:String = "";
 		var pixelShitPart2:String = '';
 
-		if (PlayState.isPixelStage)
+		if (PlayState.instance.stage.isPixelStage)
 		{
 			pixelShitPart1 = 'pixelUI/';
 			pixelShitPart2 = '-pixel';
@@ -832,7 +832,7 @@ class EditorPlayState extends MusicBeatState
 		comboSpr.velocity.x += FlxG.random.int(1, 10);
 		comboGroup.add(rating);
 
-		if (!PlayState.isPixelStage)
+		if (!PlayState.instance.stage.isPixelStage)
 		{
 			rating.setGraphicSize(Std.int(rating.width * 0.7));
 			rating.antialiasing = ClientPrefs.data.globalAntialiasing;
@@ -868,7 +868,7 @@ class EditorPlayState extends MusicBeatState
 			numScore.x += ClientPrefs.data.comboOffset[2];
 			numScore.y -= ClientPrefs.data.comboOffset[3];
 
-			if (!PlayState.isPixelStage)
+			if (!PlayState.instance.stage.isPixelStage)
 			{
 				numScore.antialiasing = ClientPrefs.data.globalAntialiasing;
 				numScore.setGraphicSize(Std.int(numScore.width * 0.5));

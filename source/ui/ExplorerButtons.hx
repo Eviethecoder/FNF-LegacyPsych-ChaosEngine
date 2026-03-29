@@ -3,6 +3,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.FlxG;
 import flixel.util.FlxColor;
+import flixel.input.mouse.FlxMouseEvent;
 import flixel.ui.FlxButton;
 import flixel.math.FlxPoint;
 import objects.Cursor;
@@ -17,18 +18,25 @@ class ExplorerButtons extends FlxButton {
         animation.addByPrefix("idle", "NotSelect",1,false);
         animation.addByPrefix("pressed", "Select",1,false);
         label.setFormat(null, 12, FlxColor.WHITE, "center");
-        onOver.callback = overlap;
-        onOut.callback = onleave;
+        FlxMouseEvent.add(this, onMouseDown, onMouseUp, onMouseOver, onMouseOut);
     }
 
 
-    function overlap(){
+    function onMouseOver(sprite:FlxButton){
         Cursor.set_cursorMode(Pointer);
-        if (FlxG.mouse.justPressed ) {
-            animation.play("pressed");
-        }
+        
     }
-    function onleave(){
+
+    function onMouseDown(sprite:FlxButton){
+        animation.play("pressed");
+    }
+
+    function onMouseUp(sprite:FlxButton){
+        Cursor.set_cursorMode(Default);
+        animation.play("idle");
+    }
+
+    function onMouseOut(sprite:FlxButton){
         Cursor.set_cursorMode(Default);
         animation.play("idle");
     }

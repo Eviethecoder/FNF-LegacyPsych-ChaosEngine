@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.util.FlxSave;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID;
+import flixel.util.FlxColor;
 
 class SaveVariables {
 	// -- BEHAVIOR OPTIONS -- //
@@ -35,6 +36,14 @@ class SaveVariables {
 	  [0, 0, 0], // Up
 	  [0, 0, 0]  // Right
 	];
+
+		public var arrowRGB:Array<Array<FlxColor>> = [
+		[0x912c32, 0xbda8a9, 0xFF651038],
+		[0x912c32, 0xbda8a9, 0xFF651038],
+		[0x4a0c0d, 0xbda8a9, 0xFF3F0922],
+		[0x4a0c0d, 0xbda8a9, 0xFF3F0922]];
+
+
 	public var comboOffset:Array<Int> = [0, 0, 0, 0]; // Rating X and Y, Combo X and Y
 	public var timeBarType:String = 'Time Left';
 	public var healthBarAlpha:Float = 1;
@@ -175,6 +184,7 @@ class ClientPrefs {
 
 	public static function loadPrefs() {
 		if(data == null) data = new SaveVariables();
+
 		if(defaultData == null) defaultData = new SaveVariables();
 	
 
@@ -200,6 +210,7 @@ class ClientPrefs {
 			FlxG.updateFramerate = data.framerate;
 		}
 
+		FlxG.save.data.gameplaySettings = data.gameplaySettings;
 		if(FlxG.save.data.gameplaySettings != null) {
 			var savedMap:Map<String, Dynamic> = FlxG.save.data.gameplaySettings;
 			for (name => value in savedMap)

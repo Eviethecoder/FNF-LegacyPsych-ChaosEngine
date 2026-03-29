@@ -2,35 +2,47 @@ package;
 
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
+import objects.FunkinSprite;
+import Character.AnimArray as AnimArray;
 
-class BGSprite extends FlxSprite
+class BGSprite extends FunkinSprite
 {
 	private var idleAnim:String;
-	public function new(image:String, x:Float = 0, y:Float = 0, ?scrollX:Float = 1, ?scrollY:Float = 1, ?animArray:Array<String> = null, ?loop:Bool = false) {
+	
+	private var idlenamelist:Array<String> = ['idle', 'dance', 'bop', 'resting', 'rest'];
+
+	public function new(image:String,x:Float = 0,y:Float = 0,scrollX:Float = 1,scrollY:Float = 1,animations:Array<AnimArray> = null) {
 		super(x, y);
 
-		if (animArray != null) {
+		if (animations != null && animations.length > 0) {
 			frames = Paths.getSparrowAtlas(image);
-			for (i in 0...animArray.length) {
-				var anim:String = animArray[i];
-				animation.addByPrefix(anim, anim, 24, loop);
-				if(idleAnim == null) {
-					idleAnim = anim;
-					animation.play(anim);
+
+			for (anim in animations) {
+				animation.addByPrefix(anim.name, anim.anim, anim.fps, anim.loop);
+				for (name in idlenamelist) {
+					if (name == anim.name) {
+						idleAnim = anim.name;
+						break;
+					}
+				}
+				if (idleAnim != null) {
+					animation.play(idleAnim);
 				}
 			}
 		} else {
-			if(image != null) {
+			if (image != null) {
 				loadGraphic(Paths.image(image));
 			}
 			active = false;
 		}
+
 		scrollFactor.set(scrollX, scrollY);
 		antialiasing = ClientPrefs.data.globalAntialiasing;
 	}
 
-	public function dance(?forceplay:Bool = false) {
-		if(idleAnim != null) {
+	public override function dance(?forceplay:Bool = false) {
+		super.dance();
+		if (idleAnim != null) {
 			animation.play(idleAnim, forceplay);
 		}
 	}

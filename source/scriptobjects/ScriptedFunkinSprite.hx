@@ -60,14 +60,14 @@ class ScriptedFunkinSprite extends FunkinSprite {
 				trace('script found!! '+ scriptpath );
 				#if !macro
 				script = HaxeScript.HaxeScript.FromFile(Paths.getPreloadPath(scriptpath), this); 
-				script.onError = PlayState.instance.hscriptError;
+                script.onError = MusicBeatState.hscriptError;
 				hasscript = true;
 				#end 
 			}
 			catch(e:Dynamic){  
                 if(PlayState.instance !=null){
-                    PlayState.instance.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
-				    PlayState.instance.addTextToDebug("[ ERROR ] Could not load Sprite script " + Paths.getPreloadPath(scriptpath), FlxColor.RED);
+                    MusicBeatState.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
+				    MusicBeatState.addTextToDebug("[ ERROR ] Could not load Sprite script " + Paths.getPreloadPath(scriptpath), FlxColor.RED);
 
                 }
                 else{
@@ -102,7 +102,7 @@ class ScriptedFunkinSprite extends FunkinSprite {
 	
 	 public function addvar(name:String, value:Dynamic) {
         if (script != null) {
-            script.interpreter.variables[name] = value;
+            script.iris.set(name, value);
         }
     }
 }

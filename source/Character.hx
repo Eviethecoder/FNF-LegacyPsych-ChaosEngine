@@ -9,20 +9,23 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
+import flixel.math.FlxPoint;
+import Note;
 import flixel.util.FlxColor;
+import utility.Characterpreloader;
 import Section.SwagSection;
-#if MODS_ALLOWED
+
 import sys.io.File;
 import sys.FileSystem;
-#end
+import utility.Scripthandler;
+
 import openfl.utils.AssetType;
 import openfl.utils.Assets;
-import haxe.Json;
-import haxe.format.JsonParser;
+import json2object.JsonParser;
 import objects.FunkinSprite;
+import HaxeScript.AnyValue;
+import utility.Scripthandler;
 
-import animate.FlxAnimate;
-import animate.FlxAnimateFrames;
 
 using StringTools;
 
@@ -32,6 +35,7 @@ typedef CharacterFile = {
 	var scale:Float;
 	var sing_duration:Float;
 	var healthicon:String;
+	var AnimType:String;
 
 	var position:Array<Float>;
 	var camera_position:Array<Float>;
@@ -54,9 +58,11 @@ typedef AnimArray = {
 	var loop:Bool;
 	var indices:Array<Int>;
 	var offsets:Array<Int>;
+	@:optional
+	var offsets_flip:Array<Int>;
 }
 
-@:build(macros.TestMacro.build())
+
 class Character extends FunkinSprite 
 {
 	public var animOffsets:Map<String, Array<Dynamic>>;
@@ -65,16 +71,21 @@ class Character extends FunkinSprite
 	public var charactertype:String ='unknown';
 	
 	public var isPlayer:Bool = false;
-	public var curCharacter:String = DEFAULT_CHARACTER;
+	public var curCharacter:String = Constants.DEFAULT_CHARACTER;
 
 	public var animstyle:String = 'v-slice';
-	var animtocheck:String;
 	public var forceanim:Bool = false; //used for extra anims that arnt sing or dance.
 
 	public var colorTween:FlxTween;
 	public var holdTimer:Float = 0;
 	public var heyTimer:Float = 0;
-	var singHoldTimer:FlxTimer;
+	var reverttimer:FlxTimer;
+	var timerhandled:Bool = false;
+	var didswitch:Bool;
+	public var pendingRevertAnim:Bool = false;
+	var heldSustainNotes:Array<Note> = [];  // Currently held sustain notes
+	var prevTapAnim:String = null;      // Last non-sustain animation
+	var lockedSustainDir:String = null;
 	public var specialAnim:Bool = false;
 	public var animationNotes:Array<Dynamic> = [];
 	public var stunned:Bool = false;
@@ -86,6 +97,7 @@ class Character extends FunkinSprite
 
 	public var healthIcon:String = 'face';
 	public var animationsArray:Array<AnimArray> = [];
+	var animtocheck:String;
 
 	public var positionArray:Array<Float> = [0, 0];
 	public var cameraPosition:Array<Float> = [0, 0];
@@ -98,8 +110,18 @@ class Character extends FunkinSprite
 	var offsethandler:Array<Float> = [];
 
 	var characterscriptPath:String;
+
 	var ogx:Float;
 	var ogy:Float;
+	  /**
+	 * The offset between the corner of the sprite and the origin of the sprite (at the character's feet).
+	 * cornerPosition = stageData - characterOrigin
+	 */
+	public var characterOrigin(get, never):FlxPoint;
+	// Frame-based logic helpers:
+
+	var queuedSustainAnim:String = null;
+	var activeSustainDir:String = null;
 
 	//Used on Character Editor
 	public var imageFile:String = '';
@@ -107,9 +129,10 @@ class Character extends FunkinSprite
 	public var imagelist:Array<String>; 
 	public var noAntialiasing:Bool = false;
 	public var originalFlipX:Bool = false;
+	public var singAnimations:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
 	public var healthColorArray:Array<Int> = [255, 0, 0];
 
-	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
+	
 	public function new(x:Float, y:Float, ?character:String = 'bf',charactertype:String = 'unknown' ,?isPlayer:Bool = false,)
 	{
 		super(x, y);
@@ -134,31 +157,13 @@ class Character extends FunkinSprite
 			//case 'your character name in case you want to hardcode them instead':
 
 			default:
-				var characterPath:String = 'characters/' + curCharacter + '.json';
-				characterscriptPath = 'characters/' + curCharacter + '.hx';
-				
-				#if MODS_ALLOWED
-				var path:String = Paths.modFolders(characterPath);
-				if (!FileSystem.exists(path)) {
-					path = Paths.getPreloadPath(characterPath);
-				}
+			
+				characterscriptPath = 'data/characters/' + curCharacter + '.hx';
+			
+				trace('character: ' + curCharacter);
+				var json:CharacterFile = Characterpreloader.charmap.get(curCharacter);
+				trace('json: ' + json);
 
-				if (!FileSystem.exists(path))
-				#else
-				var path:String = Paths.getPreloadPath(characterPath);
-				if (!Assets.exists(path))
-				#end
-				{
-					path = Paths.getPreloadPath('characters/' + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change him to BF just to prevent a crash
-				}
-
-				#if MODS_ALLOWED
-				var rawJson = File.getContent(path);
-				#else
-				var rawJson = Assets.getText(path);
-				#end
-
-				var json:CharacterFile = cast Json.parse(rawJson);
 				
 				//sparrow
 				//packer
@@ -276,10 +281,9 @@ class Character extends FunkinSprite
 									animation.addByPrefix(animAnim, animName, animFps, animLoop);
 								}
 							}
-						
-						if(anims.offsets != null && anims.offsets.length > 1) {
-							addOffset(anims.anim, anims.offsets[0], anims.offsets[1]);
-					}
+							if(anims.offsets != null && anims.offsets.length > 1) {
+								addOffset(anims.anim, anims.offsets[0], anims.offsets[1]);
+							}
 				}
 					
 				}
@@ -321,47 +325,16 @@ class Character extends FunkinSprite
 		var classname:String = Type.getClassName(Type.getClass(FlxG.state));
 		
 		if(classname == 'PlayState'){
-			if(sys.FileSystem.exists(Paths.getPreloadPath(characterscriptPath)) && PlayState.instance!=null ){
-
-			try{
-				trace('script found!! '+ characterscriptPath );
-				#if !macro
-				__hscript = HaxeScript.HaxeScript.FromFile(Paths.getPreloadPath(characterscriptPath), this); 
-				__hscript.onError = PlayState.instance.hscriptError;
+			__hscript = Scripthandler.setupScripts(characterscriptPath, this, true);
+			trace('Character Script loaded: ' + __hscript);
+			if(__hscript != null){
 				hasscript = true;
-				
-				#end 
 			}
-			catch(e:Dynamic){  
-				PlayState.instance.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
-				PlayState.instance.addTextToDebug("[ ERROR ] Could not load character script " + Paths.getPreloadPath(characterscriptPath), FlxColor.RED);
-				hasscript = false;  
-			} 
-		}
-		else if(sys.FileSystem.exists(Paths.modFolders(characterscriptPath)) && PlayState.instance!=null ){
-
-			try{
-				trace('script found!! '+ characterscriptPath );
-				#if !macro
-				__hscript = HaxeScript.HaxeScript.FromFile(Paths.modFolders(characterscriptPath), this); 
-				__hscript.onError = PlayState.instance.hscriptError;
-				hasscript = true;
-				
-				#end 
-			}
-			catch(e:Dynamic){  
-				PlayState.instance.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
-				PlayState.instance.addTextToDebug("[ ERROR ] Could not load character script " + Paths.modFolders(characterscriptPath), FlxColor.RED);
-				hasscript = false;  
-			} 
-		}
-		else{
-			hasscript = false;  
-		}
 
 		}
 		
 	
+
 	}
 
 	override function update(elapsed:Float)
@@ -388,6 +361,7 @@ class Character extends FunkinSprite
 				dance();
 			}
 			
+
 			
 
 			
@@ -397,6 +371,13 @@ class Character extends FunkinSprite
 				holdTimer += elapsed;
 			}
 
+			
+				
+			
+			
+
+			
+
 			if (holdTimer >= Conductor.stepCrochet * (0.0011 / (FlxG.sound.music != null ? FlxG.sound.music.pitch : 1)) * singDuration)
 			{
 				dance();
@@ -404,6 +385,7 @@ class Character extends FunkinSprite
 			}
 			
 
+			
 			if(animation.curAnim.finished && animation.getByName(animation.curAnim.name + '-loop') != null )
 			{
 				playAnim(animation.curAnim.name + '-loop');
@@ -415,6 +397,7 @@ class Character extends FunkinSprite
 
 	override function onAnimationFinished(name:String)
     {
+
 		setFunctionOnScripts('onAnimationFinished', [name]);
         if(forceanim){
 			forceanim = false;
@@ -422,15 +405,23 @@ class Character extends FunkinSprite
     
     }
 
+	function get_characterOrigin():FlxPoint
+  {
+    var xPos = (width / 2); // Horizontal center
+    var yPos = (height); // Vertical bottom
+    return new FlxPoint(xPos, yPos);
+  }
+
+
 	public var danced:Bool = false;
 
 	/**
 	 * FOR GF DANCING SHIT
 	 */
-	public function dance()
+	override function dance(?forceplay:Bool = false)
 	{
 		setFunctionOnScripts('dance', []);
-		if (!debugMode && !skipDance && !specialAnim)
+		if (!debugMode && !skipDance && !specialAnim && !forceanim)
 		{
 			if(danceIdle)
 			{
@@ -448,125 +439,149 @@ class Character extends FunkinSprite
 	}
 
 
-	public function setFunctionOnScripts(name:String,  params:Array<Dynamic>){
+	public function setFunctionOnScripts(name:String,  params:Array<AnyValue>){
 		if(hasscript){
 			__hscript.runFunction(name, params);
-		}
-		else{
-			
 		}
 
 	}
 
-	public function playSingAnim(note:Note,AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0 ):Void
+
+
+
+
+
+	public function playSingAnim(note:Note, AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
+	{
+		specialAnim = false;
+		setFunctionOnScripts('playSingAnim', [note, AnimName, Force, Reversed, Frame]);
+
+		
+		if (note.noAnimation)
+			return;
+
+		if (forceanim)
+		{
+			heldSustainNotes = [];
+			activeSustainDir = null;
+			return;
+		}
+
+		
+		var baseAnim:String = AnimName + note.animSuffix;
+		var curAnim:String  = getCurrentAnimation();
+
+
+		var treatAsSustain:Bool = note.isSustainNote || (note.sustainLength > 0);
+
+
+		if (animstyle == "psych" )
+		{
+			playAnim(baseAnim, Force, Reversed, Frame);
+			return;
+		}
+
+
+		if (!note.isSustainNote)
 		{
 			
-			specialAnim = false;
-			if(note.animSuffix != '' ){
-				if(alt == ''){
-					alt = note.animSuffix;
+			
+			playAnim(baseAnim, Force, Reversed, Frame);
+			
+		}
+		
+
+
+		if (treatAsSustain)
+		{
+			
+			if (heldSustainNotes.indexOf(note) == -1)
+				heldSustainNotes.push(note);
+			if (animstyle == "pause")
+			{
+				if(note.endnote){
+				trace('endnote');
+				animation.curAnim.paused = false;
 				}
 				else{
-					alt += note.animSuffix; 
+					animation.curAnim.paused = true;
 				}
+
+			}
+
+			
+
+			// ====== V-SLICE STYLE ======
+			if (animstyle == "v-slice")
+			{
 				
-			}
-			setFunctionOnScripts('playSingAnim', [note, AnimName, Force, Reversed, Frame]);
-			if (!note.noAnimation && !forceanim){
+				// Prevent switching directions mid-hold
+				if (!note.endnote && activeSustainDir != null && activeSustainDir != AnimName)
+				{
+					
+					
+					if (!isAnimationFinished())
+						return;
+						// allow fallthrough once finished
+
+					
+					
+				}
+
 				
-				if (note.isSustainNote == true && animstyle != 'psych'){
-					singHoldNote = note.isSustainNote;
 
-					
-					if (singHoldTimer == null) {
-						singHoldTimer = new FlxTimer().start(1, function(tmr:FlxTimer) {
-							singHoldNote = false;
-							trace('reset');
-						});
-					} else {
-						
-						singHoldTimer.reset(1);
-						
+				// --- END NOTE ---
+				if (note.endnote)
+				{
+					var endAnim = AnimName + alt + "-end";
+					var hasEnd = animation.getByName(endAnim) != null;
+
+					activeSustainDir = null;
+
+					// Play end animation if available
+					if (hasEnd)
+					{
+						if (curAnim != endAnim)
+						{
+							playAnim(endAnim, Force, Reversed, Frame);
+							return;
+						}
+						if (!isAnimationFinished())
+							return;
 					}
 
-					if (isSinging() && AnimName == getCurrentAnimation()){
-						switch(animstyle){
-							case ('pause'):
-								if(note.endnote){
-									trace('endnote');
-									this.animation.curAnim.paused = false;
-								}
-								else{
-									this.animation.curAnim.paused = true;
-								}
-							case('v-slice'):
-								if(note.endnote){
-									if(animation.getByName(animation.curAnim.name + '-end') != null && animation.curAnim.name != AnimName + '-end')
-										{
-										trace(animation.curAnim.name + 'compared to ' +animtocheck);
-										var animtoplay:String = AnimName + '-end';
-										trace(animtoplay);
-										if(animation.curAnim.name == animtocheck){
-											trace('dontloop');
+					// remove sustain from stack
+					var idx = heldSustainNotes.indexOf(note);
+					if (idx != -1) heldSustainNotes.splice(idx, 1);
 
-
-										}
-										else{
-											playAnim(animtoplay, Force, Reversed, Frame);
-										}
-										
-										animtocheck = animation.curAnim.name;
-										trace('holdanim: ' + animation.curAnim.name);
-									}
-								}
-								else{
-									if(isAnimationFinished() && animation.getByName(animation.curAnim.name + '-hold') != null && animation.curAnim.name != AnimName + '-hold' )
-									{
-										trace(animation.curAnim.name + 'compared to ' +animtocheck);
-										var animtoplay:String = AnimName + '-hold';
-										trace(animtoplay);
-										if(animation.curAnim.name == animtocheck){
-											trace('dontloop');
-
-
-										}
-										else{
-											playAnim(animtoplay, Force, Reversed, Frame);
-										}
-										
-										animtocheck = animation.curAnim.name;
-
-
-										
-										trace('holdanim: ' + animation.curAnim.name);
-									}
-								}
-								
-							
-						}
-
-					}
-					
-					else{
-						if (singHoldTimer != null){
-							singHoldTimer.active = false;
-							singHoldNote = false;
-						}
-						if(!getCurrentAnimation().endsWith('-hold') || !!getCurrentAnimation().endsWith('-end')){
-							playAnim(AnimName + alt, Force, Reversed, Frame);
-							trace('not holding anim sooo');
-						}
-						
-
-						 
-					}
-					
+					return;
 				}
-				else{
-					playAnim(AnimName+ alt, Force, Reversed, Frame);
+
+				// --- HOLD ANIMATION ---
+				var holdAnim = AnimName + alt + "-hold";
+				if (animation.getByName(holdAnim) != null)
+				{
+					if (isAnimationFinished() && curAnim != holdAnim)
+						playAnim(holdAnim, Force, Reversed, Frame);
 				}
+
+				return;
 			}
-			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 			
 		
@@ -585,6 +600,10 @@ class Character extends FunkinSprite
 		}
 		else{
 			forceanim = Force;
+			if(forceanim == true){
+				animation.stop();
+			}
+			
 		}
 		animation.play(AnimName, Force, Reversed, Frame);
 
@@ -654,15 +673,6 @@ class Character extends FunkinSprite
 		}
 		settingCharacterUp = false;
 	}
-	public function callFunctionWithScripts(name:String,  params:Array<String>){
-		if(hasscript){
-			__hscript.runFunction(name, params);
-		}
-		else{
-			
-		}
-
-	}
 	public override function destroy():Void
     {
         
@@ -670,9 +680,9 @@ class Character extends FunkinSprite
         super.destroy();
     }
 
-	public function addOffset(name:String, x:Float = 0, y:Float = 0)
+	public function addOffset(name:String, x:Float = 0, y:Float = 0) // we need to edit this, but make sure if their is no extra offsets then it defaults to 0, 0 instead of null, which causes errors
 	{
-		animOffsets[name] = [x, y];
+			animOffsets[name] = [x, y];
 	}
 
 	public function quickAnimAdd(name:String, anim:String)

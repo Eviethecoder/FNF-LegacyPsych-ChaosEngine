@@ -70,14 +70,14 @@ class FreeplayState extends MusicBeatState
 			var leSongs:Array<String> = [];
 			var leChars:Array<String> = [];
 
-			for (j in 0...leWeek.songs.length)
+			for (j in 0...leWeek.songlist .length)
 			{
-				leSongs.push(leWeek.songs[j][0]);
-				leChars.push(leWeek.songs[j][1]);
+				leSongs.push(leWeek.songlist [j][0]);
+				leChars.push(leWeek.songlist [j][1]);
 			}
 
 			WeekData.setDirectoryFromWeek(leWeek);
-			for (song in leWeek.songs)
+			for (song in leWeek.songlist )
 			{
 				var colors:Array<Int> = song[2];
 				if(colors == null || colors.length < 3)
@@ -355,20 +355,24 @@ class FreeplayState extends MusicBeatState
 		else if (accepted)
 		{
 			persistentUpdate = false;
+			var folder:String = '';
 			var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-			/*#if MODS_ALLOWED
-			if(!sys.FileSystem.exists(Paths.modsJson(songLowercase + '/' + poop)) && !sys.FileSystem.exists(Paths.json(songLowercase + '/' + poop))) {
-			#else
-			if(!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop))) {
-			#end
-				poop = songLowercase;
-				curDifficulty = 1;
-				trace('Couldnt find file');
-			}*/
-			trace(poop);
 
-			PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+			for (i in 0...Constants.defaultsongtypes.length)
+			{
+				if (songLowercase.contains('-' + Constants.defaultsongtypes[i]))
+				{
+					folder =  'songs/' + Constants.defaultsongtypes[i];
+					break;
+				}
+				else{
+					folder =  'songs/default' ;
+				}
+			}
+			trace(folder + '/'+ songLowercase + '/' + songLowercase);
+			Constants.cursongfolder = folder;
+			PlayState.SONG = Song.loadFromJson(songLowercase, folder + '/'+ songLowercase);
 			PlayState.isStoryMode = false;
 			PlayState.storyDifficulty = curDifficulty;
 

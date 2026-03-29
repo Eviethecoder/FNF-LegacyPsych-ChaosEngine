@@ -45,12 +45,12 @@ class HealthIcon extends FlxSprite
 				switch (isPlayer){
 				case(true):
 					updateAnim(PlayState.instance.hud.healthBar.percent);
-					if(PlayState.instance.hud.iconp1overide ==null){
+					if(PlayState.instance.hud.hudData.iconp1overide ==null){
 						x = PlayState.instance.hud.healthBar.x+ (PlayState.instance.hud.healthBar.width * (FlxMath.remapToRange(PlayState.instance.hud.healthBar.percent, 0, 100, 100, 0) * 0.01))+ (150 * scale.x - 150) / 2- iconOffset;
 						}
 				case(false):
 					updateAnim(100 - PlayState.instance.hud.healthBar.percent);
-					if(PlayState.instance.hud.iconp2overide ==null){
+					if(PlayState.instance.hud.hudData.iconp2overide ==null){
 						x = PlayState.instance.hud.healthBar.x+ (PlayState.instance.hud.healthBar.width * (FlxMath.remapToRange(PlayState.instance.hud.healthBar.percent, 0, 100, 100, 0) * 0.01))- (150 * scale.x) / 2- iconOffset * 2;
 				
 				}
@@ -70,9 +70,8 @@ class HealthIcon extends FlxSprite
 	private var iconOffsets:Array<Float> = [0, 0];
 	public function changeIcon(char:String) {
 		if(this.char != char) {
-			var name:String = 'icons/' + char;
-			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-' + char; //Older versions of psych engine's support
-			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-face'; //Prevents crash from missing icon
+			var name:String = 'icons/icon-' + char;
+		if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-face'; //Prevents crash from missing icon
 			var file:Dynamic = Paths.image(name);
 
 			loadGraphic(file); //Load stupidly first for getting the file size

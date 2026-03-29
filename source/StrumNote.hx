@@ -3,20 +3,28 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
+import shaders.RGBPalette;
+import shaders.RGBPalette.RGBShaderReference;
+import flixel.util.FlxColor;
 
 using StringTools;
 
 class StrumNote extends FlxSprite
 {
-	private var colorSwap:ColorSwap;
+	public var rgbShader:RGBShaderReference;
 	public var resetAnim:Float = 0;
 	private var noteData:Int = 0;
+	private var ispixel:Bool = false;
+	public var sustainSplash:SustainSplash;
 	public var direction:Float = 90;//plan on doing scroll directions soon -bb
 	public var downScroll:Bool = false;//plan on doing scroll directions soon -bb
 	public var sustainReduce:Bool = true;
 	
 	private var player:Int;
+	var isPlayer:Bool;
+	var arr:Array<Dynamic>;
 	
+	public var useRGBShader:Bool = true;
 	public var texture(default, set):String = null;
 	private function set_texture(value:String):String {
 		if(texture != value) {
@@ -27,22 +35,52 @@ class StrumNote extends FlxSprite
 	}
 
 	public function new(x:Float, y:Float, leData:Int, player:Int) {
-		colorSwap = new ColorSwap();
-		shader = colorSwap.shader;
+
+		isPlayer = false;
+		rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(leData,isPlayer));
+		rgbShader.enabled = false;
+		switch(player)
+		{
+			case 0:
+				isPlayer = false;
+			case 1:
+				isPlayer = true;
+
+		}
+		arr = PlayState.instance.hud.hudData.getNoteskinrgb(isPlayer)[leData];
 		noteData = leData;
 		this.player = player;
+
+		if(leData <= arr.length)
+		{
+			@:bypassAccessor
+			{
+				rgbShader.r = arr[0];
+				rgbShader.g = arr[1];
+				rgbShader.b = arr[2];
+			}
+		}
+
 		this.noteData = leData;
 		super(x, y);
 
-		var skin:String = 'NOTE_assets';
+
+
+		
+		var skin:String = 'Huds/Noteskins/NOTE_assets';
 		if(PlayState.instance !=null && PlayState.instance.hud.bars.noteskin != null){
 			var playerbool:Bool = false;
 			if(player == 1){
 				playerbool = true;
 			}
-			skin = PlayState.instance.hud.getNoteskin(playerbool);
+			skin = PlayState.instance.hud.hudData.getNoteskin(playerbool);
+		}
+		else{
+			skin = 'Huds/Noteskins/NOTE_assets';
 		}
 		texture = skin; //Load texture and anims
+
+		sustainSplash = new SustainSplash(this);
 
 		scrollFactor.set();
 	}
@@ -52,70 +90,33 @@ class StrumNote extends FlxSprite
 		var lastAnim:String = null;
 		if(animation.curAnim != null) lastAnim = animation.curAnim.name;
 
-		if(PlayState.isPixelStage)
+		frames = Paths.getSparrowAtlas(texture);
+		animation.addByPrefix('green', 'arrowUP');
+		animation.addByPrefix('blue', 'arrowDOWN');
+		animation.addByPrefix('purple', 'arrowLEFT');
+		animation.addByPrefix('red', 'arrowRIGHT');
+
+		antialiasing = ClientPrefs.data.globalAntialiasing;
+		setGraphicSize(Std.int(width * 0.7));
+
+		switch (Math.abs(noteData) % 4)
 		{
-			loadGraphic(Paths.image('pixelUI/' + texture));
-			width = width / 4;
-			height = height / 5;
-			loadGraphic(Paths.image('pixelUI/' + texture), true, Math.floor(width), Math.floor(height));
-
-			antialiasing = false;
-			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
-
-			animation.add('green', [6]);
-			animation.add('red', [7]);
-			animation.add('blue', [5]);
-			animation.add('purple', [4]);
-			switch (Math.abs(noteData) % 4)
-			{
-				case 0:
-					animation.add('static', [0]);
-					animation.add('pressed', [4, 8], 12, false);
-					animation.add('confirm', [12, 16], 24, false);
-				case 1:
-					animation.add('static', [1]);
-					animation.add('pressed', [5, 9], 12, false);
-					animation.add('confirm', [13, 17], 24, false);
-				case 2:
-					animation.add('static', [2]);
-					animation.add('pressed', [6, 10], 12, false);
-					animation.add('confirm', [14, 18], 12, false);
-				case 3:
-					animation.add('static', [3]);
-					animation.add('pressed', [7, 11], 12, false);
-					animation.add('confirm', [15, 19], 24, false);
-			}
-		}
-		else
-		{
-			frames = Paths.getSparrowAtlas(texture);
-			animation.addByPrefix('green', 'arrowUP');
-			animation.addByPrefix('blue', 'arrowDOWN');
-			animation.addByPrefix('purple', 'arrowLEFT');
-			animation.addByPrefix('red', 'arrowRIGHT');
-
-			antialiasing = ClientPrefs.data.globalAntialiasing;
-			setGraphicSize(Std.int(width * 0.7));
-
-			switch (Math.abs(noteData) % 4)
-			{
-				case 0:
-					animation.addByPrefix('static', 'arrowLEFT');
-					animation.addByPrefix('pressed', 'left press', 24, false);
-					animation.addByPrefix('confirm', 'left confirm', 24, false);
-				case 1:
-					animation.addByPrefix('static', 'arrowDOWN');
-					animation.addByPrefix('pressed', 'down press', 24, false);
-					animation.addByPrefix('confirm', 'down confirm', 24, false);
-				case 2:
-					animation.addByPrefix('static', 'arrowUP');
-					animation.addByPrefix('pressed', 'up press', 24, false);
-					animation.addByPrefix('confirm', 'up confirm', 24, false);
-				case 3:
-					animation.addByPrefix('static', 'arrowRIGHT');
-					animation.addByPrefix('pressed', 'right press', 24, false);
-					animation.addByPrefix('confirm', 'right confirm', 24, false);
-			}
+			case 0:
+				animation.addByPrefix('static', 'arrowLEFT');
+				animation.addByPrefix('pressed', 'left press', 24, false);
+				animation.addByPrefix('confirm', 'left confirm', 24, false);
+			case 1:
+				animation.addByPrefix('static', 'arrowDOWN');
+				animation.addByPrefix('pressed', 'down press', 24, false);
+				animation.addByPrefix('confirm', 'down confirm', 24, false);
+			case 2:
+				animation.addByPrefix('static', 'arrowUP');
+				animation.addByPrefix('pressed', 'up press', 24, false);
+				animation.addByPrefix('confirm', 'up confirm', 24, false);
+			case 3:
+				animation.addByPrefix('static', 'arrowRIGHT');
+				animation.addByPrefix('pressed', 'right press', 24, false);
+				animation.addByPrefix('confirm', 'right confirm', 24, false);
 		}
 		updateHitbox();
 
@@ -131,6 +132,7 @@ class StrumNote extends FlxSprite
 		x += 50;
 		x += ((FlxG.width / 2) * player);
 		ID = noteData;
+		
 	}
 
 	override function update(elapsed:Float) {
@@ -141,10 +143,9 @@ class StrumNote extends FlxSprite
 				resetAnim = 0;
 			}
 		}
-		//if(animation.curAnim != null){ //my bad i was upset
-		if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
+		
+		if(animation.curAnim.name == 'confirm' && !ispixel) {
 			centerOrigin();
-		//}
 		}
 
 		super.update(elapsed);
@@ -154,21 +155,75 @@ class StrumNote extends FlxSprite
 		animation.play(anim, force);
 		centerOffsets();
 		centerOrigin();
-		if(animation.curAnim == null || animation.curAnim.name == 'static') {
-			colorSwap.hue = 0;
-			colorSwap.saturation = 0;
-			colorSwap.brightness = 0;
-		} else {
-			if (noteData > -1 && noteData < ClientPrefs.data.arrowHSV.length)
-			{
-				colorSwap.hue = ClientPrefs.data.arrowHSV[noteData][0] / 360;
-				colorSwap.saturation = ClientPrefs.data.arrowHSV[noteData][1] / 100;
-				colorSwap.brightness = ClientPrefs.data.arrowHSV[noteData][2] / 100;
-			}
-
-			if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
-				centerOrigin();
-			}
+	
+		if(animation.curAnim.name == 'confirm' ) {
+			centerOrigin();
 		}
+		if(useRGBShader) rgbShader.enabled = (animation.curAnim != null && animation.curAnim.name != 'static');
+	}
+}
+
+class SustainSplash extends FlxSprite {
+	public var rgbShader:RGBShaderReference;
+	public var strum:StrumNote;
+	override public function new(strum:StrumNote) {
+		super();
+		this.strum = strum;
+
+		@:privateAccess
+		rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(strum.noteData, strum.isPlayer));
+
+		frames = Paths.getSparrowAtlas("sustain_cover");
+		animation.addByPrefix('cover', 'sustain cover pre0', 24, false);
+		animation.addByPrefix('splash', 'sustain cover end0', 24, false);
+		animation.addByPrefix('loop', 'sustain cover0', 24);
+		animation.play("loop");
+		updateHitbox();
+		visible = false;
+		antialiasing = ClientPrefs.data.globalAntialiasing;
+
+		scale.set(strum.scale.x / 0.7, strum.scale.y / 0.7);
+		updateHitbox();
+	}
+
+	public var updatedThisFrame:Bool = false;
+
+	public inline function show() {
+		updatedThisFrame = true;
+		visible = true;
+		if (animation.curAnim.name != "loop") {
+			animation.play("cover");
+			center();
+		}
+	}
+	public inline function hide(miss:Bool = false) {
+		if (animation.curAnim.name == "splash") return;
+
+		updatedThisFrame = true;
+		if (miss) visible = false;
+		if (animation.curAnim.name != "splash") {
+			animation.play("splash");
+			center();
+		}
+	}
+
+	override public function update(elapsed:Float) {
+		super.update(elapsed);
+		updatedThisFrame = false;
+
+		if (animation.curAnim.finished) {
+			if (animation.curAnim.name == "cover") animation.play("loop");
+			if (animation.curAnim.name == "splash") visible = false;
+		}
+		
+		//if (animation.curAnim.name != "splash") center();
+		//updateHitbox();
+		center();
+	}
+
+	public function center() {
+		centerOffsets();
+		x = strum.x + (strum.width/2) - (width/2);
+		y = strum.y + (strum.height/2) - (height/2);
 	}
 }
