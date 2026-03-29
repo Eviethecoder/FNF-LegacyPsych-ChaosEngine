@@ -1,13 +1,18 @@
 package ;
 
+
 import flixel.system.ui.FlxSoundTray;
 import flixel.tweens.FlxTween;
 import flixel.FlxG;
+import flixel.util.FlxColor;
 import flixel.system.FlxAssets;
 import flixel.tweens.FlxEase;
 import openfl.display.Bitmap;
+import flixel.util.FlxColorTransformUtil;
 import openfl.display.BitmapData;
+import openfl.geom.ColorTransform;
 import flixel.math.FlxMath;
+
 import Assets;
 
 /**
@@ -24,6 +29,7 @@ class FunkinSoundTray extends FlxSoundTray
   var alphaTarget:Float = 0;
   var bg:Bitmap;
 
+  public static var instance:FunkinSoundTray;
   var volumeMaxSound:String;
 
   public function new()
@@ -31,9 +37,21 @@ class FunkinSoundTray extends FlxSoundTray
     // calls super, then removes all children to add our own
     // graphics
     super();
+    resetBar('default');
+    instance = this;
+
+    volumeUpSound = Paths.vslicesound("soundtray/volumeUp");
+    volumeDownSound = Paths.vslicesound("soundtray/volumeDown");
+    volumeMaxSound = Paths.vslicesound("soundtray/volumeMax");
+
+    trace("Custom tray added!");
+  }
+
+
+  public function resetBar(folder:String, ?coloroveride:FlxColor, red:Float = 1.0,green:Float = 0,blue:Float = 0){
     removeChildren();
 
-    bg = new Bitmap(Assets.getBitmapData(Paths.vsliceimage("soundtray/volumebox")));
+    bg = new Bitmap(Assets.getBitmapData(Paths.vsliceimage("soundtray/" +folder + "/volumebox")));
     bg.scaleX = graphicScale;
     bg.scaleY = graphicScale;
     bg.smoothing = true;
@@ -47,16 +65,34 @@ class FunkinSoundTray extends FlxSoundTray
     // clear the bars array entirely, it was initialized
     // in the super class
     _bars = [];
+     var colorTransform = new ColorTransform();
+    //  switch(folder){
+    //     case 'default':
+    //       if (coloroveride != null){
+    //         FlxColorTransformUtil.set(colorTransform, coloroveride);
+
+    //       }
+    //       else{
+    //         colorTransform.redMultiplier = red;
+    //         colorTransform.greenMultiplier = green;
+    //         colorTransform.blueMultiplier = blue;
+    //       }
+
+    // }
+
 
     // 1...11 due to how block named the assets,
     // we are trying to get assets bars_1-10
     for (i in 1...11)
     {
-      var bar:Bitmap = new Bitmap(Assets.getBitmapData(Paths.vsliceimage("soundtray/bars_" + i)));
-       bar.x = 6;
-      bar.y = 11;
+      var bar:Bitmap = new Bitmap(Assets.getBitmapData(Paths.vsliceimage("soundtray/" + folder + "/bars_" + i)));
+      bar.x = bg.x +8;
+      bar.y = bg.y;
       bar.scaleX = graphicScale;
       bar.scaleY = graphicScale;
+        if (coloroveride != null){
+           bar.transform.colorTransform = colorTransform;
+        }
       bar.smoothing = true;
       addChild(bar);
       _bars.push(bar);
@@ -64,14 +100,7 @@ class FunkinSoundTray extends FlxSoundTray
 
     y = -height;
     screenCenter();
-
-    volumeUpSound = Paths.vslicesound("soundtray/volumeUp");
-    volumeDownSound = Paths.vslicesound("soundtray/volumeDown");
-    volumeMaxSound = Paths.vslicesound("soundtray/volumeMax");
-
-    trace("Custom tray added!");
   }
-
   override public function update(MS:Float):Void
   {
     y = FlxMath.lerp(y, lerpYPos, 0.1);

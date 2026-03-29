@@ -9,15 +9,10 @@ class Vocals{
     public var bfVocals:FlxSound;
     private var usesSingleTrack:Bool = false;
 
-    public function new(song:Null<String> = null){
-        if (song != null){
-            /*bfVocals = getVoice(song, "Player");
-            dadVocals = getVoice(song, "Opponent");
-            if (bfVocals.length < 1){ // song couldn't be loaded ;(
-                bfVocals = getVoice(song, "Voices");
-            }*/
-
-            if (Paths.soundExists('songs', '${Paths.formatToSongPath(song)}/Player')){
+    public function new(song:Null<String> = null, ?needsvocals:Bool = true){
+     
+        if (song != null && needsvocals){
+            if (Paths.soundExists('data/' +Constants.cursongfolder , '${Paths.formatToSongPath(song)}/Player')){
                 bfVocals = getVoice(song, "Player");
                 dadVocals = getVoice(song, "Opponent");
             }
@@ -39,7 +34,7 @@ class Vocals{
     static function getVoice(song:String, player:String):FlxSound
     {
         var songKey:String = '${Paths.formatToSongPath(song)}/${player}';
-        var voices = Paths.returnSound('songs', songKey);
+        var voices = Paths.returnSound('data/' +Constants.cursongfolder, songKey);
         return new FlxSound().loadEmbedded(voices);
     }
 

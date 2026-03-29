@@ -8,6 +8,7 @@ import lime.utils.Assets;
 import openfl.utils.Assets as OpenFlAssets;
 import haxe.Json;
 import haxe.format.JsonParser;
+import flixel.util.FlxColor;
 
 using StringTools;
 
@@ -34,11 +35,14 @@ class WeekData {
 	public var folder:String = '';
 	
 	// JSON variables
+
+	public var weekfile:WeekFile;
 	public var songs:Array<Dynamic>;
 	public var weekCharacters:Array<String>;
 	public var weekBackground:String;
 	public var weekBefore:String;
 	public var storyName:String;
+	public var songlist:Array<Dynamic>;
 	public var weekName:String;
 	public var freeplayColor:Array<Int>;
 	public var startUnlocked:Bool;
@@ -46,6 +50,7 @@ class WeekData {
 	public var hideStoryMode:Bool;
 	public var hideFreeplay:Bool;
 	public var difficulties:String;
+	public var script:HaxeScript = null;
 
 	public var fileName:String;
 
@@ -67,22 +72,246 @@ class WeekData {
 		return weekFile;
 	}
 
-	// HELP: Is there any way to convert a WeekFile to WeekData without having to put all variables there manually? I'm kind of a noob in haxe lmao
+	// HELP: Is there any way to convert a WeekFile to WeekData without having to put all variables there manually? I'm kind of a noob in haxe lmao 
 	public function new(weekFile:WeekFile, fileName:String) {
-		songs = weekFile.songs;
-		weekCharacters = weekFile.weekCharacters;
-		weekBackground = weekFile.weekBackground;
-		weekBefore = weekFile.weekBefore;
-		storyName = weekFile.storyName;
-		weekName = weekFile.weekName;
-		freeplayColor = weekFile.freeplayColor;
-		startUnlocked = weekFile.startUnlocked;
-		hiddenUntilUnlocked = weekFile.hiddenUntilUnlocked;
-		hideStoryMode = weekFile.hideStoryMode;
-		hideFreeplay = weekFile.hideFreeplay;
-		difficulties = weekFile.difficulties;
-
+		
+		var modsDirectories:Array<String> = Paths.getModDirectories();
+		this.weekfile = weekFile;
+		songlist = weekFile.songs;
 		this.fileName = fileName;
+
+		var scriptpath:String = 'data/weeks/' + fileName + '.hx';
+		if(FileSystem.exists('assets/' + scriptpath)){
+					try{
+							trace('script found ' +scriptpath);  
+							script = HaxeScript.FromFile(scriptpath, this);
+							script.onError =MusicBeatState.hscriptError;
+						}
+						catch(e:Dynamic){ 
+							MusicBeatState.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
+							MusicBeatState.addTextToDebug("[ ERROR ] Could not load Event script " + scriptpath, 0xFF0000); 
+						}
+				}
+		else
+		{
+			for (folder in modsDirectories)
+			{
+				var modscriptpath:String = haxe.io.Path.join([Paths.mods(), folder, 'data/weeks/', fileName + '.hx']);
+				if(FileSystem.exists(modscriptpath)){
+						try{
+								trace('script found ' +modscriptpath);  
+								script = HaxeScript.FromFile(modscriptpath, this);
+								script.onError = MusicBeatState.hscriptError;
+							}
+							catch(e:Dynamic){ 
+								MusicBeatState.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
+								MusicBeatState.addTextToDebug("[ ERROR ] Could not load Event script " + modscriptpath, 0xFF0000);
+							}
+						}
+				}
+			}
+	}
+	
+
+	public function getsonglist():Array<Dynamic> {
+		if (script != null) {
+			trace('Running script function getsonglist');
+
+			// Grab the function from the script
+			var func = script.iris.get("getsonglist");
+
+			if (func != null) {
+				var songlist:Array<Dynamic> = cast Reflect.callMethod(null, func, []);
+				if (songlist != null) {
+					return songlist;
+				} else {
+					trace('Script returned null, falling back to JSON data.');
+					return songs;
+				}
+			} else {
+				trace('Script function getsonglist not found, using fallback.');
+				return songs;
+			}
+		} else {
+			// No script loaded, use fallback
+			return songs;
+		}
+	}
+
+	public function getweekcharacters():Array<String> {
+		if (script != null) {
+			trace('Running script function getweekcharacters');
+			var func = script.iris.get("getweekcharacters");
+			if (func != null) {
+				var value:Array<String> = cast Reflect.callMethod(null, func, []);
+				if (value != null) {
+					return value;
+				}
+				return weekCharacters;
+			}
+			return weekCharacters;
+		}
+		return weekCharacters;
+	}
+
+	public function getweekbackground():String {
+		if (script != null) {
+			trace('Running script function getweekbackground');
+			var func = script.iris.get("getweekbackground");
+			if (func != null) {
+				var value:String = cast Reflect.callMethod(null, func, []);
+				if (value != null) {
+					return value;
+				}
+				return weekBackground;
+			}
+			return weekBackground;
+		}
+		return weekBackground;
+	}
+
+	public function getweekbefore():String {
+		if (script != null) {
+			trace('Running script function getweekbefore');
+			var func = script.iris.get("getweekbefore");
+			if (func != null) {
+				var value:String = cast Reflect.callMethod(null, func, []);
+				if (value != null) {
+					return value;
+				}
+				return weekBefore;
+			}
+			return weekBefore;
+		}
+		return weekBefore;
+	}
+
+	public function getstoryname():String {
+		if (script != null) {
+			trace('Running script function getstoryname');
+			var func = script.iris.get("getstoryname");
+			if (func != null) {
+				var value:String = cast Reflect.callMethod(null, func, []);
+				if (value != null) {
+					return value;
+				}
+				return storyName;
+			}
+			return storyName;
+		}
+		return storyName;
+	}
+
+	public function getweekname():String {
+		if (script != null) {
+			trace('Running script function getweekname');
+			var func = script.iris.get("getweekname");
+			if (func != null) {
+				var value:String = cast Reflect.callMethod(null, func, []);
+				if (value != null) {
+					return value;
+				}
+				return weekName;
+			}
+			return weekName;
+		}
+		return weekName;
+	}
+
+	public function getfreeplaycolor():Array<Int> {
+		if (script != null) {
+			trace('Running script function getfreeplaycolor');
+			var func = script.iris.get("getfreeplaycolor");
+			if (func != null) {
+				var value:Array<Int> = cast Reflect.callMethod(null, func, []);
+				if (value != null) {
+					return value;
+				}
+				return freeplayColor;
+			}
+			return freeplayColor;
+		}
+		return freeplayColor;
+	}
+
+	public function getstartunlocked():Bool {
+		if (script != null) {
+			trace('Running script function getstartunlocked');
+			var func = script.iris.get("getstartunlocked");
+			if (func != null) {
+				var value:Dynamic = Reflect.callMethod(null, func, []);
+				if (value != null) {
+					return cast value;
+				}
+				return startUnlocked;
+			}
+			return startUnlocked;
+		}
+		return startUnlocked;
+	}
+
+	public function gethiddenuntilunlocked():Bool {
+		if (script != null) {
+			trace('Running script function gethiddenuntilunlocked');
+			var func = script.iris.get("gethiddenuntilunlocked");
+			if (func != null) {
+				var value:Dynamic = Reflect.callMethod(null, func, []);
+				if (value != null) {
+					return cast value;
+				}
+				return hiddenUntilUnlocked;
+			}
+			return hiddenUntilUnlocked;
+		}
+		return hiddenUntilUnlocked;
+	}
+
+	public function gethidestorymode():Bool {
+		if (script != null) {
+			trace('Running script function gethidestorymode');
+			var func = script.iris.get("gethidestorymode");
+			if (func != null) {
+				var value:Dynamic = Reflect.callMethod(null, func, []);
+				if (value != null) {
+					return cast value;
+				}
+				return hideStoryMode;
+			}
+			return hideStoryMode;
+		}
+		return hideStoryMode;
+	}
+
+	public function gethidefreeplay():Bool {
+		if (script != null) {
+			trace('Running script function gethidefreeplay');
+			var func = script.iris.get("gethidefreeplay");
+			if (func != null) {
+				var value:Dynamic = Reflect.callMethod(null, func, []);
+				if (value != null) {
+					return cast value;
+				}
+				return hideFreeplay;
+			}
+			return hideFreeplay;
+		}
+		return hideFreeplay;
+	}
+
+	public function getdifficulties():String {
+		if (script != null) {
+			trace('Running script function getdifficulties');
+			var func = script.iris.get("getdifficulties");
+			if (func != null) {
+				var value:String = cast Reflect.callMethod(null, func, []);
+				if (value != null) {
+					return value;
+				}
+				return difficulties;
+			}
+			return difficulties;
+		}
+		return difficulties;
 	}
 
 	public static function reloadWeekFiles(isStoryMode:Null<Bool> = false)
@@ -132,10 +361,10 @@ class WeekData {
 		var originalLength:Int = directories.length;
 		#end
 
-		var sexList:Array<String> = CoolUtil.coolTextFile(Paths.getPreloadPath('weeks/weekList.txt'));
+		var sexList:Array<String> = CoolUtil.coolTextFile(Paths.getPreloadPath('data/weeks/weekList.txt'));
 		for (i in 0...sexList.length) {
 			for (j in 0...directories.length) {
-				var fileToCheck:String = directories[j] + 'weeks/' + sexList[i] + '.json';
+				var fileToCheck:String = directories[j] + 'data/weeks/' + sexList[i] + '.json';
 				if(!weeksLoaded.exists(sexList[i])) {
 					var week:WeekFile = getWeekFile(fileToCheck);
 					if(week != null) {
@@ -158,7 +387,7 @@ class WeekData {
 
 		#if MODS_ALLOWED
 		for (i in 0...directories.length) {
-			var directory:String = directories[i] + 'weeks/';
+			var directory:String = directories[i] + 'data/weeks/';
 			if(FileSystem.exists(directory)) {
 				var listOfWeeks:Array<String> = CoolUtil.coolTextFile(directory + 'weekList.txt');
 				for (daWeek in listOfWeeks)
@@ -190,6 +419,7 @@ class WeekData {
 			var week:WeekFile = getWeekFile(path);
 			if(week != null)
 			{
+				
 				var weekFile:WeekData = new WeekData(week, weekToCheck);
 				if(i >= originalLength)
 				{
@@ -205,7 +435,6 @@ class WeekData {
 			}
 		}
 	}
-
 	private static function getWeekFile(path:String):WeekFile {
 		var rawJson:String = null;
 		#if MODS_ALLOWED
@@ -221,6 +450,7 @@ class WeekData {
 		if(rawJson != null && rawJson.length > 0) {
 			return cast Json.parse(rawJson);
 		}
+		
 		return null;
 	}
 

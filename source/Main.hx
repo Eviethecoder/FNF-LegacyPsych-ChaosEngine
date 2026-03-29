@@ -62,11 +62,10 @@ class Main extends Sprite
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
 		var game:FlxGame =new FlxGame(gameWidth, gameHeight, InitState, #if (flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen);
+		objects.Cursor.registerHaxeUICursors();
 		@:privateAccess
 		game._customSoundTray = FunkinSoundTray;
-		#if !debug
-		FlxG.signals.postUpdate.add(function() { if(FlxG.keys.justPressed.F1) { WindowsAPI.allocConsole(); }});
-		#end
+		FlxG.signals.postUpdate.add(function() { if(FlxG.keys.justPressed.F1) { trace('window'); WindowsAPI.allocConsole(); }});
 		addChild(game);
 
 		#if !mobile

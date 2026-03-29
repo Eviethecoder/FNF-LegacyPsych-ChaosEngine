@@ -122,7 +122,7 @@ class CreditsState extends MusicBeatState
                     iconPath = 'https://avatars.githubusercontent.com/' + p.icon;
                 }
 
-                var icon = new Githubicon(iconPath); //AttachedSprite
+                var icon = new Githubicon(iconPath); // NetSprite/AttachedSprite
                 icon.sprTracker = optionText;
                 icon.xAdd = optionText.width + 10;
                 iconArray.push(icon);
@@ -136,8 +136,8 @@ class CreditsState extends MusicBeatState
         // Description box
         descBox = new AttachedSprite();
         descBox.makeGraphic(1, 1, FlxColor.BLACK);
-        descBox.xAdd = 600;
-        descBox.yAdd = 20;
+        descBox.xAdd = -10;
+        descBox.yAdd = -10;
         descBox.alphaMult = 0.6;
         descBox.alpha = 0.6;
         add(descBox);

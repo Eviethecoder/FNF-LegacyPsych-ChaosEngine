@@ -25,7 +25,7 @@ using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '0.6.3 (Legacy)'; //This is also used for Discord RPC
+	public static var psychEngineVersion:String = '0.1.3 (Chaos engine indev)'; //This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
@@ -59,9 +59,8 @@ class MainMenuState extends MusicBeatState
 
 	override function create()
 	{
-		#if MODS_ALLOWED
 		Paths.pushGlobalMods();
-		#end
+	
 		WeekData.loadTheFirstEnabledMod();
 
 		#if desktop
@@ -231,7 +230,7 @@ class MainMenuState extends MusicBeatState
 								switch (daChoice)
 								{
 									case 'story_mode':
-										openSubState(new StickerSubState(null, (sticker) -> new StoryMenuState(sticker)));
+										MusicBeatState.switchState(new StoryMenuState());
 										
 									case 'freeplay':
 										MusicBeatState.switchState(new FreeplayState());

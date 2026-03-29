@@ -11,6 +11,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import editors.EditorBaseState;
 import flixel.sound.FlxSound;
 #if MODS_ALLOWED
 import sys.FileSystem;
@@ -23,9 +24,11 @@ class MasterEditorMenu extends MusicBeatState
 	var options:Array<String> = [
 		'Week Editor',
 		'Menu Character Editor',
+		'stage Editor',
 		'Dialogue Editor',
 		'Dialogue Portrait Editor',
 		'Character Editor',
+		'Explorer TestState',
 		'Chart Editor'
 	];
 	private var grpTexts:FlxTypedGroup<Alphabet>;
@@ -115,7 +118,10 @@ class MasterEditorMenu extends MusicBeatState
 		{
 			switch(options[curSelected]) {
 				case 'Character Editor':
-					LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
+					LoadingState.loadAndSwitchState(new CharacterEditorState(Constants.DEFAULT_CHARACTER, false));
+
+				case 'stage Editor':
+					LoadingState.loadAndSwitchState(new EditorBaseState(), false);
 				case 'Week Editor':
 					MusicBeatState.switchState(new WeekEditorState());
 				case 'Menu Character Editor':
@@ -126,6 +132,8 @@ class MasterEditorMenu extends MusicBeatState
 					LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
 				case 'Chart Editor'://felt it would be cool maybe
 					LoadingState.loadAndSwitchState(new ChartingState(), false);
+				case 'Explorer TestState'://felt it would be cool maybe
+					LoadingState.loadAndSwitchState(new ExplorerTestState(), false);
 			}
 			FlxG.sound.music.volume = 0;
 			#if PRELOAD_ALL

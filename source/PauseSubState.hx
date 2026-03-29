@@ -10,6 +10,7 @@ import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import utility.Scripthandler;
 import flixel.util.FlxColor;
 import flixel.FlxCamera;
 import flixel.util.FlxStringUtil;
@@ -17,6 +18,9 @@ import flixel.util.FlxStringUtil;
 class PauseSubState extends MusicBeatSubstate
 {
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
+
+
+	var reset:Bool = false;
 
 	var menuItems:Array<String> = [];
 	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Difficulty', 'Exit to menu'];
@@ -199,6 +203,7 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.SONG = Song.loadFromJson(poop, name);
 					PlayState.storyDifficulty = curSelected;
 					MusicBeatState.resetState();
+					trace('reset the state');
 					FlxG.sound.music.volume = 0;
 					PlayState.changedDifficulty = true;
 					PlayState.chartingMode = false;
@@ -282,6 +287,7 @@ class PauseSubState extends MusicBeatSubstate
 
 	public static function restartSong(noTrans:Bool = false)
 	{
+		Scripthandler.gamescriptArray = [];
 		PlayState.instance.paused = true; // For lua
 		FlxG.sound.music.volume = 0;
 		PlayState.instance.vocals.volume = 0;
@@ -337,6 +343,13 @@ class PauseSubState extends MusicBeatSubstate
 				}
 			}
 		}
+	}
+
+	override function close():Void
+	{
+		PlayState.instance.setFunctionOnScripts('onUnPause', []);
+		super.close();
+		
 	}
 
 	function regenMenu():Void {

@@ -94,6 +94,16 @@ class MathUtil
     return x - Math.floor(x);
   }
 
+
+  /**
+   * a simnple lerp that should function like flxmath.lerp, but framerate independent
+   */
+  public static function lerpDelta(base:Float, target:Float, speed:Float, deltaTime:Float):Float
+{
+    var alpha = 1 - Math.pow(1 - speed, deltaTime * 60);
+    return lerp(base, target, alpha);
+}
+
   /**
    * Linear interpolation.
    *

@@ -110,11 +110,11 @@ class Conductor
 		/**
 	 * Duration of a step (sixtennth note) in milliseconds. Calculated based on bpm.
 	 */
-	public static var stepLengthMs(get, never):Float;
+	public static var stepLength(get, never):Float;
 
-	public static function get_stepLengthMs():Float
+	public static function get_stepLength():Float
 	{
-		return beatLengthMs / 4;
+		return 60/ bpm;
 	}
 		/**
 	 * Duration of a beat (quarter note) in milliseconds. Calculated based on bpm.
