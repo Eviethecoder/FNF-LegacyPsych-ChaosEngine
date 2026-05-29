@@ -49,6 +49,7 @@ class SaveVariables {
 	public var healthBarAlpha:Float = 1;
 	public var lowQuality:Bool = false;
 	public var shaders:Bool = true;
+	public var cacheOnGPU:Bool = true;
 	public var framerate:Int = 60;
 	// -- FEEDBACK OPTIONS -- //	
 	public var scoreZoom:Bool = true;

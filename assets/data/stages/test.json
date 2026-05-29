@@ -25,12 +25,12 @@
   "props": [
     {
       "name": "editor stage",
-    "path": "stages/editor/editor stage",
+      "path": "stages/editor/editor stage",
       "zIndex": 10,
       "PropType": "BGSprite",
       "position": [-600, -300],
       "repeatAxes": "x",
-      "scroll": [0.1, 0.1]
+      "scroll": [1, 1]
     }
   ]
 }

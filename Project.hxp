@@ -44,7 +44,7 @@ final REDIRECT_ASSETS_FOLDER:FeatureFlag = "REDIRECT_ASSETS_FOLDER";
 final PRELOAD_ALL:FeatureFlag = "PRELOAD_ALL";
 final VIDEOS_ALLOWED:FeatureFlag = "VIDEOS_ALLOWED";
 final HXCPP_CHECK_POINTER:FeatureFlag = "HXCPP_CHECK_POINTER";
-final HXCPP_STACK_LINE:FeatureFlag = "HXCPP_STACK_LINE"; 
+final HXCPP_STACK_LINE:FeatureFlag = "HXCPP_STACK_LINE";
 final MODS_ALLOWED:FeatureFlag = "MODS_ALLOWED";
 final EMBED_ASSETS:FeatureFlag = "EMBED_ASSETS";
 final FEATURE_DEBUG_TRACY:FeatureFlag = "FEATURE_DEBUG_TRACY";
@@ -84,7 +84,7 @@ class Project extends HXProject {
 
         this.app.main = MAIN_CLASS;
         this.app.file = EXECUTABLE_NAME;
-      
+
 
         this.sources.push(SOURCE_DIR);
 
@@ -94,21 +94,21 @@ class Project extends HXProject {
         this.window.background = FEATURE_DEBUG_FUNCTIONS.isEnabled(this) ? 0xFFFF00FF : 0xFF000000;
         this.window.hardware = true;
         this.window.vsync = false;
-        
+
     }
 
     function configureOutputDir() {
         var buildDir = "export/" + (isDebug() ? "debug" : "release") + "/";  //posibly make a betas export with feature flags?
         app.path = buildDir;
     }
-    
+
 
     function configureHaxelibs() {
         addHaxelib('lime');
         addHaxelib('openfl');
         addHaxelib('flixel');
         addHaxelib('flixel-addons');
-        addHaxelib('hscript-iris');
+        addHaxelib('hscript-insanity');
         addHaxelib('actuate');
         addHaxelib('flixel-ui');
         addHaxelib('haxeui-flixel');
@@ -122,7 +122,7 @@ class Project extends HXProject {
         if (FEATURE_VIDEO_PLAYBACK.isEnabled(this)){
             info('videos allowed, adding library hxvlc');
             addHaxelib('hxvlc');
-        } 
+        }
         if (isWindows()) addHaxelib('sl-windows-api');
     }
 
@@ -257,7 +257,7 @@ class Project extends HXProject {
    */
   public function addAsset(path:String, ?rename:String, ?library:String, embed:Bool = false, ?padName:String):Void
   {
-    
+
 
     var asset = new Asset(path, rename, null, embed, true);
     @:nullSafety(Off)
@@ -273,7 +273,7 @@ class Project extends HXProject {
         this.libraries.push(new Library(sourcePath, name, null, embed, preload, false, ""));
     }
 
-  
+
 
     //
     // HELPER FUNCTIONS
@@ -464,9 +464,9 @@ class Project extends HXProject {
         this.haxelibs.push(new Haxelib(name, version));
     }
     public function info(message:String):Void {
-        
+
         Sys.println('[INFO] ${message}');
-        
+
     }
 }
 

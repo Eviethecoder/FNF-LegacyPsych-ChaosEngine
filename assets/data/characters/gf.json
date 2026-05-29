@@ -188,12 +188,17 @@
 		}
 	],
 	"no_antialiasing": false,
-	"image": "characters/GF_assets",
+	"image": "characters/spritesheets/GF_assets",
 	"position": [
 		0,
 		0
 	],
-	"healthicon": "gf",
+	"iconData": {
+		"iconOffsets": [
+		],
+		"healthicon": "gf",
+		"posoffset": null
+	},
 	"flip_x": false,
 	"healthbar_colors": [
 		165,

@@ -1,0 +1,49 @@
+{
+  "eventLogic": [
+    {
+      "name": "Timing",
+      "title": "Timing",
+      "rownum": 0,
+      "type": "FLOAT"
+    },
+    {
+      "name": "Offset x",
+      "title": "Offset X",
+      "rownum": 1,
+      "type": "FLOAT"
+    },
+    {
+      "name": "Offset y",
+      "title": "Offset Y",
+      "rownum": 1,
+      "type": "FLOAT"
+    },
+    {
+      "name": "focusprop",
+      "title": "Focus Prop",
+      "rownum": 2,
+      "type": "STRING"
+    },
+    {
+      "name": "Focus",
+      "title": "CamFocus",
+      "type": "DROPDOWN",
+      "rownum": 3,
+      "list": ["Dad", "GF", "BF", "Prop"]
+    },
+    {
+      "name": "inout",
+      "title": "In/Out",
+      "type": "DROPDOWN",
+        "rownum": 3,
+      "list": ["In", "Out", "InOut"]
+    },
+    {
+      "name": "Easing",
+      "title": "Easing",
+      "type": "DROPDOWN",
+        "rownum": 3,
+      "list": ["linear", "sine", "quad", "cube", "quart", "quint", "expo", "smoothStep", "smootherStep", "elastic", "back", "bounce", "circ"]
+    }
+  ]
+}

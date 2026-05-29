@@ -25,6 +25,9 @@ typedef StageFile = {
   @:default('')
   var directory:String;
 
+  @:default([0,0])
+  var focusOffsets:Array<Float>;
+
 	var characters:CharList;
 		/**
 	 *  whether or not the stage has a gf, defaults to true

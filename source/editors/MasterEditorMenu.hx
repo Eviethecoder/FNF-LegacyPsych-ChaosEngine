@@ -22,13 +22,14 @@ using StringTools;
 class MasterEditorMenu extends MusicBeatState
 {
 	var options:Array<String> = [
-		'Week Editor',
 		'Menu Character Editor',
 		'stage Editor',
 		'Dialogue Editor',
 		'Dialogue Portrait Editor',
 		'Character Editor',
+		'Example Editor',
 		'Explorer TestState',
+		'options',
 		'Chart Editor'
 	];
 	private var grpTexts:FlxTypedGroup<Alphabet>;
@@ -118,26 +119,32 @@ class MasterEditorMenu extends MusicBeatState
 		{
 			switch(options[curSelected]) {
 				case 'Character Editor':
-					LoadingState.loadAndSwitchState(new CharacterEditorState(Constants.DEFAULT_CHARACTER, false));
+					MusicBeatState.switchState(new LoadingState(new CharacterEditorState(Constants.DEFAULT_CHARACTER, false)));
+
+					case 'Example Editor':
+						MusicBeatState.switchState(new LoadingState(new ExampleEditorState(), false));
 
 				case 'stage Editor':
-					LoadingState.loadAndSwitchState(new EditorBaseState(), false);
-				case 'Week Editor':
-					MusicBeatState.switchState(new WeekEditorState());
+					MusicBeatState.switchState(new LoadingState(new StageEditorState(), false));
+
 				case 'Menu Character Editor':
 					MusicBeatState.switchState(new MenuCharacterEditorState());
 				case 'Dialogue Portrait Editor':
-					LoadingState.loadAndSwitchState(new DialogueCharacterEditorState(), false);
+					MusicBeatState.switchState(new LoadingState(new DialogueCharacterEditorState(), false));
 				case 'Dialogue Editor':
-					LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
+					MusicBeatState.switchState(new LoadingState(new DialogueEditorState(), false));
 				case 'Chart Editor'://felt it would be cool maybe
-					LoadingState.loadAndSwitchState(new ChartingState(), false);
+					MusicBeatState.switchState(new LoadingState(new ChartingState(), false));
 				case 'Explorer TestState'://felt it would be cool maybe
-					LoadingState.loadAndSwitchState(new ExplorerTestState(), false);
+					MusicBeatState.switchState(new LoadingState(new ExplorerTestState(), false));
+				case 'options'://felt it would be cool maybe
+					MusicBeatState.switchState(new LoadingState(new options.OptionsState(), false));
 			}
-			FlxG.sound.music.volume = 0;
+			if(FlxG.sound.music != null){
+				FlxG.sound.music.volume = 0;
+			}
 			#if PRELOAD_ALL
-			FreeplayState.destroyFreeplayVocals();
+	
 			#end
 		}
 		

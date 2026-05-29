@@ -6,6 +6,7 @@ import Discord.DiscordClient;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import transitions.StickerSubState;
+import objects.FunkinMemory;
 import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -63,7 +64,7 @@ class StoryMenuState extends MusicBeatState
 
 	override function create()
 	{
-		Paths.clearUnusedMemory();
+		FunkinMemory.clearUnusedMemory();
 		if (stickerSubState != null)
 		{
 			// this.persistentUpdate = true;
@@ -71,11 +72,11 @@ class StoryMenuState extends MusicBeatState
 
 			openSubState(stickerSubState);
 			trace("StickerSubState: " + stickerSubState);
-			Paths.clearStoredMemory();
+			FunkinMemory.clearStoredMemory();
 			stickerSubState.degenStickers();
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 		}
-		Paths.clearStoredMemory();
+		FunkinMemory.clearStoredMemory();
 		
 
 		PlayState.isStoryMode = true;
@@ -348,7 +349,7 @@ class StoryMenuState extends MusicBeatState
 			PlayState.campaignMisses = 0;
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
-				LoadingState.loadAndSwitchState(new PlayState(), true);
+				MusicBeatState.switchState(new LoadingState(new PlayState()));
 				FreeplayState.destroyFreeplayVocals();
 			});
 		} else {

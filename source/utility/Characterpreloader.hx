@@ -48,7 +48,7 @@ class Characterpreloader
     }
 
     public static function validatejson(input:Character.CharacterFile, file:String){
-        trace(input.image);
+ 
         if(input.image == null){  //once more 100 percent required json variables are here add them
 
             return;
@@ -61,7 +61,7 @@ class Characterpreloader
     public static function charLookup()
     {
         var directories:Array<String> = [Paths.getPreloadPath('data/characters')];
-        for (mod in Paths.getGlobalMods())
+        for (mod in Paths.getGlobalMods()) 
         {
             trace('mod to test: ' + mod);
             directories.insert(0, Paths.mods(mod + '/data/characters/'));

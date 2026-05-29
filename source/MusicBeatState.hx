@@ -6,6 +6,7 @@ import flixel.addons.ui.FlxUIState;
 import flixel.text.FlxText;
 import flixel.math.FlxRect;
 import flixel.util.FlxTimer;
+import debug.*;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -61,6 +62,7 @@ class MusicBeatState extends FlxUIState
 
 	override function update(elapsed:Float)
 	{
+	
 		//everyStep();
 		if (FlxG.keys.justPressed.F5) {
 			ScriptedStatehandler.reListStates();
@@ -89,6 +91,7 @@ class MusicBeatState extends FlxUIState
 		if(FlxG.save.data != null) FlxG.save.data.fullscreen = FlxG.fullscreen;
 
 		super.update(elapsed);
+		  
 	}
 
 	private function updateSection():Void
@@ -227,20 +230,7 @@ class MusicBeatState extends FlxUIState
 
 	public static function addTextToDebug(text:String, color:FlxColor)
 	{
-		trace(text);
-		// debugGroup.insert(0, new DebugText(text, debugGroup, color));
-		// debugGroup.forEachAlive(function(spr:DebugText)
-		// {
-		// 	spr.y += 20;
-		// });
-		
-
-		// if (debugGroup.members.length > 34)
-		// {
-		// 	var blah = debugGroup.members[34];
-		// 	blah.destroy();
-		// 	debugGroup.remove(blah);
-		// }
+		Consolehandler.error(text);
 		
 	
 	}

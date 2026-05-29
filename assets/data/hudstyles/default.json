@@ -1,21 +1,26 @@
-
 {
   "healthbar": {
-    "animations": [
-    ],
-    "image": ["Huds/Bars/healthBar"],
+    "animations": [],
+    "image": ["Huds/Bars/HudBar"],
     "scale": 1,
-    "barStyle": "default",
-    "position": [0, 0],
-    "barOffsets": [0, 0],
+    "barStyle": "png",
+    "position": [-30, 0],
+    "barOffsets": [-300, 20],
     "no_antialiasing": false
   },
   "timeBar": {
     "image": ["Huds/Bars/timeBar"],
     "scale": 1.2,
-    "barStyle":"default",
-    "position": [100, 50],
-    "barOffsets": [0, 0]
+    "barStyle": "png",
+    "position": [0, 50],
+    "barOffsets": [320, 5]
   },
-  "scorpos": [-400,100]
+  "noteskin": {
+    "strumlinegraphic": "Huds/Noteskins/NOTE_assets",
+    "samenamenotes": true,
+    "usergbshader": true,
+    "notesplash": "Huds/NoteSplashes/noteSplashes",
+    "notesplashoffsets": [-20, -100],
+    "alphaoveride": 1
+  }
 }

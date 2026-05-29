@@ -150,7 +150,7 @@ class StickerSubState extends MusicBeatSubstate
         grpStickers.members[ind].visible = false;
         var daSound:String = FlxG.random.getObject(sounds);
         
-        new FlxSound().loadEmbedded(Paths.sound(daSound,"shared")).play();
+        new FlxSound().loadEmbedded(Paths.sound(daSound)).play();
        
 
         if (grpStickers == null || ind == grpStickers.members.length - 1)
@@ -274,7 +274,7 @@ class StickerSubState extends MusicBeatSubstate
         sticker.visible = true;
         var daSound:String = FlxG.random.getObject(sounds);
        
-        new FlxSound().loadEmbedded(Paths.sound(daSound,"shared")).play();
+        new FlxSound().loadEmbedded(Paths.sound(daSound)).play();
       
 
         var frameTimer:Int = FlxG.random.int(0, 2);

@@ -167,12 +167,17 @@
 		}
 	],
 	"no_antialiasing": false,
-	"image": "characters/BOYFRIEND",
+	"image": "characters/spritesheets/BOYFRIEND",
 	"position": [
 		0,
 		350
 	],
-	"healthicon": "bf",
+	"iconData": {
+		"iconOffsets": [
+		],
+		"healthicon": "bf",
+		"posoffset": null
+	},
 	"flip_x": true,
 	"healthbar_colors": [
 		49,

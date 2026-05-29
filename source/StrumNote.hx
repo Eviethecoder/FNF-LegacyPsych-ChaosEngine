@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import shaders.RGBPalette;
+import utility.NoteSkinhelper.NoteSkinHelper;
 import shaders.RGBPalette.RGBShaderReference;
 import flixel.util.FlxColor;
 
@@ -22,7 +23,7 @@ class StrumNote extends FlxSprite
 	
 	private var player:Int;
 	var isPlayer:Bool;
-	var arr:Array<Dynamic>;
+	var arr:Array<Int>;
 	
 	public var useRGBShader:Bool = true;
 	public var texture(default, set):String = null;
@@ -47,7 +48,7 @@ class StrumNote extends FlxSprite
 				isPlayer = true;
 
 		}
-		arr = PlayState.instance.hud.hudData.getNoteskinrgb(isPlayer)[leData];
+		arr = NoteSkinHelper.getNoteskinRgb(isPlayer)[leData];
 		noteData = leData;
 		this.player = player;
 
@@ -68,12 +69,12 @@ class StrumNote extends FlxSprite
 
 		
 		var skin:String = 'Huds/Noteskins/NOTE_assets';
-		if(PlayState.instance !=null && PlayState.instance.hud.bars.noteskin != null){
+		if(PlayState.instance !=null && PlayState.instance.hud.hudData.bars.noteskin != null){
 			var playerbool:Bool = false;
 			if(player == 1){
 				playerbool = true;
 			}
-			skin = PlayState.instance.hud.hudData.getNoteskin(playerbool);
+			skin = NoteSkinHelper.getNoteskin(playerbool);
 		}
 		else{
 			skin = 'Huds/Noteskins/NOTE_assets';

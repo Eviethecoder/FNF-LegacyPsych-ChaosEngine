@@ -1,0 +1,10 @@
+{
+  "eventLogic": [
+    {
+      "name": "NewBpm",
+      "title": "NewBpm",
+      "rownum": 0,
+      "type": "FLOAT"
+    }
+  ]
+}

@@ -2,6 +2,7 @@ package objects;
 
 import flixel.util.FlxAxes;
 import Character.AnimArray;
+import objects.FunkinMemory;
 import flixel.addons.display.FlxBackdrop;
 
 class FunkinBackdrop extends FlxBackdrop
@@ -11,7 +12,7 @@ class FunkinBackdrop extends FlxBackdrop
 
 	public function new(?path:String,?repeatAxes:FlxAxes = FlxAxes.XY,spacingX:Float = 0,spacingY:Float = 0,?animations:Array<AnimArray> = null)
 	{
-		super(Paths.image(path),0,0);
+		super(FunkinMemory.returnGraphic(Paths.vsliceimage(path)),0,0);
 
 		this.repeatAxes = repeatAxes;
 		trace("FunkinBackdrop repeatAxes: " + repeatAxes);

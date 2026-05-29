@@ -5,6 +5,11 @@ import flixel.FlxG;
 import Discord.DiscordClient;
 import lime.app.Application;
 import utility.Systeminfo;
+import utility.EventHandler;
+import utility.NoteSkinhelper.NoteSkinHelper;
+import objects.FunkinMemory;
+
+import flixel.system.debug.log.LogStyle;
 /**
  * Handles initialization of variables when first opening the game.
 **/
@@ -31,6 +36,9 @@ class InitState extends flixel.FlxState {
 		FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 		FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
 		FlxG.keys.preventDefaultKeys = [TAB];
+         // Make errors and warnings less annoying.
+        LogStyle.WARNING.openConsole = false;
+        LogStyle.WARNING.errorSound = null;
 
         FlxTransitionableState.skipNextTransIn = true;
 
@@ -42,6 +50,7 @@ class InitState extends flixel.FlxState {
 
         ClientPrefs.loadDefaultKeys();
 		ClientPrefs.loadPrefs();
+        NoteSkinHelper.setupfallback();
 
       
 
@@ -55,9 +64,15 @@ class InitState extends flixel.FlxState {
 
         // -- -- -- //
 
-        Paths.clearStoredMemory();
-		Paths.clearUnusedMemory();
+  // -- -- -- //
 
+        FunkinMemory.clearStoredMemory();
+		FunkinMemory.clearUnusedMemory();
+
+
+
+        FunkinMemory.loadPerminateAssets();
+        EventHandler.setupAllEventData();
         
         if (!DiscordClient.isInitialized)
         {
@@ -67,7 +82,6 @@ class InitState extends flixel.FlxState {
             });
         }
         utility.Characterpreloader.charLookup();
-        trace('charmap: ' + utility.Characterpreloader.charmap);
 			
         FlxG.switchState(Type.createInstance(Main.initialState, []));
     }

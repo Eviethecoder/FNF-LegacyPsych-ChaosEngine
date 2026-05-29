@@ -2,121 +2,119 @@ package shaders;
 
 import flixel.system.FlxAssets.FlxShader;
 import flixel.util.FlxColor;
-import flixel.FlxSprite;
+import objects.FunkinSprite;
 import flixel.math.FlxAngle;
 import flixel.graphics.frames.FlxFrame;
 import openfl.display.BitmapData;
 
-/*
-  A shader that aims to *mostly recreate how Adobe Animate/Flash handles drop shadows, but its main use here is for rim lighting.
-
-  Has options for color, angle, distance, and a threshold to not cast the shadow on parts like outlines.
-  Can also be supplied a secondary mask which can then have an alternate threshold, for when sprites have too many conflicting colors
-  for the drop shadow to look right (e.g. the tankmen on GF's speakers).
-
-  Also has an Adjust Color shader in here so they can work together when needed.
+/**
+ * A shader that aims to *mostly recreate how Adobe Animate/Flash handles drop shadows, but its main use here is for rim lighting.
+ *
+ * Has options for color, angle, distance, and a threshold to not cast the shadow on parts like outlines.
+ * Can also be supplied a secondary mask which can then have an alternate threshold, for when sprites have too many conflicting colors
+ * for the drop shadow to look right (e.g. the tankmen on GF's speakers).
+ *
+ * Also has an Adjust Color shader in here so they can work together when needed.
  */
 class DropShadowShader extends FlxShader
 {
-  /*
-    The color of the drop shadow.
+  /**
+   * The color of the drop shadow.
    */
   public var color(default, set):FlxColor;
 
-  /*
-    The angle of the drop shadow.
-
-    for reference, depending on the angle, the affected side will be:
-    0 = RIGHT
-    90 = UP
-    180 = LEFT
-    270 = DOWN
+  /**
+   * The angle of the drop shadow.
+   *
+   * for reference, depending on the angle, the affected side will be:
+   * 0 = RIGHT
+   * 90 = UP
+   * 180 = LEFT
+   * 270 = DOWN
    */
   public var angle(default, set):Float;
 
-  /*
-    The distance or size of the drop shadow, in pixels,
-    relative to the texture itself... NOT the camera.
+  /**
+   * The distance or size of the drop shadow, in pixels,
+   * relative to the texture itself... NOT the camera.
    */
   public var distance(default, set):Float;
 
-  /*
-    The strength of the drop shadow.
-    Effectively just an alpha multiplier.
+  /**
+   * The strength of the drop shadow.
+   * Effectively just an alpha multiplier.
    */
   public var strength(default, set):Float;
 
-  /*
-    The brightness threshold for the drop shadow.
-    Anything below this number will NOT be affected by the drop shadow shader.
-    A value of 0 effectively means theres no threshold, and vice versa.
+  /**
+   * The brightness threshold for the drop shadow.
+   * Anything below this number will NOT be affected by the drop shadow shader.
+   * A value of 0 effectively means theres no threshold, and vice versa.
    */
   public var threshold(default, set):Float;
 
-  /*
-    The amount of antialias samples per-pixel,
-    used to smooth out any hard edges the brightness thresholding creates.
-    Defaults to 2, and 0 will remove any smoothing.
+  /**
+   * The amount of antialias samples per-pixel,
+   * used to smooth out any hard edges the brightness thresholding creates.
+   * Defaults to 2, and 0 will remove any smoothing.
    */
   public var antialiasAmt(default, set):Float;
 
-  /*
-    Whether the shader should try and use the alternate mask.
-    False by default.
+  /**
+   * Whether the shader should try and use the alternate mask.
+   * False by default.
    */
   public var useAltMask(default, set):Bool;
 
-  /*
-    Whether the shader should use the inverse of the alternate mask. (i.e. blue = light)
-    False by default.
+  /**
+   * The image for the alternate mask.
+   * At the moment, it uses the blue channel to specify what is or isnt going to use the alternate threshold.
+   * (its kinda sloppy rn i need to make it work a little nicer)
+   * TODO: maybe have a sort of "threshold intensity texture" as well? where higher/lower values indicate threshold strength..
    */
-  public var invertAltMask(default, set):Bool;
-  
-  /*
-    The image for the alternate mask.
-    At the moment, it uses the blue channel to specify what is or isnt going to use the alternate threshold.
-    (its kinda sloppy rn i need to make it work a little nicer)
-    TODO: maybe have a sort of "threshold intensity texture" as well? where higher/lower values indicate threshold strength..
-   */
-  public var altMaskImage:BitmapData;
+  public var altMaskImage(default, set):BitmapData;
 
-  /*
-    An alternate brightness threshold for the drop shadow.
-    Anything below this number will NOT be affected by the drop shadow shader,
-    but ONLY when the pixel is within the mask.
+  /**
+   * An alternate brightness threshold for the drop shadow.
+   * Anything below this number will NOT be affected by the drop shadow shader,
+   * but ONLY when the pixel is within the mask.
    */
   public var maskThreshold(default, set):Float;
 
-  /*
-    The FlxSprite that the shader should get the frame data from.
-    Needed to keep the drop shadow shader in the correct bounds and rotation.
+  /**
+   * The FunkinSprite that the shader should get the frame data from.
+   * Needed to keep the drop shadow shader in the correct bounds and rotation.
    */
-  public var attachedSprite(default, set):FlxSprite;
+  public var attachedSprite(default, set):FunkinSprite;
 
-  /*
-    The hue component of the Adjust Color part of the shader.
+  /**
+   * The hue component of the Adjust Color part of the shader.
    */
   public var baseHue(default, set):Float;
 
-  /*
-    The saturation component of the Adjust Color part of the shader.
+  /**
+   * The saturation component of the Adjust Color part of the shader.
    */
   public var baseSaturation(default, set):Float;
 
-  /*
-    The brightness component of the Adjust Color part of the shader.
+  /**
+   * The brightness component of the Adjust Color part of the shader.
    */
   public var baseBrightness(default, set):Float;
 
-  /*
-    The contrast component of the Adjust Color part of the shader.
+  /**
+   * The contrast component of the Adjust Color part of the shader.
    */
   public var baseContrast(default, set):Float;
 
-  /*
-    Sets all 4 adjust color values.
+  /**
+   * Sets all 4 adjust color values.
+   * @param b The brightness value
+   * @param h The hue value
+   * @param c The contrast value
+   * @param s The saturation value
    */
-  public function setAdjustColor(b:Float, h:Float, c:Float, s:Float)
+  public function setAdjustColor(b:Float, h:Float, c:Float, s:Float):Void
   {
     baseBrightness = b;
     baseHue = h;
@@ -195,64 +193,64 @@ class DropShadowShader extends FlxShader
     return val;
   }
 
-  function set_attachedSprite(spr:FlxSprite):FlxSprite
+  function set_attachedSprite(spr:FunkinSprite):FunkinSprite
   {
     attachedSprite = spr;
     updateFrameInfo(attachedSprite.frame);
+
+    // Enable render texture for texture atlas sprites
+    // This allows the shader to work properly on them NOT SUPPORTD RN
+    // if (attachedSprite.isAnimate && !attachedSprite.useRenderTexture)
+    // {
+    //   attachedSprite.useRenderTexture = true;
+    // }
+
     return spr;
   }
 
-  /*
-    Loads an image for the mask.
-    While you *could* directly set the value of the mask, this function works for both HTML5 and native targets.
+  /**
+   * Loads an image for the mask.
+   * While you *could* directly set the value of the mask, this function works for both HTML5 and native targets.
+   *
+   * @param path The path to the image to load
    */
-  public function loadAltMask(path:String)
+  public function loadAltMask(path:String):Void
   {
-    #if html5
-    BitmapData.loadFromFile(path).onComplete(function(bmp:BitmapData) {
-      altMaskImage = bmp;
-    });
-    #else
-    var _bitmapData = BitmapData.fromFile(path);
-    altMaskImage = _bitmapData;
-    altMask.input = _bitmapData;
-    trace('Loaded alt mask from ' + altMaskImage);
-    trace('bitmap data is  ' + _bitmapData);
-    #end
+    altMaskImage = Assets.getBitmapData(path);
   }
 
-  /*
-    Should be called on the animation.callback of the attached sprite.
-    TODO: figure out why the reference to the attachedSprite breaks on web??
+  /**
+   * Should be called on the animation.callback of the attached sprite.
+   * TODO: figure out why the reference to the attachedSprite breaks on web??
+   *
+   * @param name The name of the animation
+   * @param frameNum The current frame number
+   * @param frameIndex The current frame index
    */
-  public function onAttachedFrame(name, frameNum, frameIndex)
+  public function onAttachedFrame(name:String, frameNum:Int, frameIndex:Int):Void
   {
     if (attachedSprite != null) updateFrameInfo(attachedSprite.frame);
   }
 
-  /*
-    Updates the frame bounds and angle offset of the sprite for the shader.
+  /**
+   * Updates the frame bounds and angle offset of the sprite for the shader
+   * @param frame The frame to retrieve the information from
    */
-  public function updateFrameInfo(frame:FlxFrame)
-{
-    var uv = frame.uv; // FlxUVRect (abstract over FlxRect)
+  public function updateFrameInfo(frame:FlxFrame):Void
+  {
+    // NOTE: uv.right is actually the right pos and uv.bottom is the bottom pos
+    uFrameBounds.value = [frame.uv.left, frame.uv.top, frame.uv.right, frame.uv.bottom];
 
-    // Compute the real bounds
-    var left   = uv.left;          // uv.x
-    var top    = uv.right;         // uv.y
-    var right  = uv.left + uv.top; // x + width?
-    var bottom = uv.right + uv.bottom; // y + height?
-
-    uFrameBounds.value = [
-        left,
-        top,
-        right,
-        bottom
-    ];
-
-    // Keep rotation
+    // if a frame is rotated the shader will look completely wrong lol
     angOffset.value = [frame.angle * FlxAngle.TO_RAD];
-}
+  }
+
+  function set_altMaskImage(_bitmapData:BitmapData):BitmapData
+  {
+    altMask.input = _bitmapData;
+
+    return _bitmapData;
+  }
 
   function set_maskThreshold(val:Float):Float
   {
@@ -265,12 +263,6 @@ class DropShadowShader extends FlxShader
   {
     useAltMask = val;
     useMask.value = [val];
-    return val;
-  }
-
-  function set_invertAltMask(val:Bool):Bool {
-    invertAltMask = val;
-    invertMask.value = [val];
     return val;
   }
 
@@ -298,7 +290,6 @@ class DropShadowShader extends FlxShader
       uniform sampler2D altMask;
       uniform bool useMask;
       uniform float thr2;
-      uniform bool invertMask;
 
       uniform vec3 dropColor;
 
@@ -367,9 +358,7 @@ class DropShadowShader extends FlxShader
 
         float maskIntensity = 0.0;
         if(useMask == true){
-          float b = texture2D(altMask, fragCoord).b;
-          if (invertMask) b = 1.0 - b;
-          maskIntensity = mix(0.0, 1.0, b);
+          maskIntensity = mix(0.0, 1.0, texture2D(altMask, fragCoord).b);
         }
 
         if(col.a == 0.0){
@@ -426,7 +415,8 @@ class DropShadowShader extends FlxShader
         vec2 imageRatio = vec2(1.0/openfl_TextureSize.x, 1.0/openfl_TextureSize.y);
 
         // check the pixel in the direction and distance specified
-        vec2 checkedPixel = vec2(openfl_TextureCoordv.x + (dist * cos(ang + angOffset) * imageRatio.x), openfl_TextureCoordv.y - (dist * sin(ang + angOffset) * imageRatio.y));
+        vec2 checkedPixel = vec2(openfl_TextureCoordv.x + (dist * cos(ang + angOffset) * imageRatio.x),
+        openfl_TextureCoordv.y - (dist * sin(ang + angOffset) * imageRatio.y));
 
         // multiplier for the intensity of the drop shadow
         float dropShadowAmount = 0.0;

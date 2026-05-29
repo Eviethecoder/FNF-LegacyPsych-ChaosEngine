@@ -3,6 +3,7 @@ package;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import objects.FunkinSprite;
+import objects.FunkinMemory;
 import Character.AnimArray as AnimArray;
 
 class BGSprite extends FunkinSprite
@@ -11,7 +12,7 @@ class BGSprite extends FunkinSprite
 	
 	private var idlenamelist:Array<String> = ['idle', 'dance', 'bop', 'resting', 'rest'];
 
-	public function new(image:String,x:Float = 0,y:Float = 0,scrollX:Float = 1,scrollY:Float = 1,animations:Array<AnimArray> = null) {
+	public function new(image:String,x:Float = 0,y:Float = 0,scrollX:Float = 1,scrollY:Float = 1,animations:Array<AnimArray> = null, velocity:Array<Float> = null) {
 		super(x, y);
 
 		if (animations != null && animations.length > 0) {
@@ -31,9 +32,13 @@ class BGSprite extends FunkinSprite
 			}
 		} else {
 			if (image != null) {
-				loadGraphic(Paths.image(image));
+				loadGraphic(FunkinMemory.returnGraphic(Paths.vsliceimage(image)));
 			}
 			active = false;
+		}
+		if (velocity != null ){
+			this.velocity.set(velocity[0], velocity[1]);
+			trace('the velocity is ' + this.velocity);
 		}
 
 		scrollFactor.set(scrollX, scrollY);

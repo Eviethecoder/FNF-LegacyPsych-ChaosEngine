@@ -1,0 +1,17 @@
+{
+  "eventLogic": [
+    {
+      "name": "characterJson",
+      "title": "characterJson",
+      "type": "STRING",
+       "rownum": 1
+    },
+    {
+      "name": "Char To Change",
+      "title": "CharToChange",
+      "type": "DROPDOWN",
+      "rownum": 2,
+      "list": ["DAD", "GF", "BF"]
+    }
+  ]
+}

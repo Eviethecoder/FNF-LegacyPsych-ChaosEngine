@@ -1,0 +1,38 @@
+{
+  "eventLogic": [
+    {
+      "name": "Timing",
+      "title": "Timing",
+      "rownum": 0,
+      "type": "FLOAT"
+    },
+    {
+      "name": "inout",
+      "title": "In/Out",
+      "type": "DROPDOWN",
+      "rownum": 3,
+      "list": ["In", "Out", "InOut", "None"]
+    },
+    {
+      "name": "Easing",
+      "title": "Easing",
+      "type": "DROPDOWN",
+      "rownum": 3,
+      "list": [
+        "linear",
+        "sine",
+        "quad",
+        "cube",
+        "quart",
+        "quint",
+        "expo",
+        "circ",
+        "back",
+        "bounce",
+        "elastic",
+        "smoothStep",
+        "smootherStep"
+      ]
+    }
+  ]
+}

@@ -113,9 +113,9 @@ class LyricEvent{
             dedunText.cameras = [ PlayState.instance.camOther];
             dedunText.alpha = 0;
             addtoGame(dedunText);
-            dedunOpponentIcon = new HealthIcon(PlayState.instance.stage.dad.healthIcon, false);
+            dedunOpponentIcon = new HealthIcon(PlayState.instance.stage.dad.icondata, false);
             dedunOpponentIcon.autoUpdate = false;
-            previcon = PlayState.instance.stage.dad.healthIcon;
+            previcon = PlayState.instance.stage.dad.icondata.healthicon;
             dedunOpponentIcon.scrollFactor.set(0, 0);
             dedunOpponentIcon.animation.curAnim.curFrame = 0;
             dedunOpponentIcon.cameras = [PlayState.instance.camOther];
@@ -132,6 +132,13 @@ class LyricEvent{
         size: 60
     };
 }
+
+ static function returniconformat(icon:String):Character.IconData {
+    return {
+        healthicon: icon,
+        iconOffsets: []
+    };
+}
     
 
 
@@ -143,18 +150,18 @@ class LyricEvent{
 
         if (valuearray[0] != null){
             iconmanualchange = true;
-            dedunOpponentIcon.changeIcon(valuearray[0]);
+            dedunOpponentIcon.changeIcon(returniconformat(valuearray[0]));
         }
         if (valuearray[1] != null){
             dedunOpponentIcon.animation.curAnim.curFrame = Std.parseInt(valuearray[1]);
         }
         else{
             iconmanualchange = true;
-            dedunOpponentIcon.changeIcon(Value1);
+            dedunOpponentIcon.changeIcon(returniconformat(Value1));
         }
         if(Value2 !=null){
             iconmanualchange = false;
-            dedunOpponentIcon.changeIcon(PlayState.instance.stage.dad.healthIcon);
+            dedunOpponentIcon.changeIcon(PlayState.instance.stage.dad.icondata);
         }
 
         
@@ -176,14 +183,14 @@ class LyricEvent{
                 
 
                
-                if(previcon !=PlayState.instance.stage.dad.healthIcon){
+                if(previcon !=PlayState.instance.stage.dad.icondata.healthicon){
                     if(iconmanualchange){
 
                     }
                     else{
 
-                        dedunOpponentIcon.changeIcon(PlayState.instance.stage.dad.healthIcon);
-                        previcon = PlayState.instance.stage.dad.healthIcon;
+                        dedunOpponentIcon.changeIcon(PlayState.instance.stage.dad.icondata);
+                        previcon = PlayState.instance.stage.dad.icondata.healthicon;
                     }
                    
                 }

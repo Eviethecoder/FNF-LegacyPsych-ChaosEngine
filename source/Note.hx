@@ -18,13 +18,20 @@ typedef EventNote =
 {
 	strumTime:Float,
 	event:String,
-	value1:String,
-	value2:String
+	valuearray:Array<Eventsvalue>
 }
-typedef NoteSplashData = {
+
+typedef Eventsvalue =
+{
+	name:String,
+	value:events.EventUnion
+}
+
+typedef NoteSplashData =
+{
 	disabled:Bool,
 	texture:String,
-	useGlobalShader:Bool, //breaks r/g/b but makes it copy default colors for your custom note
+	useGlobalShader:Bool, // breaks r/g/b but makes it copy default colors for your custom note
 	useRGBShader:Bool,
 	antialiasing:Bool,
 	r:FlxColor,
@@ -41,7 +48,9 @@ class Note extends FlxSprite
 	public var mustPress:Bool = false;
 	public var noteData:Int = 0;
 	public var canBeHit:Bool = false;
-		public static var globalRgbShaders:Array<RGBPalette> = [];
+
+	public static var globalRgbShaders:Array<RGBPalette> = [];
+
 	public var tooLate:Bool = false;
 	public var wasGoodHit:Bool = false;
 	public var ignoreNote:Bool = false;
@@ -52,8 +61,8 @@ class Note extends FlxSprite
 	public var isEvent:Bool = false;
 	public var isCameraEvent:Bool = false;
 	public var rgbShader:RGBShaderReference;
-	public  static var isplayer:Bool = false;
 
+	public static var isplayer:Bool = false;
 
 	public var spawned:Bool = false;
 
@@ -76,7 +85,7 @@ class Note extends FlxSprite
 
 	public var animSuffix:String = '';
 	public var gfNote:Bool = false;
-		public var forceBf:Bool = false;
+	public var forceBf:Bool = false;
 	public var earlyHitMult:Float = 0.5;
 	public var lateHitMult:Float = 1;
 	public var lowPriority:Bool = false;
@@ -84,6 +93,7 @@ class Note extends FlxSprite
 	public static var swagWidth:Float = 160 * 0.7;
 
 	public static var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
+
 	private var pixelInt:Array<Int> = [0, 1, 2, 3];
 
 	// Lua shit
@@ -129,7 +139,7 @@ class Note extends FlxSprite
 
 	public var hitsoundDisabled:Bool = false;
 	public var script:HaxeScript = null;
-
+	public var songSpeed:Float;
 
 	private function set_multSpeed(value:Float):Float
 	{
@@ -157,9 +167,10 @@ class Note extends FlxSprite
 		texture = value;
 		return value;
 	}
+
 	public function defaultRGB()
 	{
-		var arr:Array<Dynamic> = PlayState.instance.hud.hudData.getNoteskinrgb(mustPress)[noteData];
+		var arr:Array<Dynamic> = utility.NoteSkinhelper.NoteSkinHelper.getNoteskinRgb(mustPress)[noteData];
 
 		if (arr != null && noteData > -1 && noteData <= arr.length)
 		{
@@ -177,21 +188,18 @@ class Note extends FlxSprite
 
 	private function set_noteType(value:String):String
 	{
-			defaultRGB();
-		if(PlayState.instance !=null){
-			noteSplashTexture = PlayState.instance.hud.hudData.getNotesplash();
+		defaultRGB();
+		noteSplashTexture = utility.NoteSkinhelper.NoteSkinHelper.getNotesplash();
+		if (noteData > -1 && noteData < ClientPrefs.data.arrowHSV.length)
+		{
 		}
-		else{
-			noteSplashTexture = 'Huds/Notesplashes/noteSplashes';
-		}
-
 		if (noteData > -1 && noteType != value)
 		{
 			switch (value)
 			{
 				case 'Hurt Note':
 					ignoreNote = mustPress;
-					reloadNote('Huds/NoteTypes/HURT','NOTE_assets');
+					reloadNote('Huds/NoteTypes/HURT', 'NOTE_assets');
 					noteSplashTexture = '"Huds/Notesplashes/HURTnoteSplashes';
 					colorSwap.hue = 0;
 					colorSwap.saturation = 0;
@@ -218,11 +226,12 @@ class Note extends FlxSprite
 			noteType = value;
 		}
 
-		if(PlayState.instance != null){
+		if (PlayState.instance != null)
+		{
 			loadNoteScript(this);
-			
 		}
-		if(PlayState.instance == null){
+		if (PlayState.instance == null)
+		{
 			loadNoteScriptchart(this);
 		}
 		return value;
@@ -255,7 +264,7 @@ class Note extends FlxSprite
 
 		if (noteData > -1)
 		{
-			rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData,mustPress));
+			rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData, mustPress));
 			texture = '';
 
 			x += swagWidth * (noteData);
@@ -277,7 +286,8 @@ class Note extends FlxSprite
 			alpha = 0.6;
 			multAlpha = 0.6;
 			hitsoundDisabled = true;
-			if(ClientPrefs.data.downScroll) flipY = true;
+			if (ClientPrefs.data.downScroll)
+				flipY = true;
 
 			offsetX += width / 2;
 			copyAngle = false;
@@ -298,13 +308,13 @@ class Note extends FlxSprite
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
 				if (PlayState.instance != null)
 				{
-					if(player == true){
-						prevNote.scale.y *= PlayState.instance.songSpeed;
+					switch (isplayer)
+					{
+						case true:
+							prevNote.scale.y *= PlayState.instance.playerStrumline.songSpeed;
+						case false:
+							prevNote.scale.y *= PlayState.instance.opponentStrumline.songSpeed;
 					}
-					else{
-						prevNote.scale.y *= PlayState.instance.oppsongSpeed;
-					}
-					
 				}
 
 				if (PlayState.instance.stage.isPixelStage)
@@ -327,11 +337,11 @@ class Note extends FlxSprite
 			earlyHitMult = 1;
 		}
 		x += offsetX;
-		
+
 		runScriptFunction('new', []);
 	}
 
-public static function initializeGlobalRGBShader(noteData:Int, ?isPlayer:Bool = false)
+	public static function initializeGlobalRGBShader(noteData:Int, ?isPlayer:Bool = false)
 	{
 		var truenotedata:Int = noteData;
 		if (isPlayer)
@@ -342,10 +352,10 @@ public static function initializeGlobalRGBShader(noteData:Int, ?isPlayer:Bool = 
 		if (globalRgbShaders[truenotedata] == null)
 		{
 			var newRGB:RGBPalette = new RGBPalette();
-			
-			var arr:Array<Dynamic>= PlayState.instance.hud.hudData.getNoteskinrgb(isPlayer)[noteData];
-			 //ClientPrefs.data.arrowRGB[noteData];
-			
+
+			var arr:Array<Dynamic> = utility.NoteSkinhelper.NoteSkinHelper.getNoteskinRgb(isPlayer)[noteData];
+			// ClientPrefs.data.arrowRGB[noteData];
+
 			if (arr != null && noteData > -1 && noteData <= arr.length)
 			{
 				newRGB.r = arr[0];
@@ -358,7 +368,7 @@ public static function initializeGlobalRGBShader(noteData:Int, ?isPlayer:Bool = 
 				newRGB.g = 0xFF00FF00;
 				newRGB.b = 0xFF0000FF;
 			}
-			
+
 			globalRgbShaders[truenotedata] = newRGB;
 		}
 		return globalRgbShaders[truenotedata];
@@ -381,18 +391,7 @@ public static function initializeGlobalRGBShader(noteData:Int, ?isPlayer:Bool = 
 		var skin:String = texture;
 		if (texture.length < 1)
 		{
-			if (PlayState.instance != null)
-			{
-				skin = PlayState.instance.hud.hudData.getNoteskinnotes(mustPress);
-				if (skin == null || skin.length < 1)
-				{
-					skin = 'NOTE_assets';
-				}
-			}
-			else
-			{
-				skin = 'NOTE_assets';
-			}
+			skin = utility.NoteSkinhelper.NoteSkinHelper.getNoteskinNotes(mustPress);
 		}
 
 		var animName:String = null;
@@ -406,41 +405,12 @@ public static function initializeGlobalRGBShader(noteData:Int, ?isPlayer:Bool = 
 
 		var lastScaleY:Float = scale.y;
 		var blahblah:String = arraySkin.join('/');
-		if (PlayState.instance!= null)
-		{
-			if(PlayState.instance.stage.isPixelStage){
-				if (isSustainNote)
-			{
-				loadGraphic(Paths.image('pixelUI/' + blahblah + 'ENDS'));
-				width = width / 4;
-				height = height / 2;
-				originalHeightForCalcs = height;
-				loadGraphic(Paths.image('pixelUI/' + blahblah + 'ENDS'), true, Math.floor(width), Math.floor(height));
-			}
-			else
-			{
-				loadGraphic(Paths.image('pixelUI/' + blahblah));
-				width = width / 4;
-				height = height / 5;
-				loadGraphic(Paths.image('pixelUI/' + blahblah), true, Math.floor(width), Math.floor(height));
-			}
-			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
-			loadPixelNoteAnims();
-			antialiasing = false;
 
-			if (isSustainNote)
-			{
-				offsetX += lastNoteOffsetXForPixelAutoAdjusting;
-				lastNoteOffsetXForPixelAutoAdjusting = (width - 7) * (PlayState.daPixelZoom / 2);
-				offsetX -= lastNoteOffsetXForPixelAutoAdjusting;
-			}
-		}
-		else
-		{
-			frames = Paths.getSparrowAtlas(blahblah);
-			loadNoteAnims();
-			antialiasing = ClientPrefs.data.globalAntialiasing;
-		}
+		frames = Paths.getSparrowAtlas(blahblah);
+
+		loadNoteAnims();
+		antialiasing = ClientPrefs.data.globalAntialiasing;
+
 		if (isSustainNote)
 		{
 			scale.y = lastScaleY;
@@ -448,7 +418,9 @@ public static function initializeGlobalRGBShader(noteData:Int, ?isPlayer:Bool = 
 		updateHitbox();
 
 		if (animName != null)
+		{
 			animation.play(animName, true);
+		}
 
 		if (inEditor)
 		{
@@ -456,7 +428,6 @@ public static function initializeGlobalRGBShader(noteData:Int, ?isPlayer:Bool = 
 			updateHitbox();
 		}
 	}
-}
 
 	function loadNoteAnims()
 	{
@@ -488,7 +459,6 @@ public static function initializeGlobalRGBShader(noteData:Int, ?isPlayer:Bool = 
 
 	override function update(elapsed:Float)
 	{
-		runScriptFunction('update', [elapsed]);
 		super.update(elapsed);
 
 		if (mustPress)
@@ -519,11 +489,11 @@ public static function initializeGlobalRGBShader(noteData:Int, ?isPlayer:Bool = 
 			if (alpha > 0.3)
 				alpha = 0.3;
 		}
-		
-		if(isSustainNote && animation.curAnim.name.endsWith('end') &&  endnote == false)
+
+		if (isSustainNote && animation.curAnim.name.endsWith('end') && endnote == false)
 		{
 			endnote = true;
-		} 
+		}
 		runScriptFunction('updateLate', [elapsed]);
 	}
 
@@ -566,14 +536,14 @@ public static function initializeGlobalRGBShader(noteData:Int, ?isPlayer:Bool = 
 		return rect;
 	}
 
-public function loadNoteScriptchart(note:Note):HaxeScript
+	public function loadNoteScriptchart(note:Note):HaxeScript
 	{
-		//Paths.getPreloadPath('custom_notetypes/'), Paths.modFolders('custom_notetypes/')
+		// Paths.getPreloadPath('custom_notetypes/'), Paths.modFolders('custom_notetypes/')
 
 		var type:String = note.noteType;
 		if (type.length == 0)
 			type = 'Note';
-		var path = Paths.getPreloadPath('custom_notetypes/' + type + '.hx'); 
+		var path = Paths.getPreloadPath('custom_notetypes/' + type + '.hx');
 
 		try
 		{
@@ -581,7 +551,7 @@ public function loadNoteScriptchart(note:Note):HaxeScript
 				__hscript = HaxeScript.FromFile(path, note);
 			else
 			{
-				path = Paths.modFolders('custom_notetypes/' + type + '.hx'); 
+				path = Paths.modFolders('custom_notetypes/' + type + '.hx');
 				if (sys.FileSystem.exists(path))
 					__hscript = HaxeScript.FromFile(path, note);
 			}
@@ -591,18 +561,17 @@ public function loadNoteScriptchart(note:Note):HaxeScript
 			trace(e);
 		}
 
-
 		return __hscript;
 	}
 
 	public function loadNoteScript(note:Note):HaxeScript
 	{
-		//Paths.getPreloadPath('custom_notetypes/'), Paths.modFolders('custom_notetypes/')
+		// Paths.getPreloadPath('custom_notetypes/'), Paths.modFolders('custom_notetypes/')
 
 		var type:String = note.noteType;
 		if (type.length == 0)
 			type = 'Note';
-		var path = Paths.getPreloadPath('custom_notetypes/' + type + '.hx'); 
+		var path = Paths.getPreloadPath('custom_notetypes/' + type + '.hx');
 
 		try
 		{
@@ -613,15 +582,15 @@ public function loadNoteScriptchart(note:Note):HaxeScript
 			}
 			else
 			{
-				path = Paths.modFolders('custom_notetypes/' + type + '.hx'); 
+				path = Paths.modFolders('custom_notetypes/' + type + '.hx');
 				if (sys.FileSystem.exists(path))
 					script = HaxeScript.FromFile(path, note);
 			}
 		}
 		catch (e)
 		{
-			MusicBeatState.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38)); 
-			MusicBeatState.addTextToDebug("[ ERROR ] Could not load note script " + path, FlxColor.RED);  
+			MusicBeatState.addTextToDebug("   ...  " + Std.string(e), FlxColor.fromRGB(240, 166, 38));
+			MusicBeatState.addTextToDebug("[ ERROR ] Could not load note script " + path, FlxColor.RED);
 		}
 
 		if (script != null)
@@ -634,7 +603,7 @@ public function loadNoteScriptchart(note:Note):HaxeScript
 	{
 		if (__hscript == null)
 			return null;
- 
+
 		return __hscript.runFunction(id, params);
 	}
 }

@@ -49,8 +49,7 @@ class NoteSplash extends FlxSprite
 		alpha = 0.6;
 
 		if(texture == null) {
-			texture = 'noteSplashes';
-			if(PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) texture = PlayState.SONG.splashSkin;
+			texture = "Huds/NoteSplashes/noteSplashes";
 		}
 
 		if(textureLoaded != texture) {
@@ -74,7 +73,7 @@ class NoteSplash extends FlxSprite
 		}
 
 		if(texture == null) {
-			texture = 'noteSplashes';
+			texture = "Huds/NoteSplashes/noteSplashes";
 			if(PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) texture = PlayState.SONG.splashSkin;
 		}
 

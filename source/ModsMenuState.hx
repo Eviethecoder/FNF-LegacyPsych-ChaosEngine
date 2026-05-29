@@ -27,6 +27,7 @@ import flixel.ui.FlxButton;
 import flixel.FlxBasic;
 import sys.io.File;
 import objects.ModMenuItem;
+import objects.FunkinMemory;
 /*import haxe.zip.Reader;
 import haxe.zip.Entry;
 import haxe.zip.Uncompress;
@@ -85,8 +86,8 @@ class ModsMenuState extends MusicBeatState
 
 	override function create()
 	{
-		Paths.clearStoredMemory();
-		Paths.clearUnusedMemory();
+		FunkinMemory.clearStoredMemory();
+		FunkinMemory.clearUnusedMemory();
 		WeekData.setDirectoryFromWeek();
 
 		#if desktop

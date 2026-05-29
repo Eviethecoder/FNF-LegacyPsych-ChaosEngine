@@ -121,12 +121,17 @@
 		}
 	],
 	"no_antialiasing": false,
-	"image": "characters/DADDY_DEAREST",
+	"image": "characters/spritesheets/DADDY_DEAREST",
 	"position": [
 		0,
 		0
 	],
-	"healthicon": "dad",
+	"iconData": {
+		"iconOffsets": [
+		],
+		"healthicon": "dad",
+		"posoffset": null
+	},
 	"flip_x": false,
 	"healthbar_colors": [
 		175,

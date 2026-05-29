@@ -12,6 +12,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import utility.Characterpreloader;
+import lime.utils.Assets;
 import flixel.tweens.FlxTween;
 import lime.utils.Assets;
 import flixel.sound.FlxSound;
@@ -123,7 +125,7 @@ class FreeplayState extends MusicBeatState
 			songText.snapToPosition();
 
 			Paths.currentModDirectory = songs[i].folder;
-			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
+			var icon:HealthIcon = new HealthIcon(utility.Characterpreloader.grabchardata(songs[i].songCharacter).iconData);
 			icon.autoUpdate = false;
 			icon.sprTracker = songText;
 
@@ -382,9 +384,9 @@ class FreeplayState extends MusicBeatState
 			}
 			
 			if (FlxG.keys.pressed.SHIFT){
-				LoadingState.loadAndSwitchState(new ChartingState());
+				MusicBeatState.switchState(new ChartingState());
 			}else{
-				LoadingState.loadAndSwitchState(new PlayState());
+				MusicBeatState.switchState(new PlayState());
 			}
 
 			FlxG.sound.music.volume = 0;

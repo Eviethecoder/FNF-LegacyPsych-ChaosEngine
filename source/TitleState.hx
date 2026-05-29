@@ -8,6 +8,7 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.input.keyboard.FlxKey;
 import flixel.addons.display.FlxGridOverlay;
+import debug.Consolehandler;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.transition.TransitionData;
@@ -91,6 +92,10 @@ class TitleState extends MusicBeatState
 
 		
 		curWacky = FlxG.random.getObject(getIntroTextShit());
+		Consolehandler.print("Welcome to the title state! If you're seeing this, the console is working! Congrats!");
+		Consolehandler.warn("Welcome to the title state! If you're seeing this, the console is working! Congrats! this is a warning!");
+		Consolehandler.error("Welcome to the title state! If you're seeing this, the console is working! Congrats! this is an error!");
+
 
 		#if CHECK_FOR_UPDATES
 		if(ClientPrefs.data.checkForUpdates && !closedState) {

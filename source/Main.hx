@@ -7,13 +7,15 @@ import flixel.FlxState;
 import openfl.Assets;
 import openfl.Lib;
 import debug.FPSCounter;
+import debug.ConsoleCore;
+import debug.ConsolePlugin;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.display.StageScaleMode;
 import winapi.WindowsAPI;
 
 //crash handler stuff
-#if CRASH_HANDLER
+
 import lime.app.Application;
 import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
@@ -24,7 +26,8 @@ import Discord.DiscordClient;
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.Process;
-#end
+import debug.FunkinDebugDisplay;
+
 
 using StringTools;
 
@@ -38,6 +41,11 @@ class Main extends Sprite
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
 	var startFullscreen:Bool = false; // Whether to start the game in fullscreen on desktop targets
 	public static var fpsVar:FPSCounter;
+			/**
+   * The debug display at the top left.
+   */
+   public static var debugDisplay:FunkinDebugDisplay;
+
 
 	// You can pretty much ignore everything from here on - your code should go in your states.
 
@@ -68,9 +76,11 @@ class Main extends Sprite
 		FlxG.signals.postUpdate.add(function() { if(FlxG.keys.justPressed.F1) { trace('window'); WindowsAPI.allocConsole(); }});
 		addChild(game);
 
+		untyped FlxG.cameras = new graphics.FunkinCameraFrontEnd();
 		#if !mobile
-		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
-		addChild(fpsVar);
+		// addChild gets called by the user settings code.
+    	debugDisplay = new FunkinDebugDisplay(10, 10, 0xFFFFFF);
+		addChild(debugDisplay);
 		Lib.current.stage.align = "tl";
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 		#end
@@ -80,59 +90,24 @@ class Main extends Sprite
 		FlxG.mouse.visible = false;
 		#end
 		
-		#if CRASH_HANDLER
+	
+		ConsoleCore.instance = new ConsoleCore();
+		FlxG.plugins.add(new ConsolePlugin());
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
-		#end
 	}
 
-	// Code was entirely made by sqirra-rng for their fnf engine named "Izzy Engine", big props to them!!!
-	// very cool person for real they don't get enough credit for their work
-	#if CRASH_HANDLER
-	function onCrash(e:UncaughtErrorEvent):Void
-	{
-		var errMsg:String = "";
-		var path:String;
-		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
-		var dateNow:String = Date.now().toString();
-
-		dateNow = dateNow.replace(" ", "_");
-		dateNow = dateNow.replace(":", "'");
-
-		path = "./crash/" + "PsychEngine_" + dateNow + ".txt";
-
-		for (stackItem in callStack)
-		{
-			switch (stackItem)
-			{
+	private final function onCrash(e:UncaughtErrorEvent):Void {
+		var emsg:String = "";
+		for (stackItem in haxe.CallStack.exceptionStack(true)) {
+			switch (stackItem) {
 				case FilePos(s, file, line, column):
-					errMsg += file + " (line " + line + ")\n";
+					emsg += file + " (line " + line + ")\n";
 				default:
 					Sys.println(stackItem);
+					trace(stackItem);
 			}
 		}
 
-		errMsg += "\nUncaught Error: " + e.error;
-		/*
-		 * remove if you're modding and want the crash log message to contain the link
-		 * please remember to actually modify the link for the github page to report the issues to.
-		*/
-		#if officialBuild
-		errMsg += "\nPlease report this error to the GitHub page: https://github.com/CrowPlexus-FNF/FNF-LegacyPsych\n\n> Crash Handler written by: sqirra-rng";
-		#else
-		trace("[Main.hx:115]: If you plan on open sourcing your mod, you MIGHT wanna check this out and change the link two lines above this one.");
-		#end
-
-		if (!FileSystem.exists("./crash/"))
-			FileSystem.createDirectory("./crash/");
-
-		File.saveContent(path, errMsg + "\n");
-
-		Sys.println(errMsg);
-		Sys.println("Crash dump saved in " + Path.normalize(path));
-
-		Application.current.window.alert(errMsg, "Error!");
-		DiscordClient.shutdown();
-		Sys.exit(1);
+		FlxG.switchState(new debug.CrashReportSubstate(FlxG.state, emsg, e.error));
 	}
-	#end
 }
