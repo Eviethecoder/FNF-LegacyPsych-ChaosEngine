@@ -170,7 +170,7 @@ class Note extends FlxSprite
 
 	public function defaultRGB()
 	{
-		var arr:Array<Dynamic> = utility.NoteSkinhelper.NoteSkinHelper.getNoteskinRgb(mustPress)[noteData];
+		var arr:Array<Dynamic> = utility.NoteSkinHelper.getNoteskinRgb(mustPress)[noteData];
 
 		if (arr != null && noteData > -1 && noteData <= arr.length)
 		{
@@ -189,7 +189,7 @@ class Note extends FlxSprite
 	private function set_noteType(value:String):String
 	{
 		defaultRGB();
-		noteSplashTexture = utility.NoteSkinhelper.NoteSkinHelper.getNotesplash();
+		noteSplashTexture = utility.NoteSkinHelper.getNotesplash();
 		if (noteData > -1 && noteData < ClientPrefs.data.arrowHSV.length)
 		{
 		}
@@ -353,7 +353,7 @@ class Note extends FlxSprite
 		{
 			var newRGB:RGBPalette = new RGBPalette();
 
-			var arr:Array<Dynamic> = utility.NoteSkinhelper.NoteSkinHelper.getNoteskinRgb(isPlayer)[noteData];
+			var arr:Array<Dynamic> = utility.NoteSkinHelper.getNoteskinRgb(isPlayer)[noteData];
 			// ClientPrefs.data.arrowRGB[noteData];
 
 			if (arr != null && noteData > -1 && noteData <= arr.length)
@@ -391,7 +391,7 @@ class Note extends FlxSprite
 		var skin:String = texture;
 		if (texture.length < 1)
 		{
-			skin = utility.NoteSkinhelper.NoteSkinHelper.getNoteskinNotes(mustPress);
+			skin = utility.NoteSkinHelper.getNoteskinNotes(mustPress);
 		}
 
 		var animName:String = null;

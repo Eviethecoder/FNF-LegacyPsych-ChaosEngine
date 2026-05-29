@@ -2,6 +2,7 @@ package;
 
 import flixel.system.ui.FlxSoundTray;
 import openfl.display.Bitmap;
+import openfl.utils.AssetType;
 import flixel.FlxG;
 import MathUtil;
 
@@ -67,9 +68,9 @@ class FunkinSoundTray extends FlxSoundTray
 		screenCenter();
 		y = -height - 10;
 
-		volumeUpSound = Paths.vslicesound("soundtray/Volup");
-		volumeDownSound = Paths.vslicesound("soundtray/Voldown");
-		volumeMaxSound = Paths.vslicesound("soundtray/VolMAX");
+		volumeUpSound = Paths.vslicesound("soundtray/volumeUp");
+		volumeDownSound = Paths.vslicesound("soundtray/volumeDown");
+		volumeMaxSound = Paths.vslicesound("soundtray/volumeMax");
 	}
 
 	override public function update(ms:Float):Void
@@ -127,7 +128,7 @@ class FunkinSoundTray extends FlxSoundTray
 		{
 			// This is a String currently, but there is or was a Flixel PR to change this to a FlxSound or a Sound bject
 			var sound:Null<String> = FlxG.sound.volume == 1 ? volumeMaxSound : (up ? volumeUpSound : volumeDownSound);
-			if (sound != null)
+			if (sound != null && Assets.exists(sound, AssetType.SOUND))
 				FlxG.sound.play(sound);
 		}
 	}

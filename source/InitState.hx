@@ -6,83 +6,81 @@ import Discord.DiscordClient;
 import lime.app.Application;
 import utility.Systeminfo;
 import utility.EventHandler;
-import utility.NoteSkinhelper.NoteSkinHelper;
+import utility.NoteSkinHelper;
 import objects.FunkinMemory;
-
 import flixel.system.debug.log.LogStyle;
+
 /**
  * Handles initialization of variables when first opening the game.
 **/
-class InitState extends flixel.FlxState {
-    override function create():Void {
-        super.create();
+class InitState extends flixel.FlxState
+{
+	override function create():Void
+	{
+		super.create();
 
-        // -- FLIXEL STUFF -- //
-         #if FEATURE_DEBUG_TRACY
-            Systeminfo.initTracy();
-        #end
+		// -- FLIXEL STUFF -- //
+		#if FEATURE_DEBUG_TRACY
+		Systeminfo.initTracy();
+		#end
 
-     // A small jumpstart to the soundtray, it usually sets itself to inactive (somewhere...)
-      // but that makes our soundtray not show up on init if we have the game muted.
-      // We set it to active so it at least calls it's update function once (see FlxGame.onEnterFrame(), it's called there)
-      // and also see FunkinSoundTray.update() to see what we do and how we check if we are muted or not
-     FlxG.game.soundTray.active = true;
+		// A small jumpstart to the soundtray, it usually sets itself to inactive (somewhere...)
+		// but that makes our soundtray not show up on init if we have the game muted.
+		// We set it to active so it at least calls it's update function once (see FlxGame.onEnterFrame(), it's called there)
+		// and also see FunkinSoundTray.update() to see what we do and how we check if we are muted or not
+		FlxG.game.soundTray.active = true;
 
-      FlxG.scaleMode = new FullScreenScaleMode();
+		FlxG.scaleMode = new FullScreenScaleMode();
 
-      // Set the game to a lower frame rate while it is in the background.
-      FlxG.game.focusLostFramerate = 30;
+		// Set the game to a lower frame rate while it is in the background.
+		FlxG.game.focusLostFramerate = 30;
 		FlxG.sound.muteKeys = TitleState.muteKeys;
 		FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 		FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
 		FlxG.keys.preventDefaultKeys = [TAB];
-         // Make errors and warnings less annoying.
-        LogStyle.WARNING.openConsole = false;
-        LogStyle.WARNING.errorSound = null;
+		// Make errors and warnings less annoying.
+		LogStyle.WARNING.openConsole = false;
+		LogStyle.WARNING.errorSound = null;
 
-        FlxTransitionableState.skipNextTransIn = true;
+		FlxTransitionableState.skipNextTransIn = true;
 
-        // -- SETTINGS -- //
+		// -- SETTINGS -- //
 
 		FlxG.save.bind('Catastrophe', CoolUtil.getSavePath());
 
-        Controls.instance = new Controls();
+		Controls.instance = new Controls();
 
-        ClientPrefs.loadDefaultKeys();
+		ClientPrefs.loadDefaultKeys();
 		ClientPrefs.loadPrefs();
-        NoteSkinHelper.setupfallback();
+		NoteSkinHelper.setupfallback();
 
-      
-
-
-        // -- MODS -- //
+		// -- MODS -- //
 
 		Paths.pushGlobalMods();
 
 		// Just to load a mod on start up if ya got one. For mods that change the menu music and bg
 		WeekData.loadTheFirstEnabledMod();
 
-        // -- -- -- //
+		// -- -- -- //
 
-  // -- -- -- //
+		// -- -- -- //
 
-        FunkinMemory.clearStoredMemory();
+		FunkinMemory.clearStoredMemory();
 		FunkinMemory.clearUnusedMemory();
 
+		FunkinMemory.loadPerminateAssets();
+		EventHandler.setupAllEventData();
 
+		if (!DiscordClient.isInitialized)
+		{
+			DiscordClient.initialize();
+			Application.current.onExit.add(function(exitCode)
+			{
+				DiscordClient.shutdown();
+			});
+		}
+		utility.Characterpreloader.charLookup();
 
-        FunkinMemory.loadPerminateAssets();
-        EventHandler.setupAllEventData();
-        
-        if (!DiscordClient.isInitialized)
-        {
-            DiscordClient.initialize();
-            Application.current.onExit.add (function (exitCode) {
-                DiscordClient.shutdown();
-            });
-        }
-        utility.Characterpreloader.charLookup();
-			
-        FlxG.switchState(Type.createInstance(Main.initialState, []));
-    }
+		FlxG.switchState(Type.createInstance(Main.initialState, []));
+	}
 }

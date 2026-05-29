@@ -81,24 +81,28 @@ class NoteSkinHelper
 	public static function useRgbShader(?hudData:HudstyleData):Bool
 	{
 		var data = resolveHudData(hudData);
-		return data != null && data.bars != null && data.bars.noteskin != null && data.bars.noteskin.usergbshader != null ? data.bars.noteskin.usergbshader : true;
+		return data != null
+			&& data.bars != null
+			&& data.bars.noteskin != null
+			&& data.bars.noteskin.usergbshader != null ? data.bars.noteskin.usergbshader : true;
 	}
 
 	public static function getAlphaOverride(?hudData:HudstyleData):Float
 	{
 		var data = resolveHudData(hudData);
-		return data != null && data.bars != null && data.bars.noteskin != null && data.bars.noteskin.alphaoveride != null ? data.bars.noteskin.alphaoveride : DEFAULT_ALPHA;
+		return data != null
+			&& data.bars != null
+			&& data.bars.noteskin != null
+			&& data.bars.noteskin.alphaoveride != null ? data.bars.noteskin.alphaoveride : DEFAULT_ALPHA;
 	}
 
 	static function resolveHudData(?hudData:HudstyleData):HudstyleData
 	{
-		
-
 		if (HaxeScript.isInPlayState() && PlayState.instance != null && PlayState.instance.hud != null)
 		{
 			return PlayState.instance.hud.hudData;
 		}
-		
+
 		if (hudData != null)
 		{
 			return hudData;
@@ -112,7 +116,4 @@ class NoteSkinHelper
 
 		return fallbackData;
 	}
-
-
 }
-
