@@ -1,29 +1,41 @@
-buildMac:
-  runs-on: macos-12
-  steps:
-    - uses: actions/checkout@v4
-    - uses: krdlab/setup-haxe@master
-      with:
-        haxe-version: 4.3.3
-    - name: Install Haxelib
-      run: |
-        haxelib setup ~/haxelib
-        haxelib install lime 8.0.1
-        haxelib install openfl 9.3.2
-        haxelib install flixel 5.5.0
-        haxelib install flixel-addons 3.2.1
-        haxelib install flixel-tools 1.5.1
-        haxelib install flixel-ui 2.5.0
-        haxelib install hxcpp-debug-server 1.2.4
-        haxelib install tjson 1.4.0
-        haxelib install hxCodec 2.6.1
-        haxelib install hxdiscord_rpc 1.1.1
-        haxelib install hscript
-        haxelib git linc_luajit https://github.com/superpowers04/linc_luajit 8c20c7adcb7ce9d7ebc83de10208bff96e3cb5d0
-    - name: Compile
-      run: haxelib run lime build mac
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: macBuild
-        path: export/release/macos/bin
+name: macOS Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  buildMac:
+    runs-on: macos-12
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.3
+
+      - name: Install Haxelib
+        run: |
+          haxelib setup ~/haxelib
+          haxelib install lime 8.0.1
+          haxelib install openfl 9.3.2
+          haxelib install flixel 5.5.0
+          haxelib install flixel-addons 3.2.1
+          haxelib install flixel-tools 1.5.1
+          haxelib install flixel-ui 2.5.0
+          haxelib install hxcpp-debug-server 1.2.4
+          haxelib install tjson 1.4.0
+          haxelib install hxCodec 2.6.1
+          haxelib install hxdiscord_rpc 1.1.1
+          haxelib install hscript
+          haxelib git linc_luajit https://github.com/superpowers04/linc_luajit 8c20c7adcb7ce9d7ebc83de10208bff96e3cb5d0
+
+      - name: Compile
+        run: haxelib run lime build mac
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macBuild
+          path: export/release/macos/bin
