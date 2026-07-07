@@ -69,7 +69,7 @@ class CameraMovement extends BaseEvent
 		var easingtype:String = grabeventString('Easing');
 		easingtype += grabeventString('inout');
 
-		tweencamera(prop, propoffsets, time, easingtype);
+		tweencamera(prop, propoffsets, time, easingtype, grabeventBool('Legacy'));
 	}
 
 	public function snapCam(focusoffset:Array<Float>)
@@ -79,7 +79,7 @@ class CameraMovement extends BaseEvent
 		FlxG.camera.focusOn(PlayState.instance.camFollowPos.getPosition());
 	}
 
-	function tweencamera(prop:FunkinSprite, propoffsets:Array<Float>, time:Float, ease:String)
+	function tweencamera(prop:FunkinSprite, propoffsets:Array<Float>, time:Float, ease:String, legacy:Bool = false)
 	{
 		if (time == 0)
 		{
@@ -87,10 +87,28 @@ class CameraMovement extends BaseEvent
 			return;
 		}
 
+		if (legacy)
+		{
+			PlayState.instance.camFollowPos.setPosition(prop.getMidpoint().x + propoffsets[0], prop.getMidpoint().y + propoffsets[1]);
+			cameraTwn = FlxTween.tween(PlayState.instance.camFollowPos, {
+				x: prop.getMidpoint().x + propoffsets[0],
+				y: prop.getMidpoint().y + propoffsets[1]
+			}, time, {
+				ease: HaxeScript.getFlxEaseByString(ease),
+				onComplete: function(twn:FlxTween)
+				{
+					cameraTwn = null;
+					PlayState.instance.camFollowPos.setPosition(prop.getMidpoint().x + propoffsets[0], prop.getMidpoint().y + propoffsets[1]);
+					FlxG.camera.target = PlayState.instance.camFollowPos;
+				}
+			});
+			return;
+		}
+
 		// Disable camera following for the duration of the tween.
 		@:nullSafety(Off)
 		FlxG.camera.target = null;
-		PlayState.instance.camFollowPos.setPosition(prop.getMidpoint().x + propoffsets[0], prop.getMidpoint().y + propoffsets[1]);
+
 		var followPos:FlxPoint = PlayState.instance.camFollowPos.getPosition() - FlxPoint.weak(FlxG.camera.width * 0.5, FlxG.camera.height * 0.5);
 		cameraTwn = FlxTween.tween(FlxG.camera.scroll, {
 			x: followPos.x,
@@ -100,6 +118,8 @@ class CameraMovement extends BaseEvent
 			onComplete: function(twn:FlxTween)
 			{
 				cameraTwn = null;
+				PlayState.instance.camFollowPos.setPosition(prop.getMidpoint().x + propoffsets[0], prop.getMidpoint().y + propoffsets[1]);
+				FlxG.camera.target = PlayState.instance.camFollowPos;
 			}
 		});
 	}

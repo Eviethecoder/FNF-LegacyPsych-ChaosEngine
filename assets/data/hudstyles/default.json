@@ -11,7 +11,7 @@
   "timeBar": {
     "image": ["Huds/Bars/timeBar"],
     "scale": 1.2,
-    "barStyle": "png",
+    "barStyle": "default",
     "position": [0, 50],
     "barOffsets": [320, 5]
   },

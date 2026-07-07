@@ -422,7 +422,7 @@ class Stage extends FlxBasic
 					charobject.x = chardata.position[0] - charobject.characterOrigin.x;
 					charobject.y = chardata.position[1] - charobject.characterOrigin.y;
 					charextradata(charobject, chardata);
-					startCharacterPos(charobject, true);
+					trace('gf added: ' + charobject + ' at position: ' + charobject.x + ', ' + charobject.y + 'with alpha: ' + charobject.alpha);
 				}
 		}
 	}
