@@ -88,11 +88,16 @@ class Welcometest extends MusicBeatState
 	#if desktop
 	function openAudioDialog():Void
 	{
-		FileDialog.openFile(Application.current.window, (files, filter) ->
+		FileDialog.openFile(Application.current.window, (filePaths, filter) ->
 		{
-			Consolehandler.print("Selected file: " + files);
-			playaudio(files[0]);
-			trace('Selected file: ' + files[0]);
+			if (filePaths == null || filePaths.length == 0)
+				return;
+
+			var filePath:String = filePaths[0];
+
+			Consolehandler.print("Selected file: " + filePath);
+			playaudio(filePath);
+			trace('Selected file: ' + filePath);
 			if (filter != null)
 				trace('Filter used: ' + filter.name);
 		}, [

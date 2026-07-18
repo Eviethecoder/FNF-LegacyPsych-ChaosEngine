@@ -457,7 +457,7 @@ class PlayState extends MusicBeatState
 
 		Conductor.songPosition = -5000 / Conductor.songPosition;
 
-		strumLine = new FlxSprite(ClientPrefs.data.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 50).makeGraphic(FlxG.width, 10);
+		strumLine = new FlxSprite(ClientPrefs.data.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 20).makeGraphic(FlxG.width, 10);
 		if (ClientPrefs.data.downScroll)
 			strumLine.y = FlxG.height - 450;
 		strumLine.scrollFactor.set();
@@ -1724,7 +1724,7 @@ class PlayState extends MusicBeatState
 			{
 				cpuControlled = !cpuControlled;
 				botplayTxt.visible = !botplayTxt.visible;
-				playerStrumline.cpuControlled = !cpuControlled;
+				playerStrumline.cpuControlled = botplayTxt.visible;
 				trace('CPU CONTROLLED: ' + playerStrumline.cpuControlled);
 			}
 			if (FlxG.keys.justPressed.ONE)
@@ -1877,10 +1877,7 @@ class PlayState extends MusicBeatState
 		{
 			if (!cpuControlled)
 				keyShit();
-			else
-				playerDance();
-
-			if (!startedCountdown)
+			else if (!startedCountdown)
 			{
 				// Before countdown starts, disable hit-detection on every active note
 				playerStrumline.notes.forEachAlive(function(daNote:Note)
@@ -2571,9 +2568,6 @@ class PlayState extends MusicBeatState
 					playerStrumline.hitNote(daNote);
 				}
 			});
-
-			if (!parsedHoldArray.contains(true) || endingSong)
-				playerDance();
 		}
 
 		// TO DO: Find a better way to handle controller inputs, this should work for now
@@ -2945,16 +2939,6 @@ class PlayState extends MusicBeatState
 		stage.characterBopper(curBeat);
 		lastBeatHit = curBeat;
 		setFunctionOnScripts('onBeatHit', [curBeat]);
-	}
-
-	function playerDance(force:Bool = false)
-	{
-		if (force
-			|| stage.boyfriend.animation.curAnim != null
-			&& stage.boyfriend.holdTimer > Conductor.stepCrochet * (0.0011 #if FLX_PITCH / FlxG.sound.music.pitch #end) * stage.boyfriend.singDuration
-				&& stage.boyfriend.animation.curAnim.name.startsWith('sing')
-				&& !stage.boyfriend.animation.curAnim.name.endsWith('miss'))
-			stage.boyfriend.dance();
 	}
 
 	override function sectionHit()

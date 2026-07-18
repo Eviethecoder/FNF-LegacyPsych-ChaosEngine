@@ -25,67 +25,47 @@ using StringTools;
 
 class Freeplaypaper extends FlxSpriteGroup
 {
-	var songname:FlxText;
+	public var songname:FlxText;
 
 	public var targetY:Float;
 	public var selected:Bool = false;
 	public var targetX:Float;
 
-	var backing:FunkinSprite;
+	public var backing:FunkinSprite;
+
 	var scaletolerp:Float = 1;
 	var backingWidth:Float = 0;
 	var backingHeight:Float = 0;
-	var metadata:Metadata = null;
+
+	public var metadata:Metadata = null;
+
 	var dorendervibe:Bool = true;
 
-	public function new(x:Float = 0, y:Float = 0, name:String = '???')
+	public var onclick:Void->Void = null;
+
+	public function new(x:Float = 0, y:Float = 0, metadata:Metadata = null)
 	{
 		super(x, y);
-		attemptmetadata(name);
+		attemptmetadata(metadata);
 		backing = new FunkinSprite(0, 0);
 		backing.loadGraphic(Paths.image('menus/freeplay/songpaper'));
 		add(backing);
 		backingWidth = backing.width;
 		backingHeight = backing.height;
 		backing.color = FlxColor.GRAY;
-		songname = new FlxText(0, 0, 0, name);
+		songname = new FlxText(0, 0, 0, metadata != null ? metadata.name : "Unknown");
 		songname.setFormat(Paths.font("Sketchy.ttf"), 42, FlxColor.GRAY, CENTER);
 		add(songname);
 		songname.x = backing.getGraphicMidpoint().x - (songname.width / 2);
 		songname.y = backing.getGraphicMidpoint().y - (songname.height / 2);
 
-		FlxMouseEvent.add(this, null, null, onMouseOver, onMouseOut);
+		FlxMouseEvent.add(this, onMouseDown, null, onMouseOver, onMouseOut);
 	}
 
-	function attemptmetadata(name:String)
+	function attemptmetadata(metadata:Metadata)
 	{
-		var metadataPath:String = null;
-		var rawJson:String = null;
-
-		var jsonPath:String = Paths.json('songs/default/' + name + '/metadata.json');
-
-		#if sys
-		if (FileSystem.exists(jsonPath))
-		{
-			metadataPath = jsonPath;
-			rawJson = File.getContent(jsonPath);
-		}
-		#end
-
-		if (rawJson != null && rawJson.trim().length > 0)
-		{
-			var parser:JsonParser<Metadata> = new JsonParser<Metadata>();
-			parser.fromJson(rawJson, metadataPath);
-
-			if (parser.errors != null && parser.errors.length > 0)
-			{
-				for (error in parser.errors)
-					trace(error);
-			}
-
-			metadata = parser.value;
-			debug.Consolehandler.print('Metadata: ' + metadata);
-		}
+		this.metadata = metadata;
+		debug.Consolehandler.print('Metadata: ' + metadata);
 
 		if (metadata != null)
 		{
@@ -97,6 +77,12 @@ class Freeplaypaper extends FlxSpriteGroup
 				}
 			}
 		}
+	}
+
+	function onMouseDown(sprite:FlxSpriteGroup)
+	{
+		if (onclick != null)
+			onclick();
 	}
 
 	function onMouseOver(sprite:FlxSpriteGroup)
@@ -134,8 +120,8 @@ class Freeplaypaper extends FlxSpriteGroup
 		var desiredX:Float = targetX - ((backingWidth * scale.x) - backingWidth) * 0.5;
 		var desiredY:Float = targetY - ((backingHeight * scale.y) - backingHeight) * 0.5;
 
-		x = MathUtil.smoothLerpPrecision(x, desiredX, elapsed, 0.5);
-		y = MathUtil.smoothLerpPrecision(y, desiredY, elapsed, 0.5);
+		x = MathUtil.smoothLerpPrecision(x, desiredX, elapsed, 0.9);
+		y = MathUtil.smoothLerpPrecision(y, desiredY, elapsed, 0.9);
 		super.update(elapsed);
 	}
 }

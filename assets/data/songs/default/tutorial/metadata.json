@@ -1,0 +1,11 @@
+{
+  "name": "tutorial",
+	"color": "#ff00ff",
+	"renderdata": {
+		"name": "ebot",
+		"rendergraphic": "ebot"
+	},
+	"songitemdata": {
+		"itemgraphic": "songpaper"
+	}
+}

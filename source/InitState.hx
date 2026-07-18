@@ -81,6 +81,6 @@ class InitState extends flixel.FlxState
 		}
 		utility.Characterpreloader.charLookup();
 
-		FlxG.switchState(Type.createInstance(TitleState, []));
+		FlxG.switchState(Type.createInstance(states.Freeplay, []));
 	}
 }

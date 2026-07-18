@@ -1,11 +1,11 @@
 {
   "healthbar": {
     "animations": [],
-    "image": ["Huds/Bars/HudBar"],
+    "image": ["", "Huds/Bars/HudBar"],
     "scale": 1,
     "barStyle": "png",
-    "position": [-30, 0],
-    "barOffsets": [-300, 20],
+    "position": [0, 0],
+    "barOffsets": [235, -23],
     "no_antialiasing": false
   },
   "timeBar": {
@@ -13,7 +13,7 @@
     "scale": 1.2,
     "barStyle": "default",
     "position": [0, 50],
-    "barOffsets": [320, 5]
+    "barOffsets": [320, 99999]
   },
   "noteskin": {
     "strumlinegraphic": "Huds/Noteskins/NOTE_assets",
@@ -22,5 +22,6 @@
     "notesplash": "Huds/NoteSplashes/noteSplashes",
     "notesplashoffsets": [-20, -100],
     "alphaoveride": 1
-  }
+  },
+  "scorpos": [-400, 50]
 }

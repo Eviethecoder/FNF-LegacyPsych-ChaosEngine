@@ -2,36 +2,56 @@ package data;
 
 typedef Metadata =
 {
+	var name:Null<String>;
 	@:optional
-	var Mixes:Array<String>;
+	var Mixes:Null<Array<String>>;
+
 	@:optional
-	var color:String;
+	var color:Null<String>;
+
 	@:optional
-	var font:Fontformat;
-	var renderdata:RenderData;
-	var songitemdata:SongItemData;
+	var font:Null<Fontformat>;
+
+	@:optional
+	var renderdata:Null<RenderData>;
+
+	@:optional
+	var songitemdata:Null<SongItemData>;
 }
 
 typedef Fontformat =
 {
-	var font:String;
-	var selectedcolor:Int;
-	var deselectedcolor:Int;
+	@:optional
+	var font:Null<String>;
+
+	@:optional
+	var selectedcolor:Null<Int>;
+
+	@:optional
+	var deselectedcolor:Null<Int>;
 }
 
 typedef RenderData =
 {
-	var name:String;
-	@:default(true)
-	var dorendervibe:Bool;
-	var rendergraphic:String;
 	@:optional
-	var animdata:Array<Character.AnimArray>;
+	var name:Null<String>;
+
+	@:optional
+	@:default(true)
+	var dorendervibe:Null<Bool>;
+
+	@:optional
+	var rendergraphic:Null<String>;
+
+	@:optional
+	var animdata:Null<Array<Character.AnimArray>>;
 }
 
 typedef SongItemData =
 {
-	var itemgraphic:String;
 	@:optional
-	var animdata:Array<Character.AnimArray>;
+	var itemgraphic:Null<String>;
+
+	@:optional
+	var animdata:Null<Array<Character.AnimArray>>;
 }
