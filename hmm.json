@@ -1,16 +1,107 @@
 {
   "dependencies": [
-    { "name": "lime", "type": "haxelib", "version": "8.0.1" },
-    { "name": "openfl", "type": "haxelib", "version": "9.3.2" },
-    { "name": "flixel", "type": "haxelib", "version": "5.5.0" },
-    { "name": "flixel-addons", "type": "haxelib", "version": "3.2.1" },
+    {"name": "actuate", "type": "haxelib", "version": "1.9.0"},
+
+    {
+      "name": "lime",
+      "type": "git",
+      "dir": null,
+      "ref": "master",
+      "url": "https://github.com/FunkinCrew/lime"
+    },
+    {
+      "name": "flixel-animate",
+      "type": "git",
+      "dir": null,
+      "ref": "c5e3393c70b71a191f20fa902114cea92042e486",
+      "url": "https://github.com/MaybeMaru/flixel-animate"
+    },
+    {
+      "name": "openfl",
+      "type": "git",
+      "dir": null,
+      "ref": "master",
+      "url": "https://github.com/FunkinCrew/openfl"
+    },
+
+
+     {
+      "name": "flixel",
+      "type": "git",
+      "dir": null,
+      "ref": "dev",
+      "url": "https://github.com/FunkinCrew/flixel"
+    },
+    {
+      "name": "flixel-addons",
+      "type": "git",
+      "dir": null,
+      "ref": "187f93b34f93c6a405d634a42913c745e443463a",
+      "url": "https://github.com/FunkinCrew/flixel-addons"
+    },
+    {
+      "name": "flixel-animate",
+      "type": "git",
+      "dir": null,
+      "ref": "c5e3393c70b71a191f20fa902114cea92042e486",
+      "url": "https://github.com/MaybeMaru/flixel-animate"
+    },
+
     { "name": "flixel-tools", "type": "haxelib", "version": "1.5.1" },
-    { "name": "flixel-ui", "type": "haxelib", "version": "2.5.0" },
-    { "name": "hxcpp-debug-server", "type": "haxelib", "version": "1.2.4" },
+    { "name": "flixel-ui", "type": "haxelib", "version": "2.6.4" },
+
+    {
+      "name": "haxeui-core",
+      "type": "git",
+      "dir": null,
+      "ref": "09f2512564b45e92229e21433e6dd482391f7b7d",
+      "url": "https://github.com/FunkinCrew/haxeui-core"
+    },
+    {
+      "name": "haxeui-flixel",
+      "type": "git",
+      "dir": null,
+      "ref": "100f2c96beab619cfe72c567a058c41c71e3e998",
+      "url": "https://github.com/haxeui/haxeui-flixel"
+    },
+    {
+      "name": "haxeui-openfl",
+      "type": "git",
+      "ref": "",
+      "dir": null,
+      "url": "https://github.com/haxeui/haxeui-openfl"
+    },
+
+    {
+      "name": "hxcpp-debug-server",
+      "type": "git",
+      "dir": "hxcpp-debug-server",
+      "ref": "7459934666a473a4cc4d066ba4a93ef92f1ce94c",
+      "url": "https://github.com/FunkinCrew/hxcpp-debugger"
+    },
+
     { "name": "tjson", "type": "haxelib", "version": "1.4.0" },
-    { "name": "hxCodec", "type": "haxelib", "version": "2.6.1" },
+
+    {
+      "name": "hxvlc",
+      "type": "git",
+      "dir": null,
+      "ref": "main",
+      "url": "https://github.com/MAJigsaw77/hxvlc.git"
+    },
     { "name": "hxdiscord_rpc", "type": "haxelib", "version": "1.1.1" },
-    { "name": "hscript", "type": "haxelib", "version": null },
+    { "name": "uniontypes", "type": "haxelib", "version": "0.3.0" },
+
+    {
+      "name": "json2object",
+      "type": "git",
+      "dir": null,
+      "ref": "59e0467c953d1f26e3cbf2a070f140e2d2e8457d",
+      "url": "https://github.com/FunkinCrew/json2object"
+    },
+
+    { "name": "hscript-iris", "type": "haxelib", "version": "1.1.3" },
+
     {
       "name": "linc_luajit",
       "type": "git",
