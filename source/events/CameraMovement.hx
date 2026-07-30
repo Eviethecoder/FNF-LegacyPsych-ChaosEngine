@@ -89,7 +89,7 @@ class CameraMovement extends BaseEvent
 
 		if (legacy)
 		{
-			PlayState.instance.camFollowPos.setPosition(prop.getMidpoint().x + propoffsets[0], prop.getMidpoint().y + propoffsets[1]);
+			FlxG.camera.target = PlayState.instance.camFollowPos;
 			cameraTwn = FlxTween.tween(PlayState.instance.camFollowPos, {
 				x: prop.getMidpoint().x + propoffsets[0],
 				y: prop.getMidpoint().y + propoffsets[1]
@@ -98,8 +98,6 @@ class CameraMovement extends BaseEvent
 				onComplete: function(twn:FlxTween)
 				{
 					cameraTwn = null;
-					PlayState.instance.camFollowPos.setPosition(prop.getMidpoint().x + propoffsets[0], prop.getMidpoint().y + propoffsets[1]);
-					FlxG.camera.target = PlayState.instance.camFollowPos;
 				}
 			});
 			return;

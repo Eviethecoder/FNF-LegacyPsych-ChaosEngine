@@ -3,6 +3,7 @@ package debug;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import openfl.Lib;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -11,30 +12,37 @@ import Alphabet;
 import Paths;
 import TitleState;
 
-
-//taken from legacy Nightmare vision. support their shit tOOOO
-class CrashReportSubstate extends FlxState {
+// taken from legacy Nightmare vision. support their shit tOOOO
+class CrashReportSubstate extends FlxState
+{
 	var underText:FlxText;
-    public var error:String;
-    public var errorName:String;
 
-	public function new(prevState:FlxState, error:String, errorName:String):Void {
-        this.error = error;
-        this.errorName = errorName;
-        super();
+	public var error:String;
+	public var errorName:String;
+	public var prevStateClass:FlxState;
+
+	public function new(prevStateClass:FlxState, error:String, errorName:String):Void
+	{
+		this.prevStateClass = prevStateClass;
+		this.error = error;
+		this.errorName = errorName;
+		super();
 	}
 
-    override public function create(){
-        super.create();
+	override public function create()
+	{
+		super.create();
 
-        FlxG.state.persistentUpdate = false;
+		FlxG.state.persistentUpdate = false;
 		FlxG.state.persistentDraw = true;
-		
-        var bg:FlxSprite = new FlxSprite().makeGraphic(1, 1, 0xFF000000);
+
+		var bg:FlxSprite = new FlxSprite().makeGraphic(1, 1, 0xFF000000);
 		bg.scrollFactor.set();
 		bg.alpha = 0;
+		var scaleXRatio:Float = Lib.current.stage.stageWidth / bg.width;
+		var scaleYRatio:Float = Lib.current.stage.stageHeight / bg.height;
 		bg.loadGraphic(Paths.image("uhoh"));
-		bg.setGraphicSize(1280, 720);
+		bg.scale.set(scaleXRatio, scaleYRatio);
 		bg.updateHitbox();
 		bg.screenCenter();
 		add(bg);
@@ -62,13 +70,15 @@ class CrashReportSubstate extends FlxState {
 		FlxTween.tween(bg, {alpha: 0.6}, 0.6, {ease: FlxEase.cubeOut});
 
 		this.camera = FlxG.cameras.list[FlxG.cameras.list.length - 1];
-    }
+	}
 
-	override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void
+	{
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.SPACE){
-			FlxG.switchState(new TitleState());
-        }
+		if (FlxG.keys.justPressed.SPACE)
+		{
+			FlxG.switchState(prevStateClass);
+		}
 	}
 }

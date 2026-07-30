@@ -433,6 +433,9 @@ class Stage extends FlxBasic
 		charobject.angle = chardata.angle;
 		charobject.alpha = chardata.alpha;
 		charobject.scrollFactor.set(chardata.scroll[0], chardata.scroll[1]);
+		debug.Consolehandler.print('character should be flipped: ' + chardata.flipx);
+		charobject.flipX = chardata.flipx;
+		debug.Consolehandler.print('character flipX is: ' + charobject.flipX);
 		charmap.set(charobject.charactertype, charobject);
 		stageGroup.add(charobject);
 		Scripthandler.dispatchevent('CharacterCreation', [charobject.charactertype, charobject, chardata]);

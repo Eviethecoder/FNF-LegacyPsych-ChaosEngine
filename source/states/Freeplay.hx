@@ -15,6 +15,7 @@ import flixel.sound.FlxSound;
 import editors.ChartingState;
 import PlayState;
 import objects.FunkinSprite;
+import objects.RenderSprite;
 import objects.Freeplaypaper;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
@@ -37,6 +38,8 @@ class Freeplay extends MusicBeatState
 	var sidePaper:FunkinSprite;
 	var highscore:FunkinSprite;
 
+	var scoretext:FlxText;
+
 	var renderIdleTime:Float = 0;
 
 	var papers:Array<Freeplaypaper> = [];
@@ -47,13 +50,13 @@ class Freeplay extends MusicBeatState
 	var centerY = FlxG.height * 0.3;
 	var spacingY = 200;
 
-	var render:FunkinSprite;
+	var render:RenderSprite;
 	var renderTween:FlxTween = null;
 	var renderTween2:FlxTween = null;
 
 	var rendermap:Map<String, FunkinSprite> = new Map<String, FunkinSprite>();
 	var ogrenderposition:FlxPoint;
-	var metadata:Array<Metadata> = [];
+	var metadata:Map<String, Metadata> = new Map<String, Metadata>();
 
 	var curSelected:Int = 0;
 
@@ -87,10 +90,17 @@ class Freeplay extends MusicBeatState
 		highscore = new FunkinSprite();
 		highscore.loadGraphic(Paths.image("menus/freeplay/highscore"));
 		highscore.x = sidePaper.x + 300;
-		highscore.y = 40;
+
 		add(highscore);
 
-		render = new FunkinSprite();
+		scoretext = new FlxText(highscore.x + 150, highscore.y + 40, 800, "0");
+		scoretext.setFormat(Paths.font("Sketchy.ttf"), 32, FlxColor.BLACK, "center");
+		scoretext.screenCenter(X);
+		scoretext.x += 400;
+		debug.Consolehandler.print(' ' + scoretext.x);
+		add(scoretext);
+		scoretext.angle = -10;
+		render = new RenderSprite();
 		render.loadGraphic(Paths.image("menus/freeplay/freeplay renders/ebot"));
 		render.antialiasing = true;
 
@@ -102,9 +112,10 @@ class Freeplay extends MusicBeatState
 
 		add(render);
 
-		for (i in 0...metadata.length)
+		var i:Int = 0;
+		for (songMeta in metadata)
 		{
-			var paper = new Freeplaypaper(startX - (i - curSelected) * offsetX, centerY + (i - curSelected) * spacingY, metadata[i]);
+			var paper = new Freeplaypaper(startX - (i - curSelected) * offsetX, centerY + (i - curSelected) * spacingY, songMeta);
 			papers.push(paper);
 			add(paper);
 			paper.onclick = loadsong.bind();
@@ -115,8 +126,13 @@ class Freeplay extends MusicBeatState
 				rendermap.set(paper.metadata.renderdata.name, sprite);
 			}
 			paper.toggleselected(i == curSelected);
+			i++;
 		}
 		changeSelection(0);
+	}
+
+	function renderclick(sprite:FunkinSprite)
+	{
 	}
 
 	function changeSelection(change:Int = 0)
@@ -162,7 +178,7 @@ class Freeplay extends MusicBeatState
 			onComplete: function(_)
 			{
 				// Replace this later with the selected song's render.
-				render.loadGraphicFromSprite(rendermap.get(curselectedpaper.metadata.renderdata.name));
+				render.swapgraphicdata(rendermap.get(curselectedpaper.metadata.renderdata.name));
 
 				// Reset before tweening back in.
 				renderTween = null;
@@ -188,7 +204,7 @@ class Freeplay extends MusicBeatState
 		renderIdleTime += elapsed;
 
 		// Idle floating movement
-		if (renderTween == null)
+		if (renderTween == null && curselectedpaper.dorendervibe)
 		{
 			var idleX = Math.sin(renderIdleTime * 2) * 5;
 			var idleY = Math.cos(renderIdleTime * 1.5) * 5;

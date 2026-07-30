@@ -1,0 +1,28 @@
+{
+  "eventLogic": [
+    {
+      "name": "Text",
+      "title": "Text",
+      "rownum": 1,
+      "type": "STRING"
+    },
+    {
+      "name": "DurationSteps",
+      "title": "Duration Steps",
+      "rownum": 2,
+      "type": "FLOAT"
+    },
+    {
+      "name": "IconOverride",
+      "title": "Icon Override",
+      "rownum": 3,
+      "type": "STRING"
+    },
+    {
+      "name": "ResetIcon",
+      "title": "Reset Icon",
+      "rownum": 4 ,
+      "type": "BOOL"
+    }
+  ]
+}

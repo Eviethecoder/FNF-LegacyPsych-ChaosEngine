@@ -1,0 +1,35 @@
+{
+  "eventLogic": [
+    {
+      "name": "Enabled",
+      "title": "Enabled",
+      "rownum": 1,
+      "type": "BOOL"
+    },
+    {
+      "name": "Amplitude",
+      "title": "Amplitude",
+      "rownum": 2,
+      "type": "FLOAT"
+    },
+    {
+      "name": "Speed",
+      "title": "Speed",
+      "rownum": 2,
+      "type": "FLOAT"
+    },
+    {
+      "name": "PhaseOffset",
+      "title": "Phase Offset",
+      "rownum": 3,
+      "type": "FLOAT"
+    },
+    {
+      "name": "Target",
+      "title": "Target",
+      "rownum": 4,
+      "type": "DROPDOWN",
+      "list": ["Both", "Player", "Opponent", "All", "BF", "Dad"]
+    }
+  ]
+}

@@ -14,6 +14,8 @@ import events.BaseEvent;
 import events.ScriptedEvent;
 import events.BPMChange;
 import events.CharacterChange;
+import events.LyricEvent;
+import events.WaveyNotes;
 
 using StringTools;
 
@@ -26,7 +28,14 @@ class EventHandler
 	public static var eventList:Array<String> = ['none'];
 	public static var usedEvents:Array<String> = [];
 
-	static var hardcodedEvents:Array<String> = ['CameraMovement', 'CameraZoom', 'CharacterChange', 'Lyrics', 'BPMChange'];
+	static var hardcodedEvents:Array<String> = [
+		'CameraMovement',
+		'CameraZoom',
+		'CharacterChange',
+		'Lyrics',
+		'BPMChange',
+		'WaveyNotes'
+	];
 
 	public static function scanFolderRecursive(folder:String, onFile:String->Void):Void
 	{
@@ -100,7 +109,16 @@ class EventHandler
 		{
 			if (hardcodedEvents.contains(eventname))
 			{
-				var cls = Type.resolveClass('events.' + eventname);
+				var className:String = switch (eventname)
+				{
+					case 'Lyrics':
+						'LyricEvent';
+					case 'Wavey':
+						'WaveyNotes';
+					default:
+						eventname;
+				};
+				var cls = Type.resolveClass('events.' + className);
 				trace('making event: ' + eventname + ' looked for class: ' + cls);
 				var event:BaseEvent = Type.createInstance(cls, []);
 				trace(event);

@@ -39,7 +39,7 @@ class Freeplaypaper extends FlxSpriteGroup
 
 	public var metadata:Metadata = null;
 
-	var dorendervibe:Bool = true;
+	public var dorendervibe:Bool = true;
 
 	public var onclick:Void->Void = null;
 
@@ -65,23 +65,14 @@ class Freeplaypaper extends FlxSpriteGroup
 	function attemptmetadata(metadata:Metadata)
 	{
 		this.metadata = metadata;
-		debug.Consolehandler.print('Metadata: ' + metadata);
 
-		if (metadata != null)
-		{
-			if (metadata.renderdata != null)
-			{
-				if (metadata.renderdata.dorendervibe != null)
-				{
-					dorendervibe = metadata.renderdata.dorendervibe;
-				}
-			}
-		}
+		dorendervibe = metadata.dorendervibe;
+		debug.Consolehandler.print('dorendervibe: ' + dorendervibe);
 	}
 
 	function onMouseDown(sprite:FlxSpriteGroup)
 	{
-		if (onclick != null)
+		if (onclick != null && selected)
 			onclick();
 	}
 

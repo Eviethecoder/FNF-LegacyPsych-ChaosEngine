@@ -31,7 +31,9 @@ class ConsolePlugin extends FlxBasic
 			isvis = !isvis;
 		}
 		ui.visible = isvis;
-		FlxG.mouse.visible = isvis;
+		if(!FlxG.mouse.visible){
+			FlxG.mouse.visible = true;
+		}
 		ui.setFocus(isvis);
 	}
 

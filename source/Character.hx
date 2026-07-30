@@ -68,14 +68,14 @@ typedef AnimArray =
 	var fps:Int;
 	var loop:Bool;
 	var indices:Array<Int>;
-	var offsets:Array<Int>;
+	var offsets:Array<Float>;
 	@:optional
 	var offsets_flip:Array<Int>;
 }
 
 class Character extends FunkinSprite
 {
-	public var animOffsets:Map<String, Array<Dynamic>>;
+	public var animOffsets:Null<Map<String, Array<Dynamic>>>;
 	public var debugMode:Bool = false;
 	public var spriteType:String = 'sparrow';
 	public var charactertype:String = 'unknown';
@@ -115,6 +115,7 @@ class Character extends FunkinSprite
 	public var positionArray:Array<Float> = [0, 0];
 	public var cameraPosition:Array<Float> = [0, 0];
 	public var hasMissAnimations:Bool = false;
+	public var originalFlipX:Bool = false;
 
 	var singHoldNote:Bool = false;
 	var theFrames:FlxAtlasFrames;
@@ -139,7 +140,7 @@ class Character extends FunkinSprite
 	public var imageFile:String = '';
 	public var jsonScale:Float = 1;
 	public var noAntialiasing:Bool = false;
-	public var originalFlipX:Bool = false;
+
 	public var singAnimations:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
 	public var healthColorArray:Array<Int> = [255, 0, 0];
 
@@ -240,7 +241,6 @@ class Character extends FunkinSprite
 					animstyle = json.animtype;
 				}
 				singDuration = json.sing_duration;
-				flipX = !!json.flip_x;
 				if (json.no_antialiasing)
 				{
 					antialiasing = false;
@@ -280,7 +280,7 @@ class Character extends FunkinSprite
 						}
 						if (anims.offsets != null && anims.offsets.length > 1)
 						{
-							addOffset(anims.anim, anims.offsets[0], anims.offsets[1]);
+							addOffset(anims.anim, anims.offsets);
 						}
 					}
 				}
@@ -290,37 +290,11 @@ class Character extends FunkinSprite
 				}
 				// trace('Loaded file to character ' + curCharacter);
 		}
-		originalFlipX = flipX;
 
 		if (animOffsets.exists('singLEFTmiss') || animOffsets.exists('singDOWNmiss') || animOffsets.exists('singUPmiss') || animOffsets.exists('singRIGHTmiss'))
 			hasMissAnimations = true;
 		recalculateDanceIdle();
 		dance();
-
-		if (isPlayer)
-		{
-			flipX = !flipX;
-
-			/*// Doesn't flip for BF, since his are already in the right place???
-				if (!curCharacter.startsWith('bf'))
-				{
-					// var animArray
-					if(animation.getByName('singLEFT') != null && animation.getByName('singRIGHT') != null)
-					{
-						var oldRight = animation.getByName('singRIGHT').frames;
-						animation.getByName('singRIGHT').frames = animation.getByName('singLEFT').frames;
-						animation.getByName('singLEFT').frames = oldRight;
-					}
-
-					// IF THEY HAVE MISS ANIMATIONS??
-					if (animation.getByName('singLEFTmiss') != null && animation.getByName('singRIGHTmiss') != null)
-					{
-						var oldMiss = animation.getByName('singRIGHTmiss').frames;
-						animation.getByName('singRIGHTmiss').frames = animation.getByName('singLEFTmiss').frames;
-						animation.getByName('singLEFTmiss').frames = oldMiss;
-					}
-			}*/
-		}
 		var classname:String = Type.getClassName(Type.getClass(FlxG.state));
 
 		if (classname == 'PlayState')
@@ -557,12 +531,32 @@ class Character extends FunkinSprite
 		animation.play(AnimName, Force, Reversed, Frame);
 
 		var daOffset = animOffsets.get(AnimName);
-		if (animOffsets.exists(AnimName))
+		var x:Float = 0;
+		var y:Float = 0;
+
+		switch (flipX)
 		{
-			offset.set(daOffset[0], daOffset[1]);
+			case true:
+				if (daOffset[2] != null)
+				{
+					x = daOffset[2];
+				}
+				if (daOffset[3] != null)
+				{
+					y = daOffset[3];
+				}
+			case false:
+				if (daOffset[0] != null)
+				{
+					x = daOffset[0];
+				}
+				if (daOffset[1] != null)
+				{
+					y = daOffset[1];
+				}
 		}
-		else
-			offset.set(0, 0);
+
+		offset.set(x, y);
 
 		if (curCharacter.startsWith('gf'))
 		{
@@ -632,10 +626,13 @@ class Character extends FunkinSprite
 		super.destroy();
 	}
 
-	public function addOffset(name:String, x:Float = 0,
-			y:Float = 0) // we need to edit this, but make sure if their is no extra offsets then it defaults to 0, 0 instead of null, which causes errors
+	public function addOffset(name:String,
+			offsets:Array<Float>) // we need to edit this, but make sure if their is no extra offsets then it defaults to 0, 0 instead of null, which causes errors
 	{
-		animOffsets[name] = [x, y];
+		if (offsets == null)
+			offsets = [0, 0];
+
+		animOffsets[name] = offsets;
 	}
 
 	public function quickAnimAdd(name:String, anim:String)

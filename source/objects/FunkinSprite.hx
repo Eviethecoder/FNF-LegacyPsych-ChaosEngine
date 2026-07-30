@@ -15,7 +15,6 @@ import openfl.system.System;
 
 class FunkinSprite extends FlxSprite
 {
-	public var zIndex:Int = 0;
 	public var id:String;
 
 	public function new(x:Float = 0, y:Float = 0, ?graphic:FlxGraphic = null)

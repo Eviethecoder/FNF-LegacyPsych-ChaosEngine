@@ -63,28 +63,72 @@ class ConsoleUI extends Sprite
 
 	public function print(text:String, type:ConsoleLogType = NORMAL)
 	{
+		var badgeHtml = "";
+		var textColor = "#FFFFFF";
+
+		switch (type)
+		{
+			case NORMAL:
+				badgeHtml = "";
+				textColor = "#FFFFFF";
+
+			case WARNING:
+				badgeHtml = '<font color="#FFFF44"><b> WARN: </b></font>';
+				textColor = "#FFFFFF";
+
+			case ERROR:
+				badgeHtml = '<font color="#FF4444"><b> ERROR: </b></font>';
+				textColor = "#FF2222";
+		}
+
+		this.log.htmlText += badgeHtml + '<font color="$textColor">' + escapeHtml(text) + '</font><br>';
+
+		if (autoFollow)
+			this.log.scrollV = this.log.maxScrollV;
+	}
+
+	public function printFromClass(className:String, text:String, color:Int, type:ConsoleLogType = NORMAL)
+	{
 		var prefix = "";
-		var color = 0xFFFFFF;
+		var classColor = StringTools.hex(color, 6);
+		var textColor = 0xFFFFFF;
+		var classIsBold = false;
 
 		switch (type)
 		{
 			case NORMAL:
 				prefix = "";
-				color = 0xFFFFFF;
+				classColor = StringTools.hex(color, 6);
+				textColor = 0xFFFFFF;
 
 			case WARNING:
-				prefix = "[WARN] ";
-				color = 0xFFFF44;
+				prefix = "WARN: ";
+				classColor = "FFFF44";
+				textColor = 0xFFFFFF;
+				classIsBold = true;
 
 			case ERROR:
-				prefix = "[ERROR] ";
-				color = 0xFF4444;
+				prefix = "ERROR: ";
+				classColor = "FF4444";
+				textColor = 0xFF0000;
+				classIsBold = true;
 		}
 
-		// apply color formatting
-		this.log.htmlText += '<font color="#' + StringTools.hex(color, 6) + '">' + prefix + text + '</font><br>';
+		var safeClass = escapeHtml(className + ' ' +  prefix);
+		var classLabel = '■ ' + safeClass;
+		if (classIsBold)
+			classLabel = '<b>' + classLabel + '</b>';
+		var box = '<font color="#' + classColor + '">' + classLabel + '</font>';
+		var safeText = escapeHtml( text);
+		var body = '<font color="#' + StringTools.hex(textColor, 6) + '">' + safeText + '</font><br>';
+		this.log.htmlText += box + body;
 
 		if (autoFollow)
 			this.log.scrollV = this.log.maxScrollV;
+	}
+
+	function escapeHtml(text:String):String
+	{
+		return StringTools.htmlEscape(Std.string(text), true);
 	}
 }

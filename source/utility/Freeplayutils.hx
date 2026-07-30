@@ -10,12 +10,10 @@ using StringTools;
 
 class Freeplayutils
 {
-	public static function getSongFolders():Array<Metadata>
+	public static function getSongFolders():Map<String, Metadata>
 	{
 		var baseFolder = 'assets/data/songs/default';
-		var result:Array<Metadata> = [];
-		var modfolders:Array<String> = Paths.getGlobalMods();
-		var exampleSongFolder:String = 'none';
+		var result:Map<String, Metadata> = new Map<String, Metadata>();
 
 		if (!FileSystem.exists(baseFolder) || !FileSystem.isDirectory(baseFolder))
 			debug.Consolehandler.print('Base folder missing or invalid, skipping base scan: ' + baseFolder);
@@ -45,7 +43,11 @@ class Freeplayutils
 							}
 
 							if (parser.value != null)
-								result.push(parser.value);
+							{
+								var songName:String = parser.value.name != null
+									&& parser.value.name.trim().length > 0 ? parser.value.name : entry;
+								result.set(songName, parser.value);
+							}
 						}
 					}
 					catch (e:Dynamic)
@@ -90,7 +92,11 @@ class Freeplayutils
 							}
 
 							if (parser.value != null)
-								result.push(parser.value);
+							{
+								var songName:String = parser.value.name != null
+									&& parser.value.name.trim().length > 0 ? parser.value.name : entry;
+								result.set(songName, parser.value);
+							}
 						}
 					}
 					catch (e:Dynamic)

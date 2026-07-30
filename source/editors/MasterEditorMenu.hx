@@ -11,7 +11,6 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import editors.EditorBaseState;
 import editors.Welcometest;
 import flixel.sound.FlxSound;
 #if MODS_ALLOWED
@@ -140,8 +139,6 @@ class MasterEditorMenu extends MusicBeatState
 					MusicBeatState.switchState(new LoadingState(new DialogueEditorState(), false));
 				case 'Chart Editor': // felt it would be cool maybe
 					MusicBeatState.switchState(new LoadingState(new ChartingState(), false));
-				case 'Explorer TestState': // felt it would be cool maybe
-					MusicBeatState.switchState(new LoadingState(new ExplorerTestState(), false));
 				case 'options': // felt it would be cool maybe
 					MusicBeatState.switchState(new LoadingState(new options.OptionsState(), false));
 			}

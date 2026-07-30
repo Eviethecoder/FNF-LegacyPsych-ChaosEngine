@@ -17,6 +17,10 @@ typedef Metadata =
 
 	@:optional
 	var songitemdata:Null<SongItemData>;
+
+	@:optional
+	@:default(true)
+	var dorendervibe:Null<Bool>;
 }
 
 typedef Fontformat =
@@ -35,10 +39,6 @@ typedef RenderData =
 {
 	@:optional
 	var name:Null<String>;
-
-	@:optional
-	@:default(true)
-	var dorendervibe:Null<Bool>;
 
 	@:optional
 	var rendergraphic:Null<String>;

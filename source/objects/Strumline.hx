@@ -138,6 +138,7 @@ class Strumline extends FlxSpriteGroup
 			if (!isPlayer && ClientPrefs.data.middleScroll)
 			{
 				babyArrow.x += 310;
+
 				if (i > 1) // Up and Right columns
 					babyArrow.x += FlxG.width / 2 + 25;
 			}
@@ -149,7 +150,6 @@ class Strumline extends FlxSpriteGroup
 			}
 			else
 				babyArrow.alpha = targetAlpha;
-
 			strumNotes.add(babyArrow);
 			babyArrow.postAddedToGroup();
 		}
@@ -404,7 +404,7 @@ class Strumline extends FlxSpriteGroup
 			var strumX:Float = strum.x + daNote.offsetX;
 			var strumY:Float = strum.y + daNote.offsetY;
 			var strumAngle:Float = strum.angle + daNote.offsetAngle;
-			var strumDirection:Float = strum.direction;
+			var strumDirection:Float = strum.direction + daNote.directionMod;
 			var strumAlpha:Float = strum.alpha * daNote.multAlpha;
 			var strumScroll:Bool = strum.downScroll;
 

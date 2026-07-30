@@ -429,7 +429,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 				character.animationsArray = parsedJson.animations;
 				for (anim in character.animationsArray)
 				{
-					character.addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
+					character.addOffset(anim.anim, anim.offsets);
 					if (anim.frames != null)
 					{
 						cachedframes.push(anim.frames);
@@ -671,7 +671,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 				lastAnim = char.animationsArray[curAnim].anim;
 			}
 
-			var lastOffsets:Array<Int> = [0, 0];
+			var lastOffsets:Array<Float> = [0, 0, 0, 0];
 			for (anim in char.animationsArray)
 			{
 				if (animationInputText.text == anim.anim)
@@ -705,7 +705,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 
 			if (!char.animOffsets.exists(newAnim.anim))
 			{
-				char.addOffset(newAnim.anim, 0, 0);
+				char.addOffset(newAnim.anim, [0, 0, 0, 0]);
 			}
 			char.animationsArray.push(newAnim);
 
@@ -1355,15 +1355,6 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 
 		char.setPosition(char.positionArray[0] + OFFSET_X + 100, char.positionArray[1]);
 
-		/* THIS FUNCTION WAS USED TO PUT THE .TXT OFFSETS INTO THE .JSON
-
-			for (anim => offset in char.animOffsets) {
-				var leAnim:AnimArray = findAnimationByName(anim);
-				if(leAnim != null) {
-					leAnim.offsets = [offset[0], offset[1]];
-				}
-		}*/
-
 		if (blahBlahBlah)
 		{
 			genBoyOffsets();
@@ -1497,7 +1488,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 
 			if (anim.offsets != null && anim.offsets.length > 1)
 			{
-				ghostChar.addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
+				ghostChar.addOffset(anim.anim, anim.offsets);
 			}
 		}
 
@@ -1677,8 +1668,8 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 				{
 					char.animationsArray[curAnim].offsets = [0, 0];
 
-					char.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].offsets[0], char.animationsArray[curAnim].offsets[1]);
-					ghostChar.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].offsets[0], char.animationsArray[curAnim].offsets[1]);
+					char.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].offsets);
+					ghostChar.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].offsets);
 					genBoyOffsets();
 				}
 
@@ -1692,24 +1683,36 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 				for (i in 0...controlArray.length)
 				{
 					if (controlArray[i])
-					{ // this code is shit
+					{ // this code is shit - god DAM is this hardn to edit - kuru
 						var holdShift = FlxG.keys.pressed.SHIFT;
 						var multiplier = 1;
 						if (holdShift)
 							multiplier = 10;
 
 						var arrayVal = 0;
+						if (char.flipX)
+						{
+							arrayVal = 2;
+						}
 						if (i > 1)
+						{
+							trace("modifying y axis");
 							arrayVal = 1;
+							if (char.flipX)
+							{
+								arrayVal = 3;
+							}
+						}
 
 						var negaMult:Int = 1;
 						if (i % 2 == 1)
 							negaMult = -1;
-						char.animationsArray[curAnim].offsets[arrayVal] += negaMult * multiplier;
 
-						char.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].offsets[0], char.animationsArray[curAnim].offsets[1]);
-						ghostChar.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].offsets[0],
-							char.animationsArray[curAnim].offsets[1]);
+						char.animationsArray[curAnim].offsets[arrayVal] += negaMult * multiplier;
+						trace("modifying " + char.animationsArray[curAnim].offsets[arrayVal] + "axis by " + (negaMult * multiplier));
+
+						char.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].offsets);
+						ghostChar.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].offsets);
 
 						char.playAnim(char.animationsArray[curAnim].anim, false);
 						if (ghostChar.animation.curAnim != null
