@@ -94,12 +94,13 @@ class Freeplay extends MusicBeatState
 		add(highscore);
 
 		scoretext = new FlxText(highscore.x + 150, highscore.y + 40, 800, "0");
-		scoretext.setFormat(Paths.font("Sketchy.ttf"), 32, FlxColor.BLACK, "center");
+		scoretext.setFormat(Paths.font("Sketchy.ttf"), 68, FlxColor.BLACK, "center");
 		scoretext.screenCenter(X);
 		scoretext.x += 400;
+		scoretext.y += 50;
 		debug.Consolehandler.print(' ' + scoretext.x);
 		add(scoretext);
-		scoretext.angle = -10;
+		scoretext.angle = 10;
 		render = new RenderSprite();
 		render.loadGraphic(Paths.image("menus/freeplay/freeplay renders/ebot"));
 		render.antialiasing = true;
@@ -113,18 +114,26 @@ class Freeplay extends MusicBeatState
 		add(render);
 
 		var i:Int = 0;
-		for (songMeta in metadata)
+		for (key in metadata.keys())
 		{
+			var songMeta = metadata.get(key);
+
 			var paper = new Freeplaypaper(startX - (i - curSelected) * offsetX, centerY + (i - curSelected) * spacingY, songMeta);
+
 			papers.push(paper);
 			add(paper);
+
 			paper.onclick = loadsong.bind();
-			if (rendermap.get(paper.metadata.renderdata.name) == null)
+			paper.songtoload = key;
+			debug.Consolehandler.print('paper.songtoload: ' + paper.songtoload);
+
+			if (!rendermap.exists(paper.metadata.renderdata.name))
 			{
-				var sprite = new FunkinSprite(); // reminder to make funkinsprite handle animation playing and offsets
+				var sprite = new FunkinSprite();
 				sprite.loadGraphic(Paths.image('menus/freeplay/freeplay renders/' + paper.metadata.renderdata.rendergraphic));
 				rendermap.set(paper.metadata.renderdata.name, sprite);
 			}
+
 			paper.toggleselected(i == curSelected);
 			i++;
 		}
@@ -234,14 +243,16 @@ class Freeplay extends MusicBeatState
 
 		if (controls.BACK)
 		{
-			// return to main menu
+			persistentUpdate = false;
+			FlxG.sound.play(Paths.sound('cancelMenu'));
+			MusicBeatState.switchState(new MainMenuState());
 		}
 	}
 
 	function loadsong()
 	{
 		var folder:String = '';
-		var songLowercase:String = Paths.formatToSongPath(curselectedpaper.songname.text).toLowerCase();
+		var songLowercase:String = Paths.formatToSongPath(curselectedpaper.songtoload).toLowerCase();
 		var poop:String = Highscore.formatSong(songLowercase, 1);
 
 		for (i in 0...Constants.defaultsongtypes.length)

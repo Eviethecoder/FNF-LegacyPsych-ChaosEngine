@@ -5,14 +5,18 @@ import flixel.FlxSprite;
 import flixel.math.FlxMath;
 import meta.data.*;
 import objects.FunkinSprite;
+import utility.FunkinInterface;
 import Character.IconData as IconData;
 
 using StringTools;
 
-class HealthIcon extends FunkinSprite
+class HealthIcon extends FunkinSprite implements FunkinInterface
 {
 	// This backend is slightly stolen from V-Slice. Support the official release.
 	public var sprTracker:FlxSprite;
+
+	public var beatcallback:Null<Void->Void>;
+	public var stepcallback:Null<Void->Void>;
 
 	public var animOffsets:Map<String, Array<Dynamic>>;
 
@@ -69,6 +73,10 @@ class HealthIcon extends FunkinSprite
 		changeIcon(this.icondata);
 		flipX = isPlayer;
 		scrollFactor.set();
+		utility.SignalDispatcher.addtoSignal('onPause', onPause);
+		utility.SignalDispatcher.addtoSignal('onResume', onResume);
+		utility.SignalDispatcher.addtoSignal('BeatHit', onBeat);
+		utility.SignalDispatcher.addtoSignal('StepHit', onStep);
 	}
 
 	override function update(elapsed:Float)
@@ -232,6 +240,35 @@ class HealthIcon extends FunkinSprite
 		return charId.endsWith('-pixel');
 	}
 
+	public function onBeat(beat:Int):Void
+	{
+		if (beatcallback != null)
+		{
+			beatcallback();
+		}
+	}
+
+	public function onStep(step:Int):Void
+	{
+		if (stepcallback != null)
+		{
+			stepcallback();
+		}
+		if (step % 4 == 0)
+		{
+			bop();
+			updateHitbox();
+		}
+	}
+
+	public function onPause():Void
+	{
+	}
+
+	public function onResume():Void
+	{
+	}
+
 	public function getCharacter():String
 	{
 		return char;
@@ -243,6 +280,15 @@ class HealthIcon extends FunkinSprite
 		{
 			scale.set(1.2, 1.2);
 		}
+	}
+
+	public override function destroy():Void
+	{
+		utility.SignalDispatcher.removefromSignal('onPause', onPause);
+		utility.SignalDispatcher.removefromSignal('onResume', onResume);
+		utility.SignalDispatcher.removefromSignal('BeatHit', onBeat);
+		utility.SignalDispatcher.removefromSignal('StepHit', onStep);
+		super.destroy();
 	}
 
 	function updateHealthIcon(health:Float):Void

@@ -88,6 +88,12 @@ class LoadingState extends MusicBeatState
 
 	public static function forcereloadstagedata()
 	{
-		stagedata = StageData.getStageFile(PlayState.SONG.stage);
+		try
+		{
+			stagedata = StageData.getStageFile(PlayState.SONG.stage);
+		}
+		catch (e:Dynamic)
+		{
+		}
 	}
 }

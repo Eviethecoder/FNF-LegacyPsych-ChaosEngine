@@ -16,7 +16,9 @@ import flixel.util.FlxGradient;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxState;
 import flixel.FlxCamera;
+import utility.SignalDispatcher;
 import utility.Scripthandler;
+import flixel.util.FlxSignal;
 import flixel.FlxBasic;
 
 class MusicBeatState extends FlxUIState
@@ -258,11 +260,15 @@ class MusicBeatState extends FlxUIState
 	public function stepHit():Void
 	{
 		if (curStep % 4 == 0)
+		{
 			beatHit();
+		}
+		SignalDispatcher.dispatch("StepHit", curStep);
 	}
 
 	public function beatHit():Void
 	{
+		SignalDispatcher.dispatch("BeatHit", curBeat);
 		// trace('Beat: ' + curBeat);
 	}
 

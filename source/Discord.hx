@@ -6,7 +6,6 @@ import lime.app.Application;
 import hxdiscord_rpc.Discord;
 import hxdiscord_rpc.Types;
 
-
 class DiscordClient
 {
 	public static var isInitialized:Bool = false;
@@ -16,45 +15,52 @@ class DiscordClient
 
 	public static function check()
 	{
-		if(ClientPrefs.data.discordRPC) initialize();
-		else if(isInitialized) shutdown();
+		if (ClientPrefs.data.discordRPC)
+			initialize();
+		else if (isInitialized)
+			shutdown();
 	}
-	
+
 	public static function prepare()
 	{
 		if (!isInitialized && ClientPrefs.data.discordRPC)
 			initialize();
 
-		Application.current.window.onClose.add(function() {
-			if(isInitialized) shutdown();
+		Application.current.window.onClose.add(function()
+		{
+			if (isInitialized)
+				shutdown();
 		});
 	}
 
-	public dynamic static function shutdown() {
+	public dynamic static function shutdown()
+	{
 		Discord.Shutdown();
 		isInitialized = false;
 	}
-	
-	private static function onReady(request:cpp.RawConstPointer<DiscordUser>):Void {
+
+	private static function onReady(request:cpp.RawConstPointer<DiscordUser>):Void
+	{
 		var requestPtr:cpp.Star<DiscordUser> = cpp.ConstPointer.fromRaw(request).ptr;
 
-
-		if (Std.parseInt(cast(requestPtr.discriminator, String)) != 0) //New Discord IDs/Discriminator system
-			trace('(Discord) Connected to User (${cast(requestPtr.username, String)}#${cast(requestPtr.discriminator, String)})');
-		else //Old discriminators
-			trace('(Discord) Connected to User (${cast(requestPtr.username, String)})');
+		if (Std.parseInt(cast(requestPtr.discriminator, String)) != 0) // New Discord IDs/Discriminator system
+			trace('(Discord) Connected to User (${cast (requestPtr.username, String)}#${cast (requestPtr.discriminator, String)})');
+		else // Old discriminators
+			trace('(Discord) Connected to User (${cast (requestPtr.username, String)})');
 
 		changePresence();
 		Constants.curUser = cast(requestPtr.username, String);
 		Constants.debugcheck();
 	}
 
-	private static function onError(errorCode:Int, message:cpp.ConstCharStar):Void {
-		trace('Discord: Error ($errorCode: ${cast(message, String)})');
+	private static function onError(errorCode:Int, message:cpp.ConstCharStar):Void
+	{
+		trace('Discord: Error ($errorCode: ${cast (message, String)})');
 	}
 
-	private static function onDisconnected(errorCode:Int, message:cpp.ConstCharStar):Void {
-		trace('Discord: Disconnected ($errorCode: ${cast(message, String)})');
+	private static function onDisconnected(errorCode:Int, message:cpp.ConstCharStar):Void
+	{
+		trace('Discord: Disconnected ($errorCode: ${cast (message, String)})');
 	}
 
 	public static function initialize()
@@ -65,7 +71,8 @@ class DiscordClient
 		discordHandlers.errored = cpp.Function.fromStaticFunction(onError);
 		Discord.Initialize(clientID, cpp.RawPointer.addressOf(discordHandlers), 1, null);
 
-		if(!isInitialized) trace("Discord Client initialized");
+		if (!isInitialized)
+			trace("Discord Client initialized");
 		sys.thread.Thread.create(() ->
 		{
 			var localID:String = clientID;
@@ -84,43 +91,50 @@ class DiscordClient
 		isInitialized = true;
 	}
 
-	public static function changePresence(?details:String = 'In the Menus', ?state:Null<String>, ?smallImageKey : String, ?hasStartTimestamp : Bool, ?endTimestamp: Float)
+	public static function changePresence(?details:String = 'In the Menus', ?state:Null<String>, largeicon:String = 'icon', ?smallImageKey:String,
+			?hasStartTimestamp:Bool, ?endTimestamp:Float)
 	{
 		var startTimestamp:Float = 0;
-		if (hasStartTimestamp) startTimestamp = Date.now().getTime();
+		if (hasStartTimestamp)
+			startTimestamp = Date.now().getTime();
 		var endTimestampValue:Float = 0;
-		if (endTimestamp != null && endTimestamp > 0) endTimestampValue = startTimestamp + endTimestamp;
+		if (endTimestamp != null && endTimestamp > 0)
+			endTimestampValue = startTimestamp + endTimestamp;
 
 		presence.details = details;
 		presence.state = state;
-		presence.largeImageKey = 'icon';
+		presence.largeImageKey = largeicon;
 		presence.largeImageText = Constants.version;
 		var normalizedSmallImageKey:String = null;
-		if (smallImageKey != null && smallImageKey.length > 0) {
+		if (smallImageKey != null && smallImageKey.length > 0)
+		{
 			normalizedSmallImageKey = smallImageKey.toLowerCase();
 		}
-		if (normalizedSmallImageKey == 'i am') {
+		if (normalizedSmallImageKey == 'i am')
+		{
 			presence.smallImageKey = 'i am';
-		} else {
+		}
+		else
+		{
 			presence.smallImageKey = normalizedSmallImageKey;
 		}
-		if (normalizedSmallImageKey != null) {
+		if (normalizedSmallImageKey != null)
+		{
 			trace('icon to find is: ' + normalizedSmallImageKey);
 		}
 		// Obtained times are in milliseconds so they are divided so Discord can use it
 		presence.startTimestamp = Std.int(startTimestamp / 1000);
 		presence.endTimestamp = endTimestampValue > 0 ? Std.int(endTimestampValue / 1000) : 0;
 		updatePresence();
-
-		
 	}
 
 	public static function updatePresence()
 	{
-		if (!isInitialized) return;
+		if (!isInitialized)
+			return;
 		Discord.UpdatePresence(cpp.RawConstPointer.addressOf(presence));
 	}
-	
+
 	public static function resetClientID()
 		clientID = _defaultID;
 
@@ -129,7 +143,7 @@ class DiscordClient
 		var change:Bool = (clientID != newID);
 		clientID = newID;
 
-		if(change && isInitialized)
+		if (change && isInitialized)
 		{
 			shutdown();
 			initialize();
@@ -137,7 +151,5 @@ class DiscordClient
 		}
 		return newID;
 	}
-
-	
 }
 #end

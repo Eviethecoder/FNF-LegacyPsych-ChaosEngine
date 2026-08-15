@@ -115,6 +115,14 @@ class Scripthandler
 		}
 	}
 
+	public static function onBeatHit(beat:Int):Void
+	{
+		for (script in gamescriptArray)
+		{
+			script.runFunction('onBeatHit', [beat]);
+		}
+	}
+
 	public static function dispatchevent(name:String, params:Array<Dynamic>):Void
 	{
 		for (script in gamescriptArray)

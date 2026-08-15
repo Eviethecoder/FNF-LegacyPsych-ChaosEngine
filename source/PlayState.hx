@@ -705,7 +705,7 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence.
-		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", SONG.mettadata.Discordrpc, iconP2.getCharacter());
 		#end
 
 		if (!controls.controllerMode)
@@ -717,6 +717,9 @@ class PlayState extends MusicBeatState
 		playerStrumline.charlist = [stage.boyfriend];
 		opponentStrumline.charlist = [stage.dad];
 		setFunctionOnScripts('onCreatePost', []);
+
+		utility.SignalDispatcher.addtoSignal('beatHit', Scripthandler.onBeatHit);
+		utility.SignalDispatcher.addtoSignal('stepHit', Scripthandler.onBeatHit);
 
 		super.create();
 
@@ -1336,7 +1339,8 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence (with Time Left)
-		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength);
+		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", SONG.mettadata.Discordrpc, iconP2.getCharacter(), true,
+			songLength);
 		#end
 		setFunctionOnScripts('onSongStart', []);
 	}
@@ -1632,14 +1636,14 @@ class PlayState extends MusicBeatState
 				DiscordClient.changePresence(detailsText, SONG.song
 					+ " ("
 					+ storyDifficultyText
-					+ ")", iconP2.getCharacter(), true,
-					songLength
+					+ ")", SONG.mettadata.Discordrpc, iconP2.getCharacter(),
+					true, songLength
 					- Conductor.songPosition
 					- ClientPrefs.data.noteOffset);
 			}
 			else
 			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", SONG.mettadata.Discordrpc, iconP2.getCharacter());
 			}
 			#end
 		}
@@ -1657,14 +1661,14 @@ class PlayState extends MusicBeatState
 				DiscordClient.changePresence(detailsText, SONG.song
 					+ " ("
 					+ storyDifficultyText
-					+ ")", iconP2.getCharacter(), true,
-					songLength
+					+ ")", SONG.mettadata.Discordrpc, iconP2.getCharacter(),
+					true, songLength
 					- Conductor.songPosition
 					- ClientPrefs.data.noteOffset);
 			}
 			else
 			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", SONG.mettadata.Discordrpc, iconP2.getCharacter());
 			}
 		}
 		#end
@@ -1677,7 +1681,7 @@ class PlayState extends MusicBeatState
 		#if desktop
 		if (health > 0 && !paused)
 		{
-			DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+			DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", SONG.mettadata.Discordrpc, iconP2.getCharacter());
 		}
 		#end
 
@@ -1937,7 +1941,7 @@ class PlayState extends MusicBeatState
 		}
 
 		#if hxdiscord_rpc
-		DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+		DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", SONG.mettadata.Discordrpc, iconP2.getCharacter());
 		#end
 	}
 
@@ -1950,7 +1954,7 @@ class PlayState extends MusicBeatState
 		chartingMode = true;
 
 		#if hxdiscord_rpc
-		DiscordClient.changePresence("Chart Editor", null, null, true);
+		DiscordClient.changePresence("Chart Editor", null, SONG.mettadata.Discordrpc, null, true);
 		#end
 	}
 
@@ -1997,7 +2001,8 @@ class PlayState extends MusicBeatState
 
 				#if desktop
 				// Game Over doesn't get his own variable because it's only used here
-				DiscordClient.changePresence("Game Over - " + detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				DiscordClient.changePresence("Game Over - " + detailsText, SONG.song + " (" + storyDifficultyText + ")", SONG.mettadata.Discordrpc,
+					iconP2.getCharacter());
 				#end
 				isDead = true;
 				return true;
@@ -2200,7 +2205,7 @@ class PlayState extends MusicBeatState
 				{
 					CustomFadeTransition.nextCamera = null;
 				}
-				MusicBeatState.switchState(new FreeplayState());
+				MusicBeatState.switchState(new states.Freeplay());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				changedDifficulty = false;
 			}
@@ -2878,6 +2883,8 @@ class PlayState extends MusicBeatState
 		}
 		FlxG.animationTimeScale = 1;
 		#if FLX_PITCH FlxG.sound.music.pitch = 1; #end
+		utility.SignalDispatcher.removefromSignal('beatHit', Scripthandler.onBeatHit);
+		utility.SignalDispatcher.removefromSignal('stepHit', Scripthandler.onBeatHit);
 		super.destroy();
 	}
 
@@ -2929,12 +2936,6 @@ class PlayState extends MusicBeatState
 			playerStrumline.notes.sort(FlxSort.byY, ClientPrefs.data.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 			opponentStrumline.notes.sort(FlxSort.byY, ClientPrefs.data.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
-
-		iconP1.bop();
-		iconP2.bop();
-
-		iconP1.updateHitbox();
-		iconP2.updateHitbox();
 
 		stage.characterBopper(curBeat);
 		lastBeatHit = curBeat;

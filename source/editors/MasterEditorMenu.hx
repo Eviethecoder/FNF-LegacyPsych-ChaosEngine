@@ -24,12 +24,14 @@ class MasterEditorMenu extends MusicBeatState
 	var options:Array<String> = [
 		'Menu Character Editor',
 		'stage Editor',
-		'Dialogue Editor',
+		'DialogueTextState',
 		'Dialogue Portrait Editor',
 		'Character Editor',
+		'text examples',
 		'Example Editor',
 		'Chart editor welcome tests',
 		'options',
+		'3dtest',
 		'Chart Editor'
 	];
 	private var grpTexts:FlxTypedGroup<Alphabet>;
@@ -131,14 +133,19 @@ class MasterEditorMenu extends MusicBeatState
 				case 'stage Editor':
 					MusicBeatState.switchState(new LoadingState(new StageEditorState(), false));
 
+				case 'text examples':
+					FlxG.switchState(new states.EffectExamplesState());
+
 				case 'Menu Character Editor':
 					MusicBeatState.switchState(new MenuCharacterEditorState());
 				case 'Dialogue Portrait Editor':
 					MusicBeatState.switchState(new LoadingState(new DialogueCharacterEditorState(), false));
-				case 'Dialogue Editor':
-					MusicBeatState.switchState(new LoadingState(new DialogueEditorState(), false));
+				case 'DialogueTextState':
+					MusicBeatState.switchState(new DialogueTextState());
 				case 'Chart Editor': // felt it would be cool maybe
 					MusicBeatState.switchState(new LoadingState(new ChartingState(), false));
+				case '3dtest': // felt it would be cool maybe
+					MusicBeatState.switchState(new states.Modeltest());
 				case 'options': // felt it would be cool maybe
 					MusicBeatState.switchState(new LoadingState(new options.OptionsState(), false));
 			}

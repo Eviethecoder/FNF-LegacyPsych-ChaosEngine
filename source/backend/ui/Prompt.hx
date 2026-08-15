@@ -46,7 +46,8 @@ class Prompt extends BasePrompt
 
 	function promptCreate(_)
 	{
-		var btnY = 390;
+		var btnx = titleText.x;
+		var btnY = titleText.y + 100;
 		var btn:PsychUIButton = new PsychUIButton(0, btnY, _yesTxt, function()
 		{
 			yesFunction();
@@ -105,7 +106,7 @@ class BasePrompt extends MusicBeatSubstate
 		bg.updateHitbox();
 		bg.x = 0;
 		bg.y = 0;
-		debug.Consolehandler.print('bg x and y:' + bg.x + ' ' + bg.y);
+		bg.screenCenter();
 		// bg.cameras = cameras;
 		add(bg);
 

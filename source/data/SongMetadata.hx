@@ -10,6 +10,9 @@ typedef Metadata =
 	var color:Null<String>;
 
 	@:optional
+	var Discordrpc:Null<String>;
+
+	@:optional
 	var font:Null<Fontformat>;
 
 	@:optional

@@ -44,9 +44,7 @@ class Freeplayutils
 
 							if (parser.value != null)
 							{
-								var songName:String = parser.value.name != null
-									&& parser.value.name.trim().length > 0 ? parser.value.name : entry;
-								result.set(songName, parser.value);
+								result.set(entry, parser.value);
 							}
 						}
 					}
@@ -93,9 +91,7 @@ class Freeplayutils
 
 							if (parser.value != null)
 							{
-								var songName:String = parser.value.name != null
-									&& parser.value.name.trim().length > 0 ? parser.value.name : entry;
-								result.set(songName, parser.value);
+								result.set(entry, parser.value);
 							}
 						}
 					}

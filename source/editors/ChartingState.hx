@@ -11,6 +11,7 @@ import Conductor.BPMChangeEvent;
 import Section.SwagSection;
 import events.BaseEvent;
 import Song.SwagSong;
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import debug.Consolehandler;
@@ -149,6 +150,9 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 
 	var mainBox:PsychUIBox;
 
+	public var camPrompt:FlxCamera;
+	public var camhud:FlxCamera;
+
 	public static var goToPlayState:Bool = false;
 
 	/**
@@ -260,6 +264,15 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 
 	override function create()
 	{
+		camPrompt = new FlxCamera();
+
+		camhud = new FlxCamera();
+		camPrompt.bgColor.alpha = 0;
+		camhud.bgColor.alpha = 0;
+
+		FlxG.cameras.reset(camhud);
+		FlxG.cameras.add(camPrompt, false);
+		FlxG.cameras.setDefaultDrawTarget(camhud, true);
 		if (PlayState.SONG != null)
 			_song = PlayState.SONG;
 		else
@@ -631,6 +644,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		{
 			openSubState(new Prompt('This action will clear current progress.\n\nProceed?', function()
 			{
+				this.persistentUpdate = false;
 				loadJson(_song.song.toLowerCase());
 			}));
 		}, btnWid);
@@ -3231,10 +3245,15 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 
 		if (FlxG.save.data.chart_waveformVoices && vocals != null)
 		{
-			var swapLanes:Bool = _song.notes[curSec].mustHitSection;
-			var dadTrackX:Float = swapLanes ? 160 : 0;
-			var bfTrackX:Float = swapLanes ? 0 : 160;
-			var laneWidth:Float = 160;
+			var swapLanes:Bool;
+			var dadTrackX:Float;
+			var bfTrackX:Float;
+			var laneWidth:Float;
+
+			swapLanes = _song.notes[curSec].mustHitSection;
+			dadTrackX = swapLanes ? 160 : 0;
+			bfTrackX = swapLanes ? 0 : 160;
+			laneWidth = 160;
 
 			var bfSound:FlxSound = @:privateAccess vocals.bfVocals;
 			@:privateAccess

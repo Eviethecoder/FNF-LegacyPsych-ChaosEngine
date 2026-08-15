@@ -34,6 +34,9 @@ class Freeplaypaper extends FlxSpriteGroup
 	public var backing:FunkinSprite;
 
 	var scaletolerp:Float = 1;
+
+	public var songtoload:String;
+
 	var backingWidth:Float = 0;
 	var backingHeight:Float = 0;
 

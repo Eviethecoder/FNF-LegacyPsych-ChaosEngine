@@ -2,9 +2,9 @@ package;
 
 import Section.SwagSection;
 import haxe.Json;
-import haxe.format.JsonParser;
+import json2object.JsonParser;
 import lime.utils.Assets;
-
+import data.SongMetadata.Metadata;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
@@ -16,6 +16,8 @@ typedef SwagSong =
 {
 	var song:String;
 	var notes:Array<SwagSection>;
+	@:optional
+	var mettadata:Metadata;
 	var events:Array<EventData>;
 	var cameraevents:Array<EventData>;
 	var bpm:Float;
@@ -34,28 +36,32 @@ typedef SwagSong =
 	var validScore:Bool;
 }
 
-typedef EventData = {
+typedef EventData =
+{
 	var strumTime:Float;
 	var name:String;
 	var values:Array<EventValue>;
 }
 
-typedef EventValue = {
+typedef EventValue =
+{
 	var name:String;
 	var value:events.EventUnion;
 }
 
 //// "what"?
 //// a typedef with default values, basically. @crowplexus
-@:structInit class ChartNoteData {
-	public var time: Null<Float> = null;
-	public var id: Null<Int> = null;
-	public var type: Null<String> = null;
-	public var strumLine: Null<Int> = null;
-	public var isGfNote: Null<Bool> = null;
-	public var sLen: Null<Float> = null;
+@:structInit class ChartNoteData
+{
+	public var time:Null<Float> = null;
+	public var id:Null<Int> = null;
+	public var type:Null<String> = null;
+	public var strumLine:Null<Int> = null;
+	public var isGfNote:Null<Bool> = null;
+	public var sLen:Null<Float> = null;
 
-	public function dispose() {
+	public function dispose()
+	{
 		// will be cleared by the GC later
 		time = null;
 		id = null;
@@ -87,19 +93,19 @@ class Song
 
 	private static function onLoadJson(songJson:Dynamic) // Convert old charts to newest format
 	{
-		if(songJson.gfVersion == null)
+		if (songJson.gfVersion == null)
 		{
 			songJson.gfVersion = songJson.player3;
 			songJson.player3 = null;
 		}
-		if(songJson.hudSkin == null) songJson.hudSkin = 'default';
+		if (songJson.hudSkin == null)
+			songJson.hudSkin = 'default';
 
-		if(songJson.events == null)
+		if (songJson.events == null)
 		{
 			songJson.events = [];
-		
 		}
-		if(songJson.usealtcamspeed == null)
+		if (songJson.usealtcamspeed == null)
 		{
 			songJson.usealtcamspeed = true;
 		}
@@ -142,13 +148,17 @@ class Song
 
 	private static function normalizeTypedEvents(eventList:Array<EventData>):Void
 	{
-		if (eventList == null) return;
+		if (eventList == null)
+			return;
 
 		for (event in eventList)
 		{
-			if (event == null) continue;
-			if (Math.isNaN(event.strumTime)) event.strumTime = 0;
-			if (event.name == null) event.name = '';
+			if (event == null)
+				continue;
+			if (Math.isNaN(event.strumTime))
+				event.strumTime = 0;
+			if (event.name == null)
+				event.name = '';
 			if (event.values == null)
 			{
 				event.values = cast [];
@@ -158,51 +168,42 @@ class Song
 			var normalizedValues:Array<EventValue> = [];
 			for (i in 0...event.values.length)
 			{
-				var fallbackName:String = 'Value ' + (i + 1);
-				var rawValue:Dynamic = event.values[i];
-
-				if (rawValue == null)
-				{
-					normalizedValues.push({name: fallbackName, value: ''});
-					continue;
-				}
-
-				var hasObjectShape:Bool = !Std.isOfType(rawValue, String)
-					&& !Std.isOfType(rawValue, Int)
-					&& !Std.isOfType(rawValue, Float)
-					&& !Std.isOfType(rawValue, Bool);
-
-				if (hasObjectShape)
-				{
-					var valueName:String = fallbackName;
-					if (Reflect.hasField(rawValue, 'name') && Reflect.field(rawValue, 'name') != null)
-					{
-						valueName = Std.string(Reflect.field(rawValue, 'name'));
-						if (valueName == null || valueName.length < 1) valueName = fallbackName;
-					}
-
-					var extractedValue:Dynamic = rawValue;
-					if (Reflect.hasField(rawValue, 'value'))
-						extractedValue = Reflect.field(rawValue, 'value');
-
-					if (extractedValue == null)
-						extractedValue = '';
-					else if (!Std.isOfType(extractedValue, String)
-						&& !Std.isOfType(extractedValue, Int)
-						&& !Std.isOfType(extractedValue, Float)
-						&& !Std.isOfType(extractedValue, Bool))
-						extractedValue = Std.string(extractedValue);
-
-					normalizedValues.push({name: valueName, value: cast extractedValue});
-				}
-				else
-				{
-					normalizedValues.push({name: fallbackName, value: cast rawValue});
-				}
+				normalizedValues.push(normalizeEventValue(event.values[i], i));
 			}
 
 			event.values = normalizedValues;
 		}
+	}
+
+	private static function normalizeEventValue(rawValue:Dynamic, index:Int):EventValue
+	{
+		var fallbackName:String = 'Value ' + (index + 1);
+		if (rawValue == null)
+			return {name: fallbackName, value: ''};
+
+		if (isPrimitiveEventValue(rawValue))
+			return {name: fallbackName, value: cast rawValue};
+
+		var valueName:String = fallbackName;
+		if (Reflect.hasField(rawValue, 'name'))
+		{
+			var suppliedName:Dynamic = Reflect.field(rawValue, 'name');
+			if (suppliedName != null && Std.string(suppliedName).length > 0)
+				valueName = Std.string(suppliedName);
+		}
+
+		var value:Dynamic = Reflect.hasField(rawValue, 'value') ? Reflect.field(rawValue, 'value') : rawValue;
+		if (value == null)
+			value = '';
+		else if (!isPrimitiveEventValue(value))
+			value = Std.string(value);
+
+		return {name: valueName, value: cast value};
+	}
+
+	private static function isPrimitiveEventValue(value:Dynamic):Bool
+	{
+		return Std.isOfType(value, String) || Std.isOfType(value, Int) || Std.isOfType(value, Float) || Std.isOfType(value, Bool);
 	}
 
 	public function new(song, notes, bpm)
@@ -215,11 +216,14 @@ class Song
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
 	{
 		var rawJson = null;
+		var rawmetadata = null;
 		var foldertocheck:String;
-		if (folder == null){
+		if (folder == null)
+		{
 			foldertocheck = 'songs/default';
 		}
-		else{
+		else
+		{
 			foldertocheck = folder;
 		}
 
@@ -230,18 +234,21 @@ class Song
 		// trace('pathslocation:' + Paths.json(formattedFolder + '/' + formattedSong).trim());
 		#if MODS_ALLOWED
 		var moddyFile:String = Paths.modsJson(formattedFolder + '/' + formattedSong);
-		if(FileSystem.exists(moddyFile)) {
+		if (FileSystem.exists(moddyFile))
+		{
 			rawJson = File.getContent(moddyFile).trim();
+			rawmetadata = File.getContent(Paths.modsJson(formattedFolder + '/metadata'));
 		}
 		#end
 
-		if(rawJson == null) {
+		if (rawJson == null)
+		{
 			#if sys
-			
 			rawJson = File.getContent(Paths.json(formattedFolder + '/' + formattedSong)).trim();
-
+			rawmetadata = File.getContent(Paths.json(formattedFolder + '/metadata.json'));
 			#else
 			rawJson = Assets.getText(Paths.json(formattedFolder + '/' + formattedSong)).trim();
+			rawmetadata = Assets.getText(Paths.json(formattedFolder + '/metadata.json')).trim();
 			#end
 		}
 
@@ -251,15 +258,39 @@ class Song
 			// LOL GOING THROUGH THE BULLSHIT TO CLEAN IDK WHATS STRANGE
 		}
 
-		var songJson:Dynamic = parseJSONshit(rawJson);
-		if(jsonInput != 'events' && jsonInput != 'cameraevents') data.StageData.loadDirectory(songJson);
+		var songJson:Dynamic = parseJSONshit(rawJson, rawmetadata);
+		if (jsonInput != 'events' && jsonInput != 'cameraevents')
+			data.StageData.loadDirectory(songJson);
 		onLoadJson(songJson);
 		return songJson;
 	}
 
-	public static function parseJSONshit(rawJson:String):SwagSong
+	public static function parseJSONshit(rawJson:String, ?rawMetadata:String):SwagSong
 	{
 		var swagShit:SwagSong = cast Json.parse(rawJson).song;
+
+		try
+			()
+		{
+			if (rawMetadata != null && rawMetadata.trim().length > 0)
+			{
+				var metadataParser:JsonParser<Metadata> = new JsonParser<Metadata>();
+				metadataParser.fromJson(rawMetadata, 'metadata.json');
+
+				if (metadataParser.errors != null && metadataParser.errors.length > 0)
+				{
+					for (error in metadataParser.errors)
+						trace(error);
+				}
+
+				if (metadataParser.value != null)
+					swagShit.mettadata = metadataParser.value;
+			}
+		}
+	catch (e:Dynamic)
+		{
+			trace('Error parsing metadata.json: ' + e);
+		}
 		swagShit.validScore = true;
 		return swagShit;
 	}

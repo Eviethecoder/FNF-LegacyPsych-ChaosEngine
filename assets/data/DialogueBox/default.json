@@ -1,0 +1,67 @@
+{
+	"sprite": "speech_bubble",
+	"basergb": {
+		"r": [255, 255, 255],
+		"g": [0, 0, 0],
+		"b": [255, 255, 255]
+	},
+	"textoffset": [0, 0],
+	"animationdata": [
+		{
+			"anim": "normalOpen",
+			"name": "Speech Bubble Normal Open",
+			"fps": 24,
+			"loop": false,
+			"indices": [0, 1, 2, 3],
+			"offsets": [0, 0]
+		},
+		{
+			"anim": "normalClose",
+			"name": "Speech Bubble Normal Close",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		{
+			"anim": "normalIdle",
+			"name": "speech bubble normal",
+			"fps": 24,
+			"loop": true,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		{
+			"anim": "middleOpen",
+			"name": "Speech Bubble Middle Open",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		{
+			"anim": "middleIdle",
+			"name": "speech bubble middle",
+			"fps": 24,
+			"loop": true,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		{
+			"anim": "ahhMiddle",
+			"name": "AHH speech bubble middle",
+			"fps": 24,
+			"loop": true,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		{
+			"anim": "loudMiddleOpen",
+			"name": "speech bubble loud open middle",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		}
+	]
+}

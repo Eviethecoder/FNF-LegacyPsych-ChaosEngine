@@ -1,0 +1,69 @@
+{
+	"charlist": [
+		{
+			"jsonname": "bf",
+			"charType": "player"
+		},
+		{
+			"jsonname": "dad",
+			"charType": "opponent"
+		},
+		{
+			"jsonname": "gf",
+			"charType": "girlfriend"
+		}
+	],
+	"textlist": [
+		{
+			"text": "Hey! What's up?",
+			"chardata": {
+				"jsonname": "bf",
+				"charType": "player"
+			},
+			"boxdata": {
+				"animtoplay": "open",
+				"functiontorun": "",
+				"parameters": []
+			},
+			"rgbdata": {
+				"r": [255, 255, 255],
+				"g": [255, 255, 255],
+				"b": [255, 255, 255]
+			}
+		},
+		{
+			"text": "You shouldn't be here.",
+			"chardata": {
+				"jsonname": "dad",
+				"charType": "opponent"
+			},
+			"boxdata": {
+				"animtoplay": "idle",
+				"functiontorun": "",
+				"parameters": []
+			},
+			"rgbdata": {
+				"r": [255, 255, 255],
+				"g": [255, 255, 255],
+				"b": [255, 255, 255]
+			}
+		},
+		{
+			"text": "Guys, calm down!",
+			"chardata": {
+				"jsonname": "gf",
+				"charType": "girlfriend"
+			},
+			"boxdata": {
+				"animtoplay": "talk",
+				"functiontorun": "shake",
+				"parameters": [0.5, 10]
+			},
+			"rgbdata": {
+				"r": [255, 200, 200],
+				"g": [255, 200, 200],
+				"b": [255, 200, 200]
+			}
+		}
+	]
+}

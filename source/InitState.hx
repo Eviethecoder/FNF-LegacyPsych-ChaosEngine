@@ -9,6 +9,9 @@ import utility.EventHandler;
 import utility.NoteSkinHelper;
 import objects.FunkinMemory;
 import flixel.system.debug.log.LogStyle;
+import foxlite.renderer.FoxRenderer;
+import flixel.util.FlxSignal;
+import utility.SignalDispatcher;
 
 /**
  * Handles initialization of variables when first opening the game.
@@ -65,8 +68,13 @@ class InitState extends flixel.FlxState
 
 		// -- -- -- //
 
+		FoxRenderer.initLibs();
+
 		FunkinMemory.clearStoredMemory();
 		FunkinMemory.clearUnusedMemory();
+		SignalDispatcher.initializesignals();
+		SignalDispatcher.addSignal("BeatHit", new FlxTypedSignal<Int->Void>());
+		SignalDispatcher.addSignal("StepHit", new FlxTypedSignal<Float->Void>());
 
 		FunkinMemory.loadPerminateAssets();
 		EventHandler.setupAllEventData();
@@ -81,6 +89,6 @@ class InitState extends flixel.FlxState
 		}
 		utility.Characterpreloader.charLookup();
 
-		FlxG.switchState(Type.createInstance(states.Freeplay, []));
+		FlxG.switchState(Type.createInstance(TitleState, []));
 	}
 }
