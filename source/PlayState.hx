@@ -2424,6 +2424,7 @@ class PlayState extends MusicBeatState
 			},
 			startDelay: Conductor.crochet * 0.002 / playbackRate
 		});
+		setFunctionOnScripts('OnScorePopup', [note]);
 	}
 
 	public var strumsBlocked:Array<Bool> = [];
@@ -2568,9 +2569,34 @@ class PlayState extends MusicBeatState
 					&& daNote.mustPress
 					&& !daNote.tooLate
 					&& !daNote.wasGoodHit
-					&& !daNote.blockHit)
+					&& !daNote.blockHit
+					&& !daNote.invalid)
 				{
 					playerStrumline.hitNote(daNote);
+				}
+
+				if (daNote.mustPress && !cpuControlled && daNote.isSustainNote && !daNote.blockHit && !daNote.ignoreNote && !daNote.invalid
+					&& !parsedHoldArray[daNote.noteData] && !endingSong && daNote.canBeHit && !daNote.wasGoodHit && daNote.prevNote != null
+					&& daNote.prevNote.wasGoodHit)
+				{
+					health -= daNote.missHealth * healthLoss;
+					var char:Character = stage.boyfriend;
+					if (daNote.gfNote)
+					{
+						char = stage.gf;
+					}
+
+					if (char != null && !daNote.noMissAnimation && char.hasMissAnimations)
+					{
+						var animToPlay:String = singAnimations[Std.int(Math.abs(daNote.noteData))] + 'miss' + daNote.animSuffix;
+						char.playAnim(animToPlay, true);
+					}
+					daNote.invalid = true;
+					daNote.rgbShader.r = 0xFF777777;
+					daNote.rgbShader.g = 0xFFD9D8D8;
+					daNote.rgbShader.b = 0xFF2E2E2E;
+					daNote.copyAlpha = false;
+					daNote.alpha = 0.5;
 				}
 			});
 		}

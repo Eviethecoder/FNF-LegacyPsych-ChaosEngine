@@ -265,7 +265,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 	override function create()
 	{
 		camPrompt = new FlxCamera();
-
+		Cursor.show();
 		camhud = new FlxCamera();
 		camPrompt.bgColor.alpha = 0;
 		camhud.bgColor.alpha = 0;
@@ -395,7 +395,6 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		if (curSec >= _song.notes.length)
 			curSec = _song.notes.length - 1;
 
-		Cursor.show();
 		// FlxG.save.bind('funkin', CoolUtil.getSavePath());
 
 		tempBpm = _song.bpm;
@@ -1986,6 +1985,40 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		};
 	}
 
+	function getEventUiValues():Array<Dynamic>
+	{
+		var values:Array<Dynamic> = [];
+		for (binding in eventBindings)
+		{
+			if (binding == null || binding.ui == null)
+				continue;
+
+			var value:Dynamic = '';
+			switch (binding.type)
+			{
+				case STRING:
+					value = binding.ui.text;
+				case FLOAT:
+					value = binding.ui.value;
+				case BOOL:
+					value = binding.ui.checked;
+				case DROPDOWN:
+					value = binding.ui.selectedLabel;
+			}
+			values.push({index: binding.valueIndex, value: value});
+		}
+
+		values.sort(function(a:Dynamic, b:Dynamic)
+		{
+			return FlxSort.byValues(FlxSort.ASCENDING, a.index, b.index);
+		});
+
+		var orderedValues:Array<Dynamic> = [];
+		for (entry in values)
+			orderedValues.push(entry.value);
+		return orderedValues;
+	}
+
 	function changeEventSelected(change:Int = 0, ?noteData:Int)
 	{
 		if (curSelectedNote != null && (isSelectableEvent(curSelectedNote) || noteData == -1 || noteData == -2))
@@ -2480,7 +2513,6 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 			strumLineNotes.members[i].y = strumLine.y;
 		}
 
-		Cursor.show();
 		camPos.y = strumLine.y;
 		if (!disableAutoScrolling.checked)
 		{
@@ -4426,9 +4458,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 			var event = eventDropDown.selectedLabel;
 			if (event == null || event.length < 1)
 				event = 'none';
-			var text1 = '';
-			var text2 = '';
-			var values:Array<Dynamic> = [text1, text2];
+			var values:Array<Dynamic> = getEventUiValues();
 			_song.events.push(makeSongEvent(noteStrum, event, values));
 			curSelectedNote = _song.events[_song.events.length - 1];
 			curEventSelected = 0;
@@ -4441,9 +4471,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 			var event = eventDropDown.selectedLabel;
 			if (event == null || event.length < 1)
 				event = 'none';
-			var text1 = '';
-			var text2 = '';
-			var values:Array<Dynamic> = [text1, text2];
+			var values:Array<Dynamic> = getEventUiValues();
 			_song.cameraevents.push(makeSongEvent(noteStrum, event, values));
 			curSelectedNote = _song.cameraevents[_song.cameraevents.length - 1];
 			curEventSelected = 0;

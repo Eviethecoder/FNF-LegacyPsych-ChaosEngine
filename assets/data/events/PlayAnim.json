@@ -1,0 +1,29 @@
+{
+  "eventLogic": [
+    {
+      "name": "Force",
+      "title": "Force",
+      "rownum": 1,
+      "type": "BOOL"
+    },
+    {
+      "name": "AnimToPlay",
+      "title": "AnimToPlay",
+      "rownum": 2,
+      "type": "STRING"
+    },
+    {
+      "name": "PropName",
+      "title": "PropName",
+      "rownum": 2,
+      "type": "STRING"
+    },
+    {
+      "name": "Character",
+      "title": "Character",
+      "type": "DROPDOWN",
+      "rownum": 3,
+      "list": ["Dad", "GF", "BF", "Prop"]
+    }
+  ]
+}

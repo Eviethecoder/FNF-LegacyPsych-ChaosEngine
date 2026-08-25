@@ -116,9 +116,10 @@ class Project extends HXProject {
         addHaxelib('uniontypes');
         addHaxelib('hxdiscord_rpc');
         addHaxelib('tjson');
+        addHaxelib('lucidtext');
         addHaxelib('json2object');
         addHaxelib('hxjsonast');
-
+        addHaxelib('foxlite');
         if (FEATURE_VIDEO_PLAYBACK.isEnabled(this)){
             info('videos allowed, adding library hxvlc');
             addHaxelib('hxvlc');

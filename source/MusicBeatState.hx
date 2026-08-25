@@ -6,6 +6,7 @@ import flixel.addons.ui.FlxUIState;
 import flixel.text.FlxText;
 import flixel.math.FlxRect;
 import flixel.util.FlxTimer;
+import utility.Characterpreloader;
 import debug.*;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.tweens.FlxEase;
@@ -70,6 +71,8 @@ class MusicBeatState extends FlxUIState
 		{
 			ScriptedStatehandler.reListStates();
 			LoadingState.forcereloadstagedata();
+			Characterpreloader.charmap = [];
+			Characterpreloader.charLookup();
 			Scripthandler.gamescriptArray = [];
 			FlxG.resetState();
 		}

@@ -15,6 +15,7 @@ import events.ScriptedEvent;
 import events.BPMChange;
 import events.CharacterChange;
 import events.LyricEvent;
+import events.PlayAnim;
 import events.WaveyNotes;
 
 using StringTools;
@@ -34,7 +35,8 @@ class EventHandler
 		'CharacterChange',
 		'Lyrics',
 		'BPMChange',
-		'WaveyNotes'
+		'WaveyNotes',
+		'PlayAnim'
 	];
 
 	public static function scanFolderRecursive(folder:String, onFile:String->Void):Void

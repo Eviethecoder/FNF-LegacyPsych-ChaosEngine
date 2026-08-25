@@ -24,6 +24,7 @@ class Controls
 	public var NOTE_DOWN_P(get, never):Bool;
 	public var NOTE_LEFT_P(get, never):Bool;
 	public var NOTE_RIGHT_P(get, never):Bool;
+	public var NOTE_SPACE_P(get, never):Bool;
 
 	private inline function get_UI_UP_P()
 		return justPressed('ui_up');
@@ -42,6 +43,9 @@ class Controls
 
 	private inline function get_NOTE_DOWN_P()
 		return justPressed('note_down');
+
+	private inline function get_NOTE_SPACE_P()
+		return justPressed('note_space');
 
 	private inline function get_NOTE_LEFT_P()
 		return justPressed('note_left');

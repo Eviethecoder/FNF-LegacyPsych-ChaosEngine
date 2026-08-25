@@ -270,7 +270,6 @@ class Song
 		var swagShit:SwagSong = cast Json.parse(rawJson).song;
 
 		try
-			()
 		{
 			if (rawMetadata != null && rawMetadata.trim().length > 0)
 			{
@@ -287,7 +286,7 @@ class Song
 					swagShit.mettadata = metadataParser.value;
 			}
 		}
-	catch (e:Dynamic)
+		catch (e:Dynamic)
 		{
 			trace('Error parsing metadata.json: ' + e);
 		}

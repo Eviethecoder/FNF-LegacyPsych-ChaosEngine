@@ -70,7 +70,8 @@ class Freeplaypaper extends FlxSpriteGroup
 		this.metadata = metadata;
 
 		dorendervibe = metadata.dorendervibe;
-		debug.Consolehandler.print('dorendervibe: ' + dorendervibe);
+		debug.Consolehandler.print(dorendervibe);
+		debug.Consolehandler.print(true);
 	}
 
 	function onMouseDown(sprite:FlxSpriteGroup)

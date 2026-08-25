@@ -6,9 +6,10 @@ import flixel.FlxState;
 import openfl.Lib;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.util.FlxColor;
 import Alphabet;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxGradient;
+import flixel.util.FlxColor;
 import Paths;
 import TitleState;
 
@@ -47,9 +48,10 @@ class CrashReportSubstate extends FlxState
 		bg.screenCenter();
 		add(bg);
 
-		var coolText:Alphabet = new Alphabet(0, 32, "UNCATCHABLE ERROR", true);
+		var coolText:Alphabet = new Alphabet(0, 32, "OOOOPS", true);
 		coolText.screenCenter(X);
 		coolText.color = FlxColor.RED;
+
 		add(coolText);
 
 		var formattedErrorMessage:String = 'Your game has crashed! \nError caught: ${errorName}\n\n${error}\n\nPlease report this error to Team Eternal ';
@@ -78,7 +80,7 @@ class CrashReportSubstate extends FlxState
 
 		if (FlxG.keys.justPressed.SPACE)
 		{
-			FlxG.switchState(prevStateClass);
+			FlxG.switchState(new MainMenuState());
 		}
 	}
 }

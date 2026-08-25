@@ -598,6 +598,8 @@ class Strumline extends FlxSpriteGroup
 		var ps:PlayState = PlayState.instance;
 		if (ps == null)
 			return;
+		if (note.invalid)
+			return;
 
 		if (note.wasGoodHit)
 			return;

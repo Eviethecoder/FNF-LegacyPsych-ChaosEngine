@@ -30,15 +30,15 @@ class ChaosScript extends Script
 		variables.set("stage", objects.Stage.instance);
 		variables.set("Consolehandler", debug.Consolehandler);
 		variables.set('FlxColor', HaxeScript.Flxcolorscript);
-		variables.set('print', function(v:String):Void
+		variables.set('print', function(v:HaxeScript.AnyValue):Void
 		{
 			debug.Consolehandler.print(v);
 		});
-		variables.set('warn', function(v:String):Void
+		variables.set('warn', function(v:HaxeScript.AnyValue):Void
 		{
 			debug.Consolehandler.warn(v);
 		});
-		variables.set('error', function(v:String):Void
+		variables.set('error', function(v:HaxeScript.AnyValue):Void
 		{
 			debug.Consolehandler.error(v);
 		});

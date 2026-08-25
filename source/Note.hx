@@ -120,6 +120,7 @@ class Note extends FlxSprite
 	public var rating:String = 'unknown';
 	public var ratingMod:Float = 0; // 9 = unknown, 0.25 = shit, 0.5 = bad, 0.75 = good, 1 = sick
 	public var ratingDisabled:Bool = false;
+	public var invalid:Bool = false;
 
 	public var texture(default, set):String = null;
 	public var noteSplashData:NoteSplashData = {

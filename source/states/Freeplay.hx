@@ -62,6 +62,10 @@ class Freeplay extends MusicBeatState
 
 	var curselectedpaper(get, never):Null<Freeplaypaper>;
 
+	var scoretolerp:Float = 0;
+
+	var scorenum:Float = 0;
+
 	function get_curselectedpaper():Freeplaypaper
 	{
 		if (curSelected >= 0 && curSelected < papers.length)
@@ -138,6 +142,7 @@ class Freeplay extends MusicBeatState
 			i++;
 		}
 		changeSelection(0);
+		scoretolerp = scorenum;
 	}
 
 	function renderclick(sprite:FunkinSprite)
@@ -167,6 +172,8 @@ class Freeplay extends MusicBeatState
 
 			paper.toggleselected(i == curSelected);
 		}
+
+		scorenum = Highscore.getScore(curselectedpaper.songtoload, 0);
 	}
 
 	function updateRender()
@@ -221,6 +228,9 @@ class Freeplay extends MusicBeatState
 			render.x = MathUtil.smoothLerpPrecision(render.x, ogrenderposition.x + idleX, elapsed, 1);
 			render.y = MathUtil.smoothLerpPrecision(render.y, ogrenderposition.y + idleY, elapsed, 1);
 		}
+
+		scoretolerp = Math.floor(MathUtil.smoothLerpPrecision(scoretolerp, scorenum, elapsed, 1));
+		scoretext.text = '$scoretolerp';
 
 		if (controls.UI_UP_P)
 			changeSelection(-1);

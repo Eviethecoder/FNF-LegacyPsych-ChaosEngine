@@ -56,6 +56,11 @@ class Main extends Sprite
 
 	public function new()
 	{
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
+		#if cpp
+		trace('[LOG] Enabling C++ critical error handler...');
+		untyped __global__.__hxcpp_set_critical_error_handler(onCriticalError);
+		#end
 		super();
 
 		var stageWidth:Int = Lib.current.stage.stageWidth;
@@ -69,7 +74,6 @@ class Main extends Sprite
 			gameWidth = Math.ceil(stageWidth / zoom);
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 		var game:FlxGame = new FlxGame(gameWidth, gameHeight, InitState, #if (flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen);
 		objects.Cursor.registerHaxeUICursors();
 		@:privateAccess
@@ -102,8 +106,29 @@ class Main extends Sprite
 		FlxG.plugins.add(new ConsolePlugin());
 	}
 
+	static var isHandlingCrash:Bool = false;
+	static var crashCount:Int = 0;
+
+	static function onCriticalError(message:String):Void
+	{
+		writeCrashLog("CRITICAL", message);
+
+		try
+		{
+			FlxG.switchState(new debug.CrashReportSubstate(FlxG.state, message, message));
+		}
+		catch (e:Dynamic)
+		{
+			// Showing the crash screen failed too - give up safely.
+			trace('Error while handling critical error: $e');
+			Sys.exit(1);
+		}
+	}
+
 	private final function onCrash(e:UncaughtErrorEvent):Void
 	{
+		// Mark the error as handled so the OS-level default behavior doesn't also kick in.
+		e.preventDefault();
 		var emsg:String = "";
 		for (stackItem in haxe.CallStack.exceptionStack(true))
 		{
@@ -117,6 +142,30 @@ class Main extends Sprite
 			}
 		}
 
+		writeCrashLog(Std.string(e.error), emsg);
+
 		FlxG.switchState(new debug.CrashReportSubstate(FlxG.state, emsg, e.error));
+
+		isHandlingCrash = false;
+	}
+
+	// Persist the crash to disk so a stack trace survives even if the app can't recover / closes.
+	static function writeCrashLog(errorName:String, details:String):Void
+	{
+		try
+		{
+			var crashDir:String = Path.join([Sys.getCwd(), "crash"]);
+			if (!FileSystem.exists(crashDir))
+				FileSystem.createDirectory(crashDir);
+
+			var timestamp:String = Date.now().toString().replace(":", "'");
+			var path:String = Path.join([crashDir, 'ChaosEngine_${timestamp}.txt']);
+
+			File.saveContent(path, 'Error: ${errorName}\n\n${details}');
+		}
+		catch (e:Dynamic)
+		{
+			trace('Failed to write crash log: $e');
+		}
 	}
 }

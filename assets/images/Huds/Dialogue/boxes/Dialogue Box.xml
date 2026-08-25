@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="Dialogue Box.png">
+	<!-- Created using the Spritesheet and XML generator -->
+	<!-- https://uncertainprod.github.io/FNF-Spritesheet-XML-generator-Web -->
+	<SubTexture name="Idle0000" x="0" y="0" width="995" height="293" frameX="-140" frameY="-382" frameWidth="1280" frameHeight="720"/>
+	<SubTexture name="Idle0001" x="0" y="293" width="991" height="292" frameX="-142" frameY="-383" frameWidth="1280" frameHeight="720"/>
+	<SubTexture name="Idle0002" x="0" y="585" width="990" height="291" frameX="-143" frameY="-384" frameWidth="1280" frameHeight="720"/>
+</TextureAtlas>

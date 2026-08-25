@@ -83,6 +83,9 @@ class CameraMovement extends BaseEvent
 	{
 		if (time == 0)
 		{
+			if (cameraTwn != null)
+				cameraTwn.cancel();
+			cameraTwn = null;
 			snapCam([prop.getMidpoint().x + propoffsets[0], prop.getMidpoint().y + propoffsets[1]]);
 			return;
 		}
@@ -106,7 +109,7 @@ class CameraMovement extends BaseEvent
 		// Disable camera following for the duration of the tween.
 		@:nullSafety(Off)
 		FlxG.camera.target = null;
-
+		PlayState.instance.camFollowPos.setPosition(prop.getMidpoint().x + propoffsets[0], prop.getMidpoint().y + propoffsets[1]);
 		var followPos:FlxPoint = PlayState.instance.camFollowPos.getPosition() - FlxPoint.weak(FlxG.camera.width * 0.5, FlxG.camera.height * 0.5);
 		cameraTwn = FlxTween.tween(FlxG.camera.scroll, {
 			x: followPos.x,
@@ -117,7 +120,6 @@ class CameraMovement extends BaseEvent
 			{
 				cameraTwn = null;
 				PlayState.instance.camFollowPos.setPosition(prop.getMidpoint().x + propoffsets[0], prop.getMidpoint().y + propoffsets[1]);
-				FlxG.camera.target = PlayState.instance.camFollowPos;
 			}
 		});
 	}

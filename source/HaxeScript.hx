@@ -17,13 +17,14 @@ import objects.ChaosScript;
 import flixel.tweens.FlxTween;
 import openfl.display.BlendMode;
 import flixel.input.keyboard.FlxKey;
+import flixel.FlxBasic;
 import flixel.tweens.FlxEase;
 import scriptobjects.*;
 import uniontypes.*;
 
 using StringTools;
 
-typedef AnyValue = Union5<Int, Float, String, Bool, FlxSprite>;
+typedef AnyValue = Union5<Int, Float, String, Bool, FlxBasic>;
 
 // curently this is just me and NoclueBros hscript interpreter -kuru
 class HaxeScript
