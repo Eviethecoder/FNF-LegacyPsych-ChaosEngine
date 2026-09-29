@@ -14,6 +14,7 @@
     <compilerflag value="-I${this_dir}/include" />
 
     <file name="${this_dir}/src/winapi.cpp" />
+
   </files>
 
   <target id="haxe">
@@ -29,7 +30,12 @@
         <lib name="kernel32.lib" />
         <lib name="dwmapi.lib" />
         <lib name="advapi32.lib" />
+        <lib name="opengl32.lib" />
     </section>
+
+      <section if="mingw">
+        <lib name="-lopengl32" />
+      </section>
 
     <files id="external-windows" />
   </target>

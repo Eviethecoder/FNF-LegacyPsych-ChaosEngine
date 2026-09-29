@@ -1,0 +1,11 @@
+{
+  "folder": "flixel",
+  "soundlist": [
+    "flixel/beep",
+    "flixel/beep",
+    "flixel/beep"
+  ],
+  "barOffsets": [0, 0],
+  "graphicScale": 0.5,
+  "color": [255, 255, 255]
+}

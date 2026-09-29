@@ -11,7 +11,11 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxGradient;
 import flixel.util.FlxColor;
 import Paths;
+import sys.io.File;
 import TitleState;
+import sys.FileSystem;
+
+using StringTools;
 
 // taken from legacy Nightmare vision. support their shit tOOOO
 class CrashReportSubstate extends FlxState
@@ -37,6 +41,15 @@ class CrashReportSubstate extends FlxState
 		FlxG.state.persistentUpdate = false;
 		FlxG.state.persistentDraw = true;
 
+		if (!FileSystem.exists("./crash/"))
+			FileSystem.createDirectory("./crash/");
+
+		var dateNow:String = Date.now().toString();
+
+		dateNow = dateNow.replace(" ", "_");
+		dateNow = dateNow.replace(":", "'");
+
+		var path = "./crash/" + "Project-Chorus_" + dateNow + ".txt";
 		var bg:FlxSprite = new FlxSprite().makeGraphic(1, 1, 0xFF000000);
 		bg.scrollFactor.set();
 		bg.alpha = 0;
@@ -54,8 +67,11 @@ class CrashReportSubstate extends FlxState
 
 		add(coolText);
 
-		var formattedErrorMessage:String = 'Your game has crashed! \nError caught: ${errorName}\n\n${error}\n\nPlease report this error to Team Eternal ';
+		var formattedErrorMessage:String = 'Your game has crashed! \nError caught: ${errorName}\n\n${error}\n\nPlease report this error to ${Constants.teamName} ';
 
+		var formatedCrashReport:String = 'UH OH The Game Seemed To have crashed!!\n \n the error report is as follows \n ${errorName}\n${error}\nPlease report this error to ${Constants.teamName}';
+
+		File.saveContent(path, formatedCrashReport + "\n");
 		var report:FlxText = new FlxText(0, 0, FlxG.width / 1.5, formattedErrorMessage);
 		report.setFormat(Paths.font('vcr.ttf'), 32, 0xFFFFFFFF, CENTER, OUTLINE, 0xFF000000);
 		report.screenCenter(XY);

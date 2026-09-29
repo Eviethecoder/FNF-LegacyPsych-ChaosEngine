@@ -15,12 +15,5 @@
     "position": [0, 50],
     "barOffsets": [320, 5]
   },
-  "noteskin": {
-    "strumlinegraphic": "Huds/Noteskins/NOTE_assets",
-    "samenamenotes": true,
-    "usergbshader": true,
-    "notesplash": "Huds/NoteSplashes/noteSplashes",
-    "notesplashoffsets": [-20, -100],
-    "alphaoveride": 1
-  }
+  "noteskin": "default"
 }

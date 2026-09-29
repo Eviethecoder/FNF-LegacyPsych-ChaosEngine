@@ -343,10 +343,11 @@ class PlayState extends MusicBeatState
 			ClientPrefs.keyBinds.get('note_left').copy(),
 			ClientPrefs.keyBinds.get('note_down').copy(),
 			ClientPrefs.keyBinds.get('note_up').copy(),
-			ClientPrefs.keyBinds.get('note_right').copy()
+			ClientPrefs.keyBinds.get('note_right').copy(),
+			ClientPrefs.keyBinds.get('note_space').copy()
 		];
 
-		controlArray = ['NOTE_LEFT', 'NOTE_DOWN', 'NOTE_UP', 'NOTE_RIGHT'];
+		controlArray = ['NOTE_LEFT', 'NOTE_DOWN', 'NOTE_UP', 'NOTE_RIGHT', 'NOTE_SPACE'];
 
 		// Ratings
 		ratingsData = Rating.getDefaultList();
@@ -457,14 +458,14 @@ class PlayState extends MusicBeatState
 
 		Conductor.songPosition = -5000 / Conductor.songPosition;
 
-		strumLine = new FlxSprite(ClientPrefs.data.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 20).makeGraphic(FlxG.width, 10);
+		strumLine = new FlxSprite(ClientPrefs.data.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 20).makeGraphic(FlxG.width, FlxG.height - 750);
 		if (ClientPrefs.data.downScroll)
-			strumLine.y = FlxG.height - 450;
+			strumLine.y = FlxG.height - 150;
 		strumLine.scrollFactor.set();
 		hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song); ///do this before song is generated for noteskins
 
-		opponentStrumline = new objects.Strumline(0, strumLine.y, false);
-		playerStrumline = new objects.Strumline(0, strumLine.y, true);
+		opponentStrumline = new objects.Strumline(strumLine.y, false);
+		playerStrumline = new objects.Strumline(strumLine.y, true);
 
 		// Note-hit logic is owned by Strumline.
 		playerStrumline.onNoteMiss = function(note:Note)
@@ -682,6 +683,7 @@ class PlayState extends MusicBeatState
 			startCountdown();
 		}
 		RecalculateRating();
+		FunkinSoundTray.instance.swapBar(hud.hudData.getsoundbar());
 
 		// PRECACHING MISS SOUNDS BECAUSE I THINK THEY CAN LAG PEOPLE AND FUCK THEM UP IDK HOW HAXE WORKS
 		if (ClientPrefs.data.hitsoundVolume > 0)
@@ -2099,118 +2101,100 @@ class PlayState extends MusicBeatState
 		#if ACHIEVEMENTS_ALLOWED
 		#end
 
-		setFunctionOnScripts('onSongEnd', []);
-		if (!transitioning)
+		var endcutsceen:Dynamic = Scripthandler.returnfromscript('EndSong', []);
+		if (endcutsceen != false && !transitioning)
 		{
-			if (SONG.validScore)
+			endsonglogic();
+		}
+	}
+
+	public function endsonglogic():Void
+	{
+		if (SONG.validScore)
+		{
+			#if !switch
+			var percent:Float = ratingPercent;
+			if (Math.isNaN(percent))
+				percent = 0;
+			Highscore.saveScore(SONG.song, songScore, percent);
+			#end
+		}
+		playbackRate = 1;
+
+		if (chartingMode)
+		{
+			openChartEditor();
+			return;
+		}
+
+		if (isStoryMode)
+		{
+			campaignScore += songScore;
+			campaignMisses += songMisses;
+
+			storyPlaylist.remove(storyPlaylist[0]);
+
+			if (storyPlaylist.length <= 0)
 			{
-				#if !switch
-				var percent:Float = ratingPercent;
-				if (Math.isNaN(percent))
-					percent = 0;
-				Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
-				#end
-			}
-			playbackRate = 1;
-
-			if (chartingMode)
-			{
-				openChartEditor();
-				return;
-			}
-
-			if (isStoryMode)
-			{
-				campaignScore += songScore;
-				campaignMisses += songMisses;
-
-				storyPlaylist.remove(storyPlaylist[0]);
-
-				if (storyPlaylist.length <= 0)
-				{
-					WeekData.loadTheFirstEnabledMod();
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-
-					cancelMusicFadeTween();
-					if (FlxTransitionableState.skipNextTransIn)
-					{
-						CustomFadeTransition.nextCamera = null;
-					}
-					MusicBeatState.switchState(new StoryMenuState());
-
-					// if ()
-					if (!ClientPrefs.getGameplaySetting('practice', false) && !ClientPrefs.getGameplaySetting('botplay', false))
-					{
-						StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
-
-						if (SONG.validScore)
-						{
-							Highscore.saveWeekScore(WeekData.getWeekFileName(), campaignScore, storyDifficulty);
-						}
-
-						FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
-						FlxG.save.flush();
-					}
-					changedDifficulty = false;
-				}
-				else
-				{
-					var difficulty:String = CoolUtil.getDifficultyFilePath();
-
-					trace('LOADING NEXT SONG');
-					trace(Paths.formatToSongPath(PlayState.storyPlaylist[0]) + difficulty);
-
-					var winterHorrorlandNext = (Paths.formatToSongPath(SONG.song) == "eggnog");
-					if (winterHorrorlandNext)
-					{
-						var blackShit:FlxSprite = new FlxSprite(-FlxG.width * FlxG.camera.zoom,
-							-FlxG.height * FlxG.camera.zoom).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
-						blackShit.scrollFactor.set();
-						add(blackShit);
-						camHUD.visible = false;
-
-						FlxG.sound.play(Paths.sound('Lights_Shut_off'));
-					}
-
-					FlxTransitionableState.skipNextTransIn = true;
-					FlxTransitionableState.skipNextTransOut = true;
-
-					prevCamFollow = camFollow;
-					prevCamFollowPos = camFollowPos;
-
-					PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, songfolder + PlayState.storyPlaylist[0]); // quickfix
-					FlxG.sound.music.stop();
-
-					if (winterHorrorlandNext)
-					{
-						new FlxTimer().start(1.5, function(tmr:FlxTimer)
-						{
-							cancelMusicFadeTween();
-							MusicBeatState.switchState(new LoadingState(new PlayState()));
-						});
-					}
-					else
-					{
-						cancelMusicFadeTween();
-						MusicBeatState.switchState(new LoadingState(new PlayState()));
-					}
-				}
-			}
-			else
-			{
-				trace('WENT BACK TO FREEPLAY??');
 				WeekData.loadTheFirstEnabledMod();
+
 				cancelMusicFadeTween();
 				if (FlxTransitionableState.skipNextTransIn)
 				{
 					CustomFadeTransition.nextCamera = null;
 				}
-				MusicBeatState.switchState(new states.Freeplay());
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				MusicBeatState.switchState(new MainMenuState()); // placeholder
+
+				// if ()
+				if (!ClientPrefs.getGameplaySetting('practice', false) && !ClientPrefs.getGameplaySetting('botplay', false))
+				{
+					// StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
+
+					if (SONG.validScore)
+					{
+						Highscore.saveWeekScore(WeekData.getWeekFileName(), campaignScore);
+					}
+
+					// FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted; will be readded
+					FlxG.save.flush();
+				}
 				changedDifficulty = false;
 			}
-			transitioning = true;
+			else
+			{
+				var difficulty:String = CoolUtil.getDifficultyFilePath();
+				difficulty = '';
+				var nextSong:String = PlayState.storyPlaylist[0].toLowerCase();
+
+				trace('LOADING NEXT SONG');
+				trace(nextSong + difficulty);
+
+				FlxTransitionableState.skipNextTransIn = true;
+				FlxTransitionableState.skipNextTransOut = true;
+
+				prevCamFollow = camFollow;
+				prevCamFollowPos = camFollowPos;
+
+				PlayState.SONG = Song.loadFromJson(nextSong + difficulty, songfolder + nextSong);
+				FlxG.sound.music.stop();
+
+				cancelMusicFadeTween();
+				MusicBeatState.switchState(new LoadingState(new PlayState()));
+			}
 		}
+		else
+		{
+			trace('WENT BACK TO FREEPLAY??');
+			WeekData.loadTheFirstEnabledMod();
+			cancelMusicFadeTween();
+			if (FlxTransitionableState.skipNextTransIn)
+			{
+				CustomFadeTransition.nextCamera = null;
+			}
+			MusicBeatState.switchState(new states.Freeplay());
+			changedDifficulty = false;
+		}
+		transitioning = true;
 	}
 
 	public function KillNotes()
@@ -2456,17 +2440,24 @@ class PlayState extends MusicBeatState
 		final plrInputNotes:Array<Note> = playerStrumline.notes.members.filter(function(n:Note):Bool
 		{
 			var canHit:Bool = !strumsBlocked[n.noteData] && n.canBeHit && n.mustPress && !n.tooLate && !n.wasGoodHit && !n.blockHit;
-			return n != null && canHit && !n.isSustainNote && n.noteData == key;
+			return n != null && canHit && !n.isSustainNote && (n.special ? key == 4 : n.noteData == key);
 		});
 		plrInputNotes.sort(sortHitNotes);
 
 		var shouldMiss:Bool = !ClientPrefs.data.ghostTapping;
 
 		if (plrInputNotes.length != 0)
-		{ // slightly faster than doing `> 0` lol
+		{
 			final funnyNote:Note = plrInputNotes[0]; // front note
-			// trace('✡⚐🕆☼ 💣⚐💣');
-			playerStrumline.hitNote(funnyNote);
+			debug.Consolehandler.print('funnyNote: ' + funnyNote.special);
+			if (funnyNote.special && key == 4)
+			{
+				playerStrumline.hitNote(funnyNote);
+			}
+			if (!funnyNote.special)
+			{
+				playerStrumline.hitNote(funnyNote);
+			}
 		}
 		else
 		{
@@ -2485,10 +2476,23 @@ class PlayState extends MusicBeatState
 		Conductor.songPosition = lastTime;
 
 		var spr:StrumNote = playerStrumline.strumNotes.members[key];
-		if (strumsBlocked[key] != true && spr != null && spr.animation.curAnim.name != 'confirm')
+
+		if (key == 4)
 		{
-			spr.playAnim('pressed');
-			spr.resetAnim = 0;
+			debug.Consolehandler.print('Space key pressed');
+			for (strum in playerStrumline.strumNotes.members)
+			{
+				strum.playAnim('pressed');
+				strum.resetAnim = 0;
+			}
+		}
+		else
+		{
+			if (strumsBlocked[key] != true && spr != null && spr.animation.curAnim.name != 'confirm')
+			{
+				spr.playAnim('pressed');
+				spr.resetAnim = 0;
+			}
 		}
 		setFunctionOnScripts('onKeyPress', [key]);
 	}
@@ -2509,6 +2513,7 @@ class PlayState extends MusicBeatState
 		if (!FlxG.keys.checkStatus(eventKey, JUST_RELEASED))
 			return;
 		var key:Int = getKeyFromEvent(eventKey);
+
 		if (!cpuControlled && startedCountdown && !paused && key > -1)
 		{
 			var spr:StrumNote = playerStrumline.strumNotes.members[key];
@@ -2517,8 +2522,17 @@ class PlayState extends MusicBeatState
 				spr.playAnim('static');
 				spr.resetAnim = 0;
 			}
-			setFunctionOnScripts('onKeyRelease', [key]);
 		}
+		if (key == 4)
+		{
+			for (strum in playerStrumline.strumNotes.members)
+			{
+				strum.playAnim('static');
+				strum.resetAnim = 0;
+			}
+		}
+
+		setFunctionOnScripts('onKeyRelease', [key]);
 		// trace('released: ' + controlArray);
 	}
 
@@ -2540,7 +2554,6 @@ class PlayState extends MusicBeatState
 	{
 		// HOLDING
 		var parsedHoldArray:Array<Bool> = parseKeys();
-
 		// TO DO: Find a better way to handle controller inputs, this should work for now
 		if (controls.controllerMode)
 		{
@@ -2572,7 +2585,19 @@ class PlayState extends MusicBeatState
 					&& !daNote.blockHit
 					&& !daNote.invalid)
 				{
-					playerStrumline.hitNote(daNote);
+					if (daNote.special)
+					{
+						debug.Consolehandler.print('parsedHoldArray[4]: ' + parsedHoldArray[4]);
+						if (parsedHoldArray[4])
+						{
+							debug.Consolehandler.print('SPACE NOTE HIT');
+							playerStrumline.hitNote(daNote);
+						}
+					}
+					else
+					{
+						playerStrumline.hitNote(daNote);
+					}
 				}
 
 				if (daNote.mustPress && !cpuControlled && daNote.isSustainNote && !daNote.blockHit && !daNote.ignoreNote && !daNote.invalid

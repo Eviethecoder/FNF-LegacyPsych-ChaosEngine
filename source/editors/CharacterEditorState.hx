@@ -168,7 +168,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 		}
 
 		FlxG.camera.follow(camFollow);
-
+		FlxG.camera.bgColor = 0xff45308b;
 		iconBox = new PsychUIBox(FlxG.width - 675, 297, 350, 370, ['Icons']);
 		iconBox.cameras = [camMenu];
 		iconBox.scrollFactor.set();

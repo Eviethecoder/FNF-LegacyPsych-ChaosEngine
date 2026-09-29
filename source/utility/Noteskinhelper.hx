@@ -3,6 +3,66 @@ package utility;
 import ClientPrefs;
 import PlayState;
 import data.HudstyleData;
+import Character.AnimArray;
+
+typedef NoteSkin =
+{
+	var frames:Null<String>;
+	var strumline:Null<StrumlineData>;
+	var notes:Null<NoteData>;
+	@:optional
+	var notesplash:Null<NoteSplashData>;
+	@:optional
+	var usergbshader:Null<Bool>;
+	@:optional
+	var alphaoveride:Null<Float>;
+	@:default(false)
+	var dojitter:Null<Bool>;
+}
+
+typedef NoteSplashData =
+{
+	var notesplash:Null<String>;
+	var notesplashoffsets:Null<Array<Float>>;
+	var usergbshader:Null<Bool>;
+	var alphaoveride:Null<Float>;
+}
+
+typedef StrumlineData =
+{
+	var frames:Null<String>;
+	var leftstatic:Null<AnimArray>;
+	var downstatic:Null<AnimArray>;
+	var upstatic:Null<AnimArray>;
+	var rightstatic:Null<AnimArray>;
+	var leftpressed:Null<AnimArray>;
+	var downpressed:Null<AnimArray>;
+	var uppressed:Null<AnimArray>;
+	var rightpressed:Null<AnimArray>;
+	var rightconfirm:Null<AnimArray>;
+	var leftconfirm:Null<AnimArray>;
+	var downconfirm:Null<AnimArray>;
+	var upconfirm:Null<AnimArray>;
+}
+
+typedef NoteData =
+{
+	var frames:Null<String>;
+	var purple:Null<AnimArray>;
+	var blue:Null<AnimArray>;
+	var green:Null<AnimArray>;
+	@:optional
+	var special:Null<AnimArray>;
+	var yellow:Null<AnimArray>;
+	var purpleholdend:Null<AnimArray>;
+	var blueholdend:Null<AnimArray>;
+	var greenholdend:Null<AnimArray>;
+	var yellowholdend:Null<AnimArray>;
+	var purplehold:Null<AnimArray>;
+	var bluehold:Null<AnimArray>;
+	var greenhold:Null<AnimArray>;
+	var yellowhold:Null<AnimArray>;
+}
 
 class NoteSkinHelper
 {
@@ -25,6 +85,7 @@ class NoteSkinHelper
 			return;
 		}
 
+		utility.NoteSkinpreloader.preloadNoteSkin('default');
 		var data:HudstyleData = new HudstyleData();
 		var hudscriptpath:String = 'data/hudstyles/' + selectedHud + '.hx';
 		if (data.loadFromJson(selectedHud, hudscriptpath))
@@ -43,10 +104,10 @@ class NoteSkinHelper
 		fallbackHudName = null;
 	}
 
-	public static function getNoteskin(player:Bool, ?hudData:HudstyleData):String
+	public static function grabNoteskinjson(noteskin:String):NoteSkin
 	{
-		var data = resolveHudData(hudData);
-		return data != null ? data.getNoteskin(player) : DEFAULT_NOTESKIN;
+		var noteskin = utility.NoteSkinpreloader.grabnoteskindata(noteskin);
+		return noteskin;
 	}
 
 	public static function getNoteskinNotes(player:Bool, ?hudData:HudstyleData):String
@@ -66,6 +127,35 @@ class NoteSkinHelper
 		return data != null ? data.getNoteskinrgb(player) : ClientPrefs.data.arrowRGB;
 	}
 
+	public static function getNoteskinFrames(player:Bool, ?hudData:HudstyleData):String
+	{
+		var data = resolveHudData(hudData);
+		return data != null ? data.getNoteskinFrames(player) : DEFAULT_NOTESKIN;
+	}
+
+	public static function getStrumlineData(?hudData:HudstyleData):StrumlineData
+	{
+		var data = resolveHudData(hudData);
+		return data != null && data.noteskindata != null ? data.noteskindata.strumline : null;
+	}
+
+	public static function getNoteData(?hudData:HudstyleData):NoteData
+	{
+		var data = resolveHudData(hudData);
+		return data != null && data.noteskindata != null ? data.noteskindata.notes : null;
+	}
+
+	public static function getNoteTypeData(notetype:String):NoteData
+	{
+		var noteTypeData:NoteData = utility.NoteTypepreloader.grabNoteTypeJson(notetype);
+		if (noteTypeData == null)
+		{
+			var data = resolveHudData();
+			return data != null && data.noteskindata != null ? data.noteskindata.notes : null;
+		}
+		return noteTypeData;
+	}
+
 	public static function getNotesplash(?hudData:HudstyleData):String
 	{
 		var data = resolveHudData(hudData);
@@ -81,19 +171,13 @@ class NoteSkinHelper
 	public static function useRgbShader(?hudData:HudstyleData):Bool
 	{
 		var data = resolveHudData(hudData);
-		return data != null
-			&& data.bars != null
-			&& data.bars.noteskin != null
-			&& data.bars.noteskin.usergbshader != null ? data.bars.noteskin.usergbshader : true;
+		return data != null ? data.useRgbShader() : true;
 	}
 
 	public static function getAlphaOverride(?hudData:HudstyleData):Float
 	{
 		var data = resolveHudData(hudData);
-		return data != null
-			&& data.bars != null
-			&& data.bars.noteskin != null
-			&& data.bars.noteskin.alphaoveride != null ? data.bars.noteskin.alphaoveride : DEFAULT_ALPHA;
+		return data != null ? data.getAlphaOverride() : DEFAULT_ALPHA;
 	}
 
 	static function resolveHudData(?hudData:HudstyleData):HudstyleData
@@ -108,7 +192,7 @@ class NoteSkinHelper
 			return hudData;
 		}
 
-		var targetHud:String = 'default';
+		var targetHud:String = fallbackHudName != null ? fallbackHudName : 'default';
 		if (fallbackData == null || fallbackHudName != targetHud)
 		{
 			setupfallback(targetHud);

@@ -107,7 +107,7 @@ class Song
 		}
 		if (songJson.usealtcamspeed == null)
 		{
-			songJson.usealtcamspeed = true;
+			songJson.usealtcamspeed = false;
 		}
 		if (songJson.extradata == null)
 		{
@@ -245,10 +245,10 @@ class Song
 		{
 			#if sys
 			rawJson = File.getContent(Paths.json(formattedFolder + '/' + formattedSong)).trim();
-			rawmetadata = File.getContent(Paths.json(formattedFolder + '/metadata.json'));
+			rawmetadata = File.getContent(Paths.json(formattedFolder + '/metadata'));
 			#else
 			rawJson = Assets.getText(Paths.json(formattedFolder + '/' + formattedSong)).trim();
-			rawmetadata = Assets.getText(Paths.json(formattedFolder + '/metadata.json')).trim();
+			rawmetadata = Assets.getText(Paths.json(formattedFolder + '/metadata')).trim();
 			#end
 		}
 

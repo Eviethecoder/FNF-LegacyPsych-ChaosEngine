@@ -1,6 +1,7 @@
 {
   "folder": "default",
   "soundlist": ["volumeUp", "volumeDown", "volumeMax"],
-  "barOffsets": [8, 5],
+  "barOffsets": [9, 5],
+  "graphicScale": 0.3,
   "color": [255, 255, 255]
 }

@@ -3,8 +3,22 @@ package;
 import flixel.system.ui.FlxSoundTray;
 import openfl.display.Bitmap;
 import openfl.utils.AssetType;
+import openfl.utils.Assets;
 import flixel.FlxG;
 import MathUtil;
+import json2object.JsonParser;
+import openfl.geom.ColorTransform;
+
+typedef VolumeBar =
+{
+	var folder:String;
+	var soundlist:Array<String>;
+	var barOffsets:Array<Float>;
+	@default(0.30)
+	var graphicScale:Float;
+	@:optional
+	var color:Array<Int>;
+}
 
 /**
  *  Extends the default flixel soundtray, but with some art
@@ -17,60 +31,82 @@ class FunkinSoundTray extends FlxSoundTray
 {
 	var graphicScale:Float = 0.30;
 	var lerpYPos:Float = 0;
+	var curloadedbar:String = '';
 	var alphaTarget:Float = 0;
+
+	var bg:Bitmap;
+	var trayConfig:VolumeBar;
+
+	public static var instance:FunkinSoundTray;
 
 	var volumeMaxSound:String;
 
 	public function new()
 	{
-		// calls super, then removes all children to add our own
-		// graphics
 		super();
-		removeChildren();
+		instance = this;
+		resetBar('default');
+		trace('Custom tray added!');
+	}
 
-		var bg:Bitmap = new Bitmap(Assets.getBitmapData(Paths.vsliceimage("soundtray/default/volumebox")));
+	public function loadTrayConfig(json:String):VolumeBar
+	{
+		curloadedbar = json;
+		var rawJson = Paths.getcontent(Paths.json('soundbars/' + json));
+		var jsonParser:JsonParser<VolumeBar> = new JsonParser<VolumeBar>();
+		jsonParser.fromJson(rawJson, json);
+		return jsonParser.value;
+	}
+
+	public function resetBar(json:String, red:Float = 255, green:Float = 0, blue:Float = 0):Void
+	{
+		trayConfig = loadTrayConfig(json);
+		graphicScale = trayConfig.graphicScale;
+
+		volumeUpSound = Paths.vslicesound('soundtray/' + trayConfig.soundlist[0]);
+		volumeDownSound = Paths.vslicesound('soundtray/' + trayConfig.soundlist[1]);
+		volumeMaxSound = Paths.vslicesound('soundtray/' + trayConfig.soundlist[2]);
+
+		removeChildren();
+		bg = new Bitmap(Assets.getBitmapData(Paths.vsliceimage('soundtray/' + trayConfig.folder + '/volumebox')));
 		bg.scaleX = graphicScale;
 		bg.scaleY = graphicScale;
 		bg.smoothing = true;
 		addChild(bg);
 
-		y = -height;
-		visible = false;
-
-		// makes an alpha'd version of all the bars (bar_10.png)
-		var backingBar:Bitmap = new Bitmap(Assets.getBitmapData(Paths.vsliceimage("soundtray/default/bars_10")));
-		backingBar.x = 9;
-		backingBar.y = 5;
-		backingBar.scaleX = graphicScale;
-		backingBar.scaleY = graphicScale;
-		backingBar.smoothing = true;
-		addChild(backingBar);
-		backingBar.alpha = 0.4;
-
-		// clear the bars array entirely, it was initialized
-		// in the super class
 		_bars = [];
+		var colorTransform = new ColorTransform();
+		var color = trayConfig.color != null ? trayConfig.color : [Std.int(red), Std.int(green), Std.int(blue)];
+		colorTransform.redMultiplier = color[0] / 255;
+		colorTransform.greenMultiplier = color[1] / 255;
+		colorTransform.blueMultiplier = color[2] / 255;
 
-		// 1...11 due to how block named the assets,
-		// we are trying to get assets bars_1-10
 		for (i in 1...11)
 		{
-			var bar:Bitmap = new Bitmap(Assets.getBitmapData(Paths.vsliceimage("soundtray/default/bars_" + i)));
-			bar.x = 9;
-			bar.y = 5;
+			var bar:Bitmap = new Bitmap(Assets.getBitmapData(Paths.vsliceimage('soundtray/' + trayConfig.folder + '/bars_' + i)));
+			bar.x = bg.x + trayConfig.barOffsets[0];
+			bar.y = bg.y + trayConfig.barOffsets[1];
 			bar.scaleX = graphicScale;
 			bar.scaleY = graphicScale;
+			bar.transform.colorTransform = colorTransform;
 			bar.smoothing = true;
+			bar.visible = false;
 			addChild(bar);
 			_bars.push(bar);
 		}
 
 		screenCenter();
 		y = -height - 10;
+		lerpYPos = y;
+		alpha = 0;
+		alphaTarget = 0;
+		visible = false;
+	}
 
-		volumeUpSound = Paths.vslicesound("soundtray/volumeUp");
-		volumeDownSound = Paths.vslicesound("soundtray/volumeDown");
-		volumeMaxSound = Paths.vslicesound("soundtray/volumeMax");
+	public function swapBar(jsontoload)
+	{
+		if (curloadedbar != jsontoload)
+			resetBar(jsontoload);
 	}
 
 	override public function update(ms:Float):Void

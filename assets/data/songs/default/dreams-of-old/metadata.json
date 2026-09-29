@@ -1,6 +1,7 @@
 {
-  "name": "tutorial",
+  "name": "Dreams of Old",
 	"color": "#ff00ff",
+	"Discordrpc": "https://i.imgur.com/j1NOFU9.gif",
 	"renderdata": {
 		"name": "ebot",
 		"rendergraphic": "ebot"

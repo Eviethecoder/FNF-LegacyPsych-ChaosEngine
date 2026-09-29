@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import shaders.RGBPalette;
 import utility.NoteSkinHelper;
+import Character.AnimArray;
 import shaders.RGBPalette.RGBShaderReference;
 import flixel.util.FlxColor;
 
@@ -14,6 +15,7 @@ class StrumNote extends FlxSprite
 {
 	public var rgbShader:RGBShaderReference;
 	public var resetAnim:Float = 0;
+	public var animOffsets:Null<Map<String, Array<Dynamic>>>;
 
 	private var noteData:Int = 0;
 	private var ispixel:Bool = false;
@@ -43,6 +45,11 @@ class StrumNote extends FlxSprite
 	public function new(x:Float, y:Float, leData:Int, player:Int)
 	{
 		isPlayer = false;
+		#if (haxe >= "4.0.0")
+		animOffsets = new Map();
+		#else
+		animOffsets = new Map<String, Array<Dynamic>>();
+		#end
 		rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(leData, isPlayer));
 		rgbShader.enabled = false;
 		switch (player)
@@ -69,20 +76,7 @@ class StrumNote extends FlxSprite
 		this.noteData = leData;
 		super(x, y);
 
-		var skin:String = 'Huds/Noteskins/NOTE_assets';
-		if (PlayState.instance != null && PlayState.instance.hud.hudData.bars.noteskin != null)
-		{
-			var playerbool:Bool = false;
-			if (player == 1)
-			{
-				playerbool = true;
-			}
-			skin = NoteSkinHelper.getNoteskin(playerbool);
-		}
-		else
-		{
-			skin = 'Huds/Noteskins/NOTE_assets';
-		}
+		var skin:String = NoteSkinHelper.getNoteskinFrames(isPlayer);
 		texture = skin; // Load texture and anims
 
 		sustainSplash = new SustainSplash(this);
@@ -95,41 +89,55 @@ class StrumNote extends FlxSprite
 		var lastAnim:String = null;
 		if (animation.curAnim != null)
 			lastAnim = animation.curAnim.name;
-
+		var strumlineData = NoteSkinHelper.getStrumlineData();
 		frames = Paths.getSparrowAtlas(texture);
-		animation.addByPrefix('green', 'arrowUP');
-		animation.addByPrefix('blue', 'arrowDOWN');
-		animation.addByPrefix('purple', 'arrowLEFT');
-		animation.addByPrefix('red', 'arrowRIGHT');
+
+		if (strumlineData != null)
+		{
+			switch (Math.abs(noteData) % 4)
+			{
+				case 0:
+					addAnimation(strumlineData.leftstatic, 'static');
+					addAnimation(strumlineData.leftpressed, 'pressed');
+					addAnimation(strumlineData.leftconfirm, 'confirm');
+				case 1:
+					addAnimation(strumlineData.downstatic, 'static');
+					addAnimation(strumlineData.downpressed, 'pressed');
+					addAnimation(strumlineData.downconfirm, 'confirm');
+				case 2:
+					addAnimation(strumlineData.upstatic, 'static');
+					addAnimation(strumlineData.uppressed, 'pressed');
+					addAnimation(strumlineData.upconfirm, 'confirm');
+				case 3:
+					addAnimation(strumlineData.rightstatic, 'static');
+					addAnimation(strumlineData.rightpressed, 'pressed');
+					addAnimation(strumlineData.rightconfirm, 'confirm');
+			}
+		}
 
 		antialiasing = ClientPrefs.data.globalAntialiasing;
 		setGraphicSize(Std.int(width * 0.7));
-
-		switch (Math.abs(noteData) % 4)
-		{
-			case 0:
-				animation.addByPrefix('static', 'arrowLEFT');
-				animation.addByPrefix('pressed', 'left press', 24, false);
-				animation.addByPrefix('confirm', 'left confirm', 24, false);
-			case 1:
-				animation.addByPrefix('static', 'arrowDOWN');
-				animation.addByPrefix('pressed', 'down press', 24, false);
-				animation.addByPrefix('confirm', 'down confirm', 24, false);
-			case 2:
-				animation.addByPrefix('static', 'arrowUP');
-				animation.addByPrefix('pressed', 'up press', 24, false);
-				animation.addByPrefix('confirm', 'up confirm', 24, false);
-			case 3:
-				animation.addByPrefix('static', 'arrowRIGHT');
-				animation.addByPrefix('pressed', 'right press', 24, false);
-				animation.addByPrefix('confirm', 'right confirm', 24, false);
-		}
 		updateHitbox();
 
 		if (lastAnim != null)
 		{
 			playAnim(lastAnim, true);
 		}
+	}
+
+	function addAnimation(data:AnimArray, animnameoveride:String = null):Void
+	{
+		if (data == null)
+			return;
+
+		var animationName:String = animnameoveride != null ? animnameoveride : data.anim;
+		if (data.indices != null && data.indices.length > 0)
+			animation.addByIndices(animationName, data.name, data.indices, '', data.fps, data.loop);
+		else
+			animation.addByPrefix(animationName, data.name, data.fps, data.loop);
+
+		if (data.offsets != null && data.offsets.length > 1)
+			addOffset(animationName, data.offsets);
 	}
 
 	public function postAddedToGroup()
@@ -139,6 +147,15 @@ class StrumNote extends FlxSprite
 		x += 50;
 		x += ((FlxG.width / 2) * player);
 		ID = noteData;
+	}
+
+	public function addOffset(name:String,
+			offsets:Array<Float>) // we need to edit this, but make sure if their is no extra offsets then it defaults to 0, 0 instead of null, which causes errors
+	{
+		if (offsets == null)
+			offsets = [0, 0];
+
+		animOffsets[name] = offsets;
 	}
 
 	override function update(elapsed:Float)
@@ -161,10 +178,40 @@ class StrumNote extends FlxSprite
 		super.update(elapsed);
 	}
 
+	/**
+	 * Helper function that adjusts the offset automatically to center the bounding box within the graphic.  modified to add our offsets we add to the total
+	 *
+	 * @param   AdjustPosition   Adjusts the actual X and Y position just once to match the offset change.
+	 */
+	public function centerAnimationOffsets(animname:String = '', AdjustPosition:Bool = false):Void
+	{
+		offset.x = (frameWidth - width) * 0.5;
+		offset.y = (frameHeight - height) * 0.5;
+		if (animname != '')
+		{
+			var daOffset = animOffsets.get(animname);
+			var x:Float = 0;
+			var y:Float = 0;
+			if (daOffset != null && daOffset.length > 1)
+			{
+				x += daOffset[0];
+				y += daOffset[1];
+				offset.x += x;
+				offset.y += y;
+			}
+		}
+		if (AdjustPosition)
+		{
+			x += offset.x + x;
+			y += offset.y + y;
+		}
+	}
+
 	public function playAnim(anim:String, ?force:Bool = false)
 	{
 		animation.play(anim, force);
-		centerOffsets();
+		centerAnimationOffsets(anim);
+
 		centerOrigin();
 
 		if (animation.curAnim.name == 'confirm')

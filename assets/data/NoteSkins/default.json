@@ -1,0 +1,214 @@
+{
+	"strumline": {
+		"frames": "Huds/Noteskins/NOTE_assets",
+		"leftstatic": {
+			"anim": "leftstatic",
+			"name": "arrowLEFT",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"downstatic": {
+			"anim": "downstatic",
+			"name": "arrowDOWN",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"upstatic": {
+			"anim": "upstatic",
+			"name": "arrowUP",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"rightstatic": {
+			"anim": "rightstatic",
+			"name": "arrowRIGHT",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+
+		"leftpressed": {
+			"anim": "leftpressed",
+			"name": "left press",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"downpressed": {
+			"anim": "downpressed",
+			"name": "down press",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"uppressed": {
+			"anim": "uppressed",
+			"name": "up press",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"rightpressed": {
+			"anim": "rightpressed",
+			"name": "right press",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+
+		"leftconfirm": {
+			"anim": "leftconfirm",
+			"name": "left confirm",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"downconfirm": {
+			"anim": "downconfirm",
+			"name": "down confirm",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"upconfirm": {
+			"anim": "upconfirm",
+			"name": "up confirm",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"rightconfirm": {
+			"anim": "rightconfirm",
+			"name": "right confirm",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		}
+	},
+
+	"notes": {
+		"frames": "Huds/Noteskins/NOTE_assets-notes",
+		"purple": {
+			"anim": "purple0",
+			"name": "purple0",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"blue": {
+			"anim": "blue0",
+			"name": "blue0",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"green": {
+			"anim": "green0",
+			"name": "green0",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"yellow": {
+			"anim": "yellow0",
+			"name": "red0",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+
+		"purpleholdend": {
+			"anim": "purpleholdend",
+			"name": "purple hold end",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"blueholdend": {
+			"anim": "blueholdend",
+			"name": "blue hold end",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"greenholdend": {
+			"anim": "greenholdend",
+			"name": "green hold end",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"yellowholdend": {
+			"anim": "yellowholdend",
+			"name": "red hold end",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+
+		"purplehold": {
+			"anim": "purplehold",
+			"name": "purple hold piece",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"bluehold": {
+			"anim": "bluehold",
+			"name": "blue hold piece",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"greenhold": {
+			"anim": "greenhold",
+			"name": "green hold piece",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		},
+		"yellowhold": {
+			"anim": "yellowhold",
+			"name": "red hold piece",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [0, 0]
+		}
+	},
+	"notesplash": {
+		"notesplash": "Huds/NoteSplashes/noteSplashes",
+		"notesplashoffsets": [-20, -100],
+		"usergbshader": true,
+		"alphaoveride": 1.0
+	},
+	"usergbshader": true,
+	"alphaoveride": 1.0,
+	"dojitter": false
+}

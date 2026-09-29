@@ -73,6 +73,8 @@ class MusicBeatState extends FlxUIState
 			LoadingState.forcereloadstagedata();
 			Characterpreloader.charmap = [];
 			Characterpreloader.charLookup();
+			utility.NoteSkinpreloader.noteskinmap = [];
+			utility.NoteSkinpreloader.noteskinLookup();
 			Scripthandler.gamescriptArray = [];
 			FlxG.resetState();
 		}

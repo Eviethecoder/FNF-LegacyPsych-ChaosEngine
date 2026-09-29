@@ -77,7 +77,6 @@ class Freeplay extends MusicBeatState
 	{
 		super.create();
 		metadata = Freeplayutils.getSongFolders();
-		trace('Freeplay metadata: ' + metadata);
 		selectsound = FlxG.sound.load(Paths.sound('freeplay/songselect'), 0.5);
 
 		ogrenderposition = new FlxPoint();
@@ -109,7 +108,6 @@ class Freeplay extends MusicBeatState
 		render.loadGraphic(Paths.image("menus/freeplay/freeplay renders/ebot"));
 		render.antialiasing = true;
 
-		// Position roughly centered on the paper.
 		render.x = sidePaper.x + (sidePaper.width - render.width);
 		render.y = sidePaper.y + 380;
 

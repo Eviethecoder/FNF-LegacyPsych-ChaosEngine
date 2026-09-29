@@ -4,6 +4,8 @@ import haxe.Json;
 import Character.AnimArray as AnimArray;
 import ClientPrefs;
 import utility.Scripthandler;
+import utility.NoteSkinHelper;
+import utility.NoteSkinHelper.NoteSkin;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
@@ -25,28 +27,8 @@ typedef Hudstyle =
 	@:optional
 	var scorpos:Array<Float>;
 	@:optional
-	var noteskin:NoteskinInfo;
-	@:optional
-	var notesplash:String;
-	@:optional
-	var falback:String;
-}
-
-typedef NoteskinInfo =
-{
-	var strumlinegraphic:String;
-	@:optional
-	var notegraphic:String;
-	@:optional
-	var samenamenotes:Bool;
-	@:optional
-	var notesplash:String;
-	@:optional
-	var notesplashoffsets:Array<Float>;
-	@:optional
-	var usergbshader:Bool;
-	@:optional
-	var alphaoveride:Float;
+	var noteskin:String;
+	var soundbar:String;
 }
 
 typedef BarInfo =
@@ -72,6 +54,8 @@ class HudstyleData
 	public var script:HaxeScript = null;
 	public var hudscriptpath:String;
 	public var hasscript:Bool = false;
+	public var soundbar:String;
+	public var noteskindata:NoteSkin;
 
 	public function new()
 	{
@@ -100,6 +84,8 @@ class HudstyleData
 		bars = cast Json.parse(File.getContent(path));
 
 		applyDefaults();
+		noteskindata = NoteSkinHelper.grabNoteskinjson(bars.noteskin);
+
 		return true;
 	}
 
@@ -118,6 +104,10 @@ class HudstyleData
 			iconp2overide = bars.iconP2pos;
 			trace('iconp2overide is: ' + iconp2overide);
 		}
+		if (bars.soundbar != null)
+		{
+			soundbar = bars.soundbar;
+		}
 		if (bars.iconP1visible != null)
 		{
 			iconp1vis = bars.iconP1visible;
@@ -132,14 +122,7 @@ class HudstyleData
 		}
 		if (bars.noteskin == null)
 		{
-			bars.noteskin = {
-				strumlinegraphic: 'Huds/Noteskins/NOTE_assets',
-				samenamenotes: true,
-				notesplash: 'Huds/NoteSplashes/noteSplashes',
-				notesplashoffsets: [-10, -10],
-				usergbshader: true,
-				alphaoveride: 0.6
-			};
+			bars.noteskin = 'default';
 		}
 	}
 
@@ -176,6 +159,26 @@ class HudstyleData
 			return bars.healthbar.barOffsets;
 		}
 		return bars.healthbar.barOffsets;
+	}
+
+	public function getsoundbar():String
+	{
+		if (script != null)
+		{
+			trace('Running script function getsoundbar with bar number');
+			var func = script.variables.get("getsoundbar");
+			if (func != null)
+			{
+				var bar:String = cast Reflect.callMethod(null, func, []);
+				if (bar != null)
+				{
+					return bar;
+				}
+				return soundbar;
+			}
+			return soundbar;
+		}
+		return soundbar;
 	}
 
 	public function gethealthbarposition():Array<Float>
@@ -233,11 +236,13 @@ class HudstyleData
 				{
 					return offsets;
 				}
-				return bars.noteskin.notesplashoffsets != null ? bars.noteskin.notesplashoffsets : [0, 0];
 			}
-			return bars.noteskin.notesplashoffsets != null ? bars.noteskin.notesplashoffsets : [0, 0];
 		}
-		return bars.noteskin.notesplashoffsets != null ? bars.noteskin.notesplashoffsets : [0, 0];
+		if (noteskindata != null && noteskindata.notesplash != null && noteskindata.notesplash.notesplashoffsets != null)
+		{
+			return noteskindata.notesplash.notesplashoffsets;
+		}
+		return [-20, -100];
 	}
 
 	public function getNoteskinnotes(player:Bool):String
@@ -252,24 +257,24 @@ class HudstyleData
 				{
 					return noteskin;
 				}
-				if (bars.noteskin.samenamenotes)
-				{
-					trace('samenamenotes is true, using strumlinegraphic with -notes suffix: ' + bars.noteskin.strumlinegraphic + '-notes');
-					return bars.noteskin.strumlinegraphic + '-notes';
-				}
-				return bars.noteskin.notegraphic;
 			}
-			if (bars.noteskin.samenamenotes)
-			{
-				return bars.noteskin.strumlinegraphic + '-notes';
-			}
-			return bars.noteskin.notegraphic;
 		}
-		if (bars.noteskin.samenamenotes)
+		if (noteskindata != null)
 		{
-			return bars.noteskin.strumlinegraphic + '-notes';
+			if (noteskindata.notes != null && noteskindata.notes.frames != null && noteskindata.notes.frames.length > 0)
+			{
+				return noteskindata.notes.frames;
+			}
+			if (noteskindata.frames != null && noteskindata.frames.length > 0)
+			{
+				return noteskindata.frames;
+			}
+			if (noteskindata.strumline != null && noteskindata.strumline.frames != null && noteskindata.strumline.frames.length > 0)
+			{
+				return noteskindata.strumline.frames + '-notes';
+			}
 		}
-		return bars.noteskin.notegraphic;
+		return 'Huds/Noteskins/NOTE_assets-notes';
 	}
 
 	public function getNoteskinrgb(player:Bool):Array<Array<Int>>
@@ -284,18 +289,16 @@ class HudstyleData
 				{
 					return rgbvalues;
 				}
-				return ClientPrefs.data.arrowRGB;
 			}
-			return ClientPrefs.data.arrowRGB;
 		}
 		return ClientPrefs.data.arrowRGB;
 	}
 
-	public function getNoteskin(player:Bool):String
+	public function getNoteskinFrames(player:Bool):String
 	{
 		if (script != null)
 		{
-			var func = script.variables.get("getNoteskin");
+			var func = script.variables.get("getNoteskinFrames");
 			if (func != null)
 			{
 				var noteskin:String = cast Reflect.callMethod(null, func, [player]);
@@ -303,11 +306,20 @@ class HudstyleData
 				{
 					return noteskin;
 				}
-				return bars.noteskin.strumlinegraphic;
 			}
-			return bars.noteskin.strumlinegraphic;
 		}
-		return bars.noteskin.strumlinegraphic;
+		if (noteskindata != null)
+		{
+			if (noteskindata.strumline != null && noteskindata.strumline.frames != null && noteskindata.strumline.frames.length > 0)
+			{
+				return noteskindata.strumline.frames;
+			}
+			if (noteskindata.frames != null && noteskindata.frames.length > 0)
+			{
+				return noteskindata.frames;
+			}
+		}
+		return 'Huds/Noteskins/NOTE_assets';
 	}
 
 	public function getNotesplash():String
@@ -322,11 +334,64 @@ class HudstyleData
 				{
 					return notesplash;
 				}
-				return bars.noteskin.notesplash;
 			}
-			return bars.noteskin.notesplash;
 		}
-		return bars.noteskin.notesplash;
+		if (noteskindata != null
+			&& noteskindata.notesplash != null
+			&& noteskindata.notesplash.notesplash != null
+			&& noteskindata.notesplash.notesplash.length > 0)
+		{
+			return noteskindata.notesplash.notesplash;
+		}
+		return 'Huds/NoteSplashes/noteSplashes';
+	}
+
+	public function useRgbShader():Bool
+	{
+		if (script != null)
+		{
+			var func = script.variables.get("useRgbShader");
+			if (func != null)
+			{
+				var res:Dynamic = Reflect.callMethod(null, func, []);
+				if (res != null)
+				{
+					return cast res;
+				}
+			}
+		}
+		if (noteskindata != null)
+		{
+			if (noteskindata.usergbshader != null)
+				return noteskindata.usergbshader;
+			if (noteskindata.notesplash != null && noteskindata.notesplash.usergbshader != null)
+				return noteskindata.notesplash.usergbshader;
+		}
+		return true;
+	}
+
+	public function getAlphaOverride():Float
+	{
+		if (script != null)
+		{
+			var func = script.variables.get("getAlphaOverride");
+			if (func != null)
+			{
+				var res:Dynamic = Reflect.callMethod(null, func, []);
+				if (res != null)
+				{
+					return cast res;
+				}
+			}
+		}
+		if (noteskindata != null)
+		{
+			if (noteskindata.alphaoveride != null)
+				return noteskindata.alphaoveride;
+			if (noteskindata.notesplash != null && noteskindata.notesplash.alphaoveride != null)
+				return noteskindata.notesplash.alphaoveride;
+		}
+		return 0.6;
 	}
 
 	public function gettimebargraphics(barnum:Int):String

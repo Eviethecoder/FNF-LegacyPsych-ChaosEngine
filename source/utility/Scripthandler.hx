@@ -115,6 +115,18 @@ class Scripthandler
 		}
 	}
 
+	public static function returnfromscript(name:String, params:Array<Dynamic>):Dynamic
+	{
+		for (script in gamescriptArray)
+		{
+			var result:Dynamic = script.runFunction(name, params);
+
+			if (result != null)
+				return result;
+		}
+		return null;
+	} // DO NOTE TH
+
 	public static function onBeatHit(beat:Int):Void
 	{
 		for (script in gamescriptArray)

@@ -6,6 +6,7 @@ import Discord.DiscordClient;
 import lime.app.Application;
 import utility.Systeminfo;
 import utility.EventHandler;
+import utility.NoteTypepreloader;
 import utility.NoteSkinHelper;
 import objects.FunkinMemory;
 import flixel.system.debug.log.LogStyle;
@@ -55,7 +56,9 @@ class InitState extends flixel.FlxState
 
 		ClientPrefs.loadDefaultKeys();
 		ClientPrefs.loadPrefs();
+
 		NoteSkinHelper.setupfallback();
+		NoteTypepreloader.customNoteTypeLookup();
 
 		// -- MODS -- //
 
@@ -88,6 +91,7 @@ class InitState extends flixel.FlxState
 			});
 		}
 		utility.Characterpreloader.charLookup();
+		utility.NoteSkinpreloader.noteskinLookup();
 
 		FlxG.switchState(Type.createInstance(TitleState, []));
 	}

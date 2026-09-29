@@ -1,0 +1,102 @@
+{
+	"frames": "Huds/NoteTypes/HURTNOTE_assets-notes",
+	"purple": {
+		"anim": "purple",
+		"name": "purple",
+		"fps": 24,
+		"loop": false,
+		"indices": [],
+		"offsets": [0, 0]
+	},
+	"blue": {
+		"anim": "blue",
+		"name": "blue",
+		"fps": 24,
+		"loop": false,
+		"indices": [],
+		"offsets": [0, 0]
+	},
+	"green": {
+		"anim": "green",
+		"name": "green",
+		"fps": 24,
+		"loop": false,
+		"indices": [],
+		"offsets": [0, 0]
+	},
+	"yellow": {
+		"anim": "yellow",
+		"name": "red",
+		"fps": 24,
+		"loop": false,
+		"indices": [],
+		"offsets": [0, 0]
+	},
+
+	"purpleholdend": {
+		"anim": "purpleholdend",
+		"name": "purple hold end",
+		"fps": 24,
+		"loop": false,
+		"indices": [],
+		"offsets": [0, 0]
+	},
+	"blueholdend": {
+		"anim": "blueholdend",
+		"name": "blue hold end",
+		"fps": 24,
+		"loop": false,
+		"indices": [],
+		"offsets": [0, 0]
+	},
+	"greenholdend": {
+		"anim": "greenholdend",
+		"name": "green hold end",
+		"fps": 24,
+		"loop": false,
+		"indices": [],
+		"offsets": [0, 0]
+	},
+	"yellowholdend": {
+		"anim": "yellowholdend",
+		"name": "red hold end",
+		"fps": 24,
+		"loop": false,
+		"indices": [],
+		"offsets": [0, 0]
+	},
+
+	"purplehold": {
+		"anim": "purplehold",
+		"name": "purple hold piece",
+		"fps": 24,
+		"loop": false,
+		"indices": [],
+		"offsets": [0, 0]
+	},
+	"bluehold": {
+		"anim": "bluehold",
+		"name": "blue hold piece",
+		"fps": 24,
+		"loop": false,
+		"indices": [],
+		"offsets": [0, 0]
+	},
+	"greenhold": {
+		"anim": "greenhold",
+		"name": "green hold piece",
+		"fps": 24,
+		"loop": false,
+		"indices": [],
+		"offsets": [0, 0]
+	},
+	"yellowhold": {
+		"anim": "yellowhold",
+		"name": "red hold piece",
+		"fps": 24,
+		"loop": false,
+		"indices": [],
+		"offsets": [0, 0]
+
+	}
+}

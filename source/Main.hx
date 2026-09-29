@@ -111,8 +111,6 @@ class Main extends Sprite
 
 	static function onCriticalError(message:String):Void
 	{
-		writeCrashLog("CRITICAL", message);
-
 		try
 		{
 			FlxG.switchState(new debug.CrashReportSubstate(FlxG.state, message, message));
@@ -142,30 +140,10 @@ class Main extends Sprite
 			}
 		}
 
-		writeCrashLog(Std.string(e.error), emsg);
-
 		FlxG.switchState(new debug.CrashReportSubstate(FlxG.state, emsg, e.error));
 
 		isHandlingCrash = false;
 	}
 
 	// Persist the crash to disk so a stack trace survives even if the app can't recover / closes.
-	static function writeCrashLog(errorName:String, details:String):Void
-	{
-		try
-		{
-			var crashDir:String = Path.join([Sys.getCwd(), "crash"]);
-			if (!FileSystem.exists(crashDir))
-				FileSystem.createDirectory(crashDir);
-
-			var timestamp:String = Date.now().toString().replace(":", "'");
-			var path:String = Path.join([crashDir, 'ChaosEngine_${timestamp}.txt']);
-
-			File.saveContent(path, 'Error: ${errorName}\n\n${details}');
-		}
-		catch (e:Dynamic)
-		{
-			trace('Failed to write crash log: $e');
-		}
-	}
 }

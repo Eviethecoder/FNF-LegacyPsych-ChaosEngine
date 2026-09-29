@@ -62,6 +62,10 @@ class Controls
 	public var NOTE_DOWN(get, never):Bool;
 	public var NOTE_LEFT(get, never):Bool;
 	public var NOTE_RIGHT(get, never):Bool;
+	public var NOTE_SPACE(get, never):Bool;
+
+	private inline function get_NOTE_SPACE()
+		return pressed('note_space');
 
 	private inline function get_UI_UP()
 		return pressed('ui_up');

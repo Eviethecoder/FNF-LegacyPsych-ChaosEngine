@@ -1,8 +1,8 @@
 package objects;
 
 import flixel.FlxG;
+import flixel.FlxBasic;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 import Section.SwagSection;
 import flixel.tweens.FlxEase;
@@ -20,7 +20,7 @@ using StringTools;
  * movement and killing independently. PlayState creates two instances of
  * this class and wires up the hit/miss callbacks.
  */
-class Strumline extends FlxSpriteGroup
+class Strumline extends FlxTypedGroup<FlxBasic>
 {
 	// ─── public fields ───────────────────────────────────────────────────────
 
@@ -32,7 +32,7 @@ class Strumline extends FlxSpriteGroup
 	 * This is the same FlxTypedGroup that was added to PlayState.noteGroup,
 	 * so rendering still goes through the existing camera layers.
 	 */
-	public var notes:FlxTypedSpriteGroup<Note>;
+	public var notes:FlxTypedGroup<Note>;
 
 	/** Notes waiting to appear on screen, sorted ascending by strumTime. */
 	public var unspawnNotes:Array<Note> = [];
@@ -73,21 +73,20 @@ class Strumline extends FlxSpriteGroup
 	public var charlist:Array<Character> = [];
 
 	/**
-	 * @param x          Horizontal position of the lane (usually 0 – arrows set their own x).
 	 * @param strumY     Vertical position used when spawning the strum arrows.
 	 * @param isPlayer   True for the player lane, false for the opponent lane.
 	 * @param noteGroup  The FlxTypedGroup<Note> owned by PlayState that notes are
 	 *                   inserted into so they're drawn in the correct layer order.
 	 */
-	public function new(x:Float = 0, strumY:Float = 50, isPlayer:Bool = false)
+	public function new(strumY:Float = 50, isPlayer:Bool = false)
 	{
-		super(x, strumY);
+		super();
 		this.isPlayer = isPlayer;
 		this._strumY = strumY;
 
 		strumNotes = new FlxTypedSpriteGroup<StrumNote>();
 
-		notes = new FlxTypedSpriteGroup<Note>();
+		notes = new FlxTypedGroup<Note>();
 		add(strumNotes);
 		add(notes);
 	}
@@ -251,6 +250,7 @@ class Strumline extends FlxSpriteGroup
 
 					sustainNote.gfNote = note.isGfNote;
 					sustainNote.noteType = swagNote.noteType;
+					sustainNote.special = swagNote.special;
 					sustainNote.scrollFactor.set();
 					swagNote.tail.push(sustainNote);
 					sustainNote.parent = swagNote;
@@ -402,6 +402,14 @@ class Strumline extends FlxSpriteGroup
 				return;
 
 			var strumX:Float = strum.x + daNote.offsetX;
+			if (daNote.special)
+			{
+				var firstStrum:StrumNote = strumNotes.members[0];
+				var lastStrum:StrumNote = strumNotes.members[3];
+				var firstCenter:Float = firstStrum.x + firstStrum.width / 2;
+				var lastCenter:Float = lastStrum.x + lastStrum.width / 2;
+				strumX = (firstCenter + lastCenter) / 2 - daNote.width / 2 + daNote.offsetX;
+			}
 			var strumY:Float = strum.y + daNote.offsetY;
 			var strumAngle:Float = strum.angle + daNote.offsetAngle;
 			var strumDirection:Float = strum.direction + daNote.directionMod;
@@ -427,7 +435,7 @@ class Strumline extends FlxSpriteGroup
 
 				if (strumScroll && daNote.isSustainNote)
 				{
-					if (StringTools.endsWith(daNote.animation.curAnim.name, 'end'))
+					if (StringTools.endsWith(daNote.notegraphic.animation.curAnim.name, 'end'))
 					{
 						daNote.y += 10.5 * (fakeCrochet / 400) * 1.5 * scrolledSpeed + (46 * (scrolledSpeed - 1));
 						daNote.y -= 46 * (1 - (fakeCrochet / 600)) * scrolledSpeed;
@@ -450,8 +458,8 @@ class Strumline extends FlxSpriteGroup
 				// Play strum confirm animation
 				var time:Float = 0.15;
 				if (daNote.isSustainNote
-					&& daNote.animation.curAnim != null
-					&& !StringTools.endsWith(daNote.animation.curAnim.name, 'end'))
+					&& daNote.notegraphic.animation.curAnim != null
+					&& !StringTools.endsWith(daNote.notegraphic.animation.curAnim.name, 'end'))
 					time += 0.15;
 				strum.playAnim('confirm', true);
 				strum.resetAnim = time;
@@ -483,7 +491,7 @@ class Strumline extends FlxSpriteGroup
 
 			if (sustainSetting > 0 && daNote.isSustainNote && daNote.wasGoodHit && !strum.sustainSplash.updatedThisFrame)
 			{
-				if (StringTools.endsWith(daNote.animation.curAnim.name, "holdend"))
+				if (StringTools.endsWith(daNote.notegraphic.animation.curAnim.name, "holdend"))
 				{
 					if (Conductor.songPosition >= daNote.strumTime)
 						strum.sustainSplash.hide(!isPlayer || sustainSetting == 1);
@@ -663,7 +671,19 @@ class Strumline extends FlxSpriteGroup
 			}
 		}
 
-		confirmStrum(note.noteData, note.isSustainNote);
+		if (note.special == true)
+		{
+			debug.Consolehandler.print('ALLL NOTES BEING HIT');
+			for (strum in strumNotes.members)
+			{
+				if (strum != null)
+					strum.playAnim('confirm', true);
+			}
+		}
+		else
+		{
+			confirmStrum(note.noteData, note.isSustainNote);
+		}
 		ps.vocals.unmutePlayer();
 
 		if (!note.isSustainNote)

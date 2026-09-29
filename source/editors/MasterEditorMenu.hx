@@ -31,7 +31,7 @@ class MasterEditorMenu extends MusicBeatState
 		'Example Editor',
 		'Chart editor welcome tests',
 		'options',
-		'3dtest',
+		// '3dtest',
 		'Chart Editor'
 	];
 	private var grpTexts:FlxTypedGroup<Alphabet>;
@@ -144,8 +144,8 @@ class MasterEditorMenu extends MusicBeatState
 					MusicBeatState.switchState(new DialogueTextState());
 				case 'Chart Editor': // felt it would be cool maybe
 					MusicBeatState.switchState(new LoadingState(new ChartingState(), false));
-				case '3dtest': // felt it would be cool maybe
-					MusicBeatState.switchState(new states.Modeltest());
+				// case '3dtest': // felt it would be cool maybe
+				// 	MusicBeatState.switchState(new states.Modeltest());
 				case 'options': // felt it would be cool maybe
 					MusicBeatState.switchState(new LoadingState(new options.OptionsState(), false));
 			}

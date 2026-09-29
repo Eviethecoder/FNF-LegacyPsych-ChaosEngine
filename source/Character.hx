@@ -310,8 +310,6 @@ class Character extends FunkinSprite
 
 	override function update(elapsed:Float)
 	{
-		FlxG.watch.addQuick('alt:', alt);
-
 		if (!debugMode && animation.curAnim != null)
 		{
 			if (heyTimer > 0)
@@ -438,18 +436,14 @@ class Character extends FunkinSprite
 			if (heldSustainNotes.indexOf(note) == -1)
 				heldSustainNotes.push(note);
 
-			// ====== V-SLICE STYLE ======
 			if (animstyle == "v-slice")
 			{
-				// Prevent switching directions mid-hold
 				if (!note.endnote && activeSustainDir != null && activeSustainDir != AnimName)
 				{
 					if (!isAnimationFinished())
 						return;
-					// allow fallthrough once finished
 				}
 
-				// --- END NOTE ---
 				if (note.endnote)
 				{
 					var endAnim = AnimName + alt + "-end";
@@ -457,7 +451,6 @@ class Character extends FunkinSprite
 
 					activeSustainDir = null;
 
-					// Play end animation if available
 					if (hasEnd)
 					{
 						if (curAnim != endAnim)
@@ -469,7 +462,6 @@ class Character extends FunkinSprite
 							return;
 					}
 
-					// remove sustain from stack
 					var idx = heldSustainNotes.indexOf(note);
 					if (idx != -1)
 						heldSustainNotes.splice(idx, 1);
@@ -477,7 +469,6 @@ class Character extends FunkinSprite
 					return;
 				}
 
-				// --- HOLD ANIMATION ---
 				var holdAnim = AnimName + alt + "-hold";
 				if (animation.getByName(holdAnim) != null)
 				{
@@ -487,13 +478,8 @@ class Character extends FunkinSprite
 
 				return;
 			}
-
-			// Other styles (not v-slice) sustain notes don't break flow yet
 		}
 
-		// --------------------------------------------------------------
-		//  PAUSE STYLE LOGIC
-		// --------------------------------------------------------------
 		if (animstyle == "pause")
 		{
 			// Start singing

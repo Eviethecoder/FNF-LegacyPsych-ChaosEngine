@@ -86,7 +86,7 @@ class PsychUITab extends FlxSprite
 		}
 		catch (e:Dynamic)
 		{
-			trace("Error setting cameras for PsychUITab: " + e);
+			// Ignore errors when setting cameras for PsychUITab
 		}
 		return super.set_cameras(v);
 	}
