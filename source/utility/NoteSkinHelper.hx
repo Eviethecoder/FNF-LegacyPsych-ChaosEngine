@@ -1,4 +1,6 @@
 package utility;
+import objects.Note;
+import objects.NoteSplash;
 
 import ClientPrefs;
 import PlayState;

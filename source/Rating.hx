@@ -1,4 +1,5 @@
 package;
+import objects.NoteSplash;
 
 class Rating
 {

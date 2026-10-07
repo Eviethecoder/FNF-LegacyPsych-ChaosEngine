@@ -1,4 +1,5 @@
 package data;
+import objects.NoteSplash;
 
 import haxe.Json;
 import Character.AnimArray as AnimArray;

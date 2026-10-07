@@ -3,6 +3,7 @@ package;
 #if hxdiscord_rpc
 import Discord.DiscordClient;
 #end
+import objects.Alphabet;
 import editors.ChartingState;
 import flixel.FlxG;
 import flixel.FlxSprite;

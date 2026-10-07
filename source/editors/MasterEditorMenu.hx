@@ -1,6 +1,7 @@
 package editors;
 
 #if hxdiscord_rpc
+import objects.Alphabet;
 import Discord.DiscordClient;
 #end
 import flixel.FlxG;

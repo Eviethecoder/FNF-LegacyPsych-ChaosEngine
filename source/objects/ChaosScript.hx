@@ -26,6 +26,7 @@ class ChaosScript extends Script
 	{
 		this.interp.setDefaults();
 		variables.set('interp', interp);
+		variables.set('MathUtil', utility.MathUtil);
 		variables.set('Path', Paths);
 		variables.set("stage", objects.Stage.instance);
 		variables.set("Consolehandler", debug.Consolehandler);

@@ -1,5 +1,7 @@
-package;
+package objects;
 
+import ClientPrefs;
+import Paths;
 import flixel.FlxSprite;
 
 using StringTools;

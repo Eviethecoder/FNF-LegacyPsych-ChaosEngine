@@ -1,4 +1,7 @@
 package editors;
+import objects.Note;
+import objects.NoteSplash;
+import objects.StrumNote;
 
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.addons.transition.FlxTransitionableState;

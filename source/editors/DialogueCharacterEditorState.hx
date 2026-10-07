@@ -29,7 +29,7 @@ import DialogueBoxPsych;
 import flixel.FlxCamera;
 import flixel.group.FlxSpriteGroup;
 import lime.system.Clipboard;
-import Alphabet;
+import objects.Alphabet;
 #if sys
 import sys.io.File;
 #end

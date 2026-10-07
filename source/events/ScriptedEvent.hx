@@ -1,4 +1,5 @@
 package events;
+import objects.Note;
 
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
@@ -27,7 +28,7 @@ class ScriptedEvent extends BaseEvent
 		runfunction('TriggerEvent', []);
 	}
 
-	public override function precacheEvent(daevent:Note.EventNote):Void
+	public override function precacheEvent(daevent:objects.Note.EventNote):Void
 	{
 		runfunction('precacheEvent', [daevent]);
 	}

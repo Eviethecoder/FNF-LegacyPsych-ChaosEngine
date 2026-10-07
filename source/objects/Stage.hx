@@ -18,7 +18,6 @@ import debug.Consolehandler;
 import flixel.util.FlxAxes;
 import data.StageData;
 import HaxeScript;
-import Note;
 import Character;
 
 using StringTools;

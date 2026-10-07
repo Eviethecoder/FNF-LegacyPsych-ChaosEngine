@@ -1,4 +1,5 @@
 package utility;
+import objects.Note;
 
 #if sys
 import sys.FileSystem;
@@ -17,6 +18,7 @@ import events.CharacterChange;
 import events.LyricEvent;
 import events.PlayAnim;
 import events.WaveyNotes;
+import events.ChangeScrollSpeed;
 
 using StringTools;
 
@@ -36,7 +38,8 @@ class EventHandler
 		'Lyrics',
 		'BPMChange',
 		'WaveyNotes',
-		'PlayAnim'
+		'PlayAnim',
+		'ChangeScrollSpeed'
 	];
 
 	public static function scanFolderRecursive(folder:String, onFile:String->Void):Void
@@ -104,7 +107,7 @@ class EventHandler
 		#end
 	}
 
-	public static function setupevents(eventnote:Note.EventNote):Void
+	public static function setupevents(eventnote:objects.Note.EventNote):Void
 	{
 		var eventname:String = eventnote.event;
 		if (!usedEvents.contains(eventname))
@@ -154,7 +157,7 @@ class EventHandler
 		}
 	}
 
-	public static function callEvent(eventname:String, eventvalues:Array<Note.Eventsvalue>):Void
+	public static function callEvent(eventname:String, eventvalues:Array<objects.Note.Eventsvalue>):Void
 	{
 		var event:BaseEvent = usedeventmap.get(eventname);
 		if (event != null)

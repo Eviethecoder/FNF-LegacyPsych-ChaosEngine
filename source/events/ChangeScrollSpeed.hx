@@ -1,56 +1,81 @@
+package events;
+
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
+import PlayState;
+import HaxeScript;
+import objects.Strumline;
+
+@:keep
 class ChangeScrollSpeed extends BaseEvent
 {
-	public var songSpeedTween:FlxTween;
-	public var songSpeedTween2:FlxTween;
+	public static var playerSpeedTween:FlxTween;
+	public static var opponentSpeedTween:FlxTween;
 
-	public function new(newSpeed:Float)
+	public function new(?name:String)
 	{
 		super();
+		eventName = 'ChangeScrollSpeed';
 	}
 
 	override public function triggerEvent():Void
 	{
-		if (PlayState.instance.songSpeedType == "constant")
+		var game:PlayState = PlayState.instance;
+		if (game.songSpeedType == "constant")
 			return;
-		var multiplier:Float = grabeventFloat('multiplyer');
-		var time:Float = grabeventFloat('time');
-		var strumlinetoscroll:Float = grabeventString('strumlinetoscroll');
 
-		var newValue:Float = PlayState.instance.SONG.speed * ClientPrefs.getGameplaySetting('scrollspeed', 1) * multiplier;
+		var multiplier:Float = grabeventFloat('Scroll modifier');
+		if (multiplier == 0)
+			multiplier = 1;
+		var time:Float = handletimelogic(grabeventFloat('Timing'));
+		var target:String = grabeventString('Strumline to modify');
+		var easing:String = grabeventString('Easing') + grabeventString('inout');
 
-		if (val2 <= 0)
+		var newValue:Float = PlayState.SONG.speed * ClientPrefs.getGameplaySetting('scrollspeed', 1) * multiplier;
+
+		switch (target)
 		{
-			PlayState.instance.songSpeed = newValue;
-		}
-		else
-		{
-			dospeedtween(newValue, time, strumlinetoscroll);
+			case 'Player':
+				playerSpeedTween = changeSpeed(game.playerStrumline, playerSpeedTween, newValue, time, easing);
+			case 'Opponent':
+				opponentSpeedTween = changeSpeed(game.opponentStrumline, opponentSpeedTween, newValue, time, easing);
+			default:
+				playerSpeedTween = changeSpeed(game.playerStrumline, playerSpeedTween, newValue, time, easing);
+				opponentSpeedTween = changeSpeed(game.opponentStrumline, opponentSpeedTween, newValue, time, easing);
 		}
 	}
 
-	function dospeedtween(newValue:Float, time:Float, strumlinetoscroll:Float):Void
+	function changeSpeed(strumline:Strumline, oldTween:FlxTween, newValue:Float, time:Float, easing:String):FlxTween
 	{
-		switch (strumlinetoscroll)
+		if (oldTween != null)
+			oldTween.cancel();
+
+		if (time <= 0)
 		{
-			case "all":
-				dospeedtween(newValue, time, "Player");
-				dospeedtween(newValue, time, "Opponent");
-			case "Player":
-				songSpeedTween1 = FlxTween.tween(this, {PlayState.instance.playerStrumline.songSpeed: newValue}, time / PlayState.instance.playbackRate, {
-					ease: FlxEase.linear,
-					onComplete: function(twn:FlxTween)
-					{
-						songSpeedTween1 = null;
-					}
-				});
-			case "Opponent":
-				songSpeedTween2 = FlxTween.tween(this, {PlayState.instance.opponentStrumline.songSpeed: newValue}, time / PlayState.instance.playbackRate, {
-					ease: FlxEase.linear,
-					onComplete: function(twn:FlxTween)
-					{
-						songSpeedTween2 = null;
-					}
-				});
+			strumline.songSpeed = newValue;
+			return null;
+		}
+
+		return FlxTween.tween(strumline, {songSpeed: newValue}, time / PlayState.instance.playbackRate, {
+			ease: HaxeScript.getFlxEaseByString(easing),
+			onComplete: function(twn:FlxTween)
+			{
+				if (playerSpeedTween == twn)
+					playerSpeedTween = null;
+				if (opponentSpeedTween == twn)
+					opponentSpeedTween = null;
+			}
+		});
+	}
+
+	static function handletimelogic(offset:Float):Float
+	{
+		if (offset == 0)
+			return 0;
+		return switch (PlayState.instance.steptyype)
+		{
+			case 'step': Conductor.stepCrochet * offset / 1000;
+			default: offset;
 		}
 	}
 }

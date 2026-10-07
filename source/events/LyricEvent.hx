@@ -1,4 +1,5 @@
 package events;
+import objects.Note;
 
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -42,7 +43,7 @@ class LyricEvent extends BaseEvent
 		eventName = "Lyrics";
 	}
 
-	override public function precacheEvent(daevent:Note.EventNote):Void
+	override public function precacheEvent(daevent:objects.Note.EventNote):Void
 	{
 		var songName:String = PlayState.SONG != null ? PlayState.SONG.song : '';
 		grabjson(Paths.getPreloadPath('data/' + Constants.cursongfolder + Paths.formatToSongPath(songName) + '/lyrics.json'));

@@ -1,4 +1,5 @@
 package ;
+import utility.MathUtil;
 
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -9,7 +10,6 @@ import flixel.util.FlxVerticalAlign;
 import flixel.FlxG;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
-import MathUtil;
 import objects.FunkinCamera;
 
 class FullScreenScaleMode extends flixel.system.scaleModes.BaseScaleMode

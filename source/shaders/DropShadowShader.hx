@@ -1,4 +1,5 @@
 package shaders;
+import objects.AttachedSprite;
 
 import flixel.system.FlxAssets.FlxShader;
 import flixel.util.FlxColor;

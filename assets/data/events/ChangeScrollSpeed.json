@@ -1,0 +1,51 @@
+{
+  "eventLogic": [
+    {
+      "name": "Strumline to modify",
+      "title": "Strumline to modify",
+      "type": "DROPDOWN",
+      "rownum": 0,
+      "list": ["Player", "Opponent", "Both"]
+    },
+    {
+      "name": "Scroll modifier",
+      "title": "Scroll modifier",
+      "rownum": 1,
+      "type": "FLOAT"
+    },
+    {
+      "name": "Timing",
+      "title": "Timing",
+      "rownum": 2,
+      "type": "FLOAT"
+    },
+    {
+      "name": "inout",
+      "title": "In/Out",
+      "type": "DROPDOWN",
+      "rownum": 3,
+      "list": ["In", "Out", "InOut", "None"]
+    },
+    {
+      "name": "Easing",
+      "title": "Easing",
+      "type": "DROPDOWN",
+      "rownum": 3,
+      "list": [
+        "linear",
+        "sine",
+        "quad",
+        "cube",
+        "quart",
+        "quint",
+        "expo",
+        "smoothStep",
+        "smootherStep",
+        "elastic",
+        "back",
+        "bounce",
+        "circ"
+      ]
+    }
+  ]
+}

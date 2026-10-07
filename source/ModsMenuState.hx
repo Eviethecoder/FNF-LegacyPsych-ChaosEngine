@@ -4,6 +4,7 @@ package;
 import Discord.DiscordClient;
 #end
 import flash.text.TextField;
+import objects.AttachedSprite;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;

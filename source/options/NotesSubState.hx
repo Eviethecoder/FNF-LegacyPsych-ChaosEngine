@@ -1,8 +1,11 @@
 package options;
+import objects.Note;
+import shaders.ColorSwap;
 
 #if hxdiscord_rpc
 import Discord.DiscordClient;
 #end
+import objects.Alphabet;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;

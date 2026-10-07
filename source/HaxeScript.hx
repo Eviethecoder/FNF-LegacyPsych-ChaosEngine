@@ -1,5 +1,7 @@
 package;
 
+import objects.Note;
+import objects.StrumNote;
 import haxe.Rest;
 import flixel.FlxCamera;
 import openfl.geom.Rectangle;

@@ -1,11 +1,11 @@
-package;
+package objects;
+import utility.MathUtil;
 
 import flixel.system.ui.FlxSoundTray;
 import openfl.display.Bitmap;
 import openfl.utils.AssetType;
 import openfl.utils.Assets;
 import flixel.FlxG;
-import MathUtil;
 import json2object.JsonParser;
 import openfl.geom.ColorTransform;
 

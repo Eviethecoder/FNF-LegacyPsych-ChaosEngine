@@ -3,6 +3,8 @@ package options;
 #if hxdiscord_rpc
 import Discord.DiscordClient;
 #end
+import objects.Alphabet;
+import objects.AttachedText;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;

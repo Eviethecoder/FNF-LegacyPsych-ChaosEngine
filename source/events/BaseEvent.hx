@@ -1,4 +1,5 @@
 package events;
+import objects.Note;
 
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
@@ -37,7 +38,7 @@ class BaseEvent extends FlxBasic
 	public var eventName:String = "";
 	public var eventScript:HaxeScript;
 
-	public var eventData:Array<Note.Eventsvalue> = [];
+	public var eventData:Array<objects.Note.Eventsvalue> = [];
 
 	public function new()
 	{
@@ -48,7 +49,7 @@ class BaseEvent extends FlxBasic
 	{
 	}
 
-	public function precacheEvent(daevent:Note.EventNote):Void
+	public function precacheEvent(daevent:objects.Note.EventNote):Void
 	{
 	}
 

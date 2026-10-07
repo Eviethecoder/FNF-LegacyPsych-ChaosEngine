@@ -1,4 +1,5 @@
 package objects;
+import utility.MathUtil;
 
 import objects.FunkinSprite;
 import flixel.group.FlxSpriteGroup;
@@ -12,7 +13,6 @@ import flixel.util.FlxTimer;
 import flixel.sound.FlxSound;
 import json2object.JsonParser;
 import flash.media.Sound;
-import MathUtil;
 import flixel.input.mouse.FlxMouseEvent;
 import data.SongMetadata.Metadata;
 import openfl.utils.Assets;

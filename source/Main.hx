@@ -1,4 +1,5 @@
 package;
+import objects.FunkinSoundTray;
 
 import flixel.graphics.FlxGraphic;
 import flixel.FlxG;

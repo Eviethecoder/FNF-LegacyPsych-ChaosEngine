@@ -27,7 +27,7 @@ import flash.net.FileFilter;
 import haxe.Json;
 import DialogueBoxPsych;
 import lime.system.Clipboard;
-import Alphabet;
+import objects.Alphabet;
 #if sys
 import sys.io.File;
 #end

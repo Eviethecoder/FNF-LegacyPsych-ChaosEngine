@@ -1,7 +1,6 @@
 package shaders;
 
 import flixel.system.FlxAssets.FlxShader;
-import Note;
 import flixel.util.FlxColor;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;

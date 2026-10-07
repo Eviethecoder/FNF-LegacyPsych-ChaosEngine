@@ -1,4 +1,5 @@
 package;
+import objects.Note;
 
 import flixel.FlxG;
 import animateatlas.AtlasFrameMaker;
@@ -8,7 +9,6 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
 import flixel.math.FlxPoint;
-import Note;
 import flixel.util.FlxColor;
 import debug.Consolehandler;
 import utility.Characterpreloader;

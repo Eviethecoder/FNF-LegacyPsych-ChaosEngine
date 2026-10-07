@@ -1,4 +1,5 @@
 package;
+import objects.Note;
 
 import flixel.FlxG;
 import flixel.FlxSprite;

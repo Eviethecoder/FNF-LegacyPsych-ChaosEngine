@@ -4,6 +4,8 @@ package;
 import Discord.DiscordClient;
 #end
 
+import objects.Alphabet;
+import objects.AttachedSprite;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;

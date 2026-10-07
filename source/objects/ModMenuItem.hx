@@ -7,7 +7,7 @@ import flixel.FlxG;
 import openfl.display.BitmapData;
 import flixel.math.FlxRect;
 import flixel.text.FlxText;
-import AttachedSprite;
+import objects.AttachedSprite;
 import flixel.math.FlxPoint;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.FlxCamera;
@@ -107,4 +107,3 @@ class ModMenuItem extends FlxSpriteGroup {
         refreshState();
     }
 }
-

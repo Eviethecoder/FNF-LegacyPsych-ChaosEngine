@@ -1,3 +1,4 @@
+import objects.Alphabet;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;

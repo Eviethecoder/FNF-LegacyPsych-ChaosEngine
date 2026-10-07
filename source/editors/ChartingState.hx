@@ -1,6 +1,9 @@
 package editors;
+import objects.Note;
+import objects.StrumNote;
 
 #if hxdiscord_rpc
+import objects.AttachedSprite;
 import Discord.DiscordClient;
 #end
 import flash.geom.Rectangle;

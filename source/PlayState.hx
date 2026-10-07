@@ -1,9 +1,13 @@
 package;
+import objects.Note;
+import objects.NoteSplash;
+import objects.StrumNote;
+import objects.StrumNote.SustainSplash;
+import objects.FunkinSoundTray;
 
 import flixel.graphics.FlxGraphic;
 #if hxdiscord_rpc
 import Discord.DiscordClient;
-import StrumNote.SustainSplash;
 #end
 import Section;
 import Song;
@@ -37,8 +41,7 @@ import editors.ChartingState;
 import editors.CharacterEditorState;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.keyboard.FlxKey;
-import Note.EventNote;
-import FunkinSoundTray;
+import objects.Note.EventNote;
 import openfl.events.KeyboardEvent;
 import flixel.util.FlxSave;
 import animateatlas.AtlasFrameMaker;
@@ -126,7 +129,7 @@ class PlayState extends MusicBeatState
 
 	public var startedCountdown:Bool = false;
 
-	// ── Strumlines (own arrows + notes for each lane) ───────────────────────
+	// â”€â”€ Strumlines (own arrows + notes for each lane) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	/** Opponent (CPU) strumline. */
 	public var opponentStrumline:objects.Strumline;
@@ -1454,7 +1457,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		// ── Note objects are now built inside each Strumline ──────────────────
+		// â”€â”€ Note objects are now built inside each Strumline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 		// Pass noteTypeMap so note-type scripts can be preloaded as before.
 		var ghostNotesCleared:Int = 0; // kept for the trace below (strumlines clear internally)
 		opponentStrumline.generateNotes(songData.notes, noteTypeMap);
@@ -1533,7 +1536,7 @@ class PlayState extends MusicBeatState
 
 	/**
 	 * Delegates to the appropriate Strumline instance.
-	 * Kept for Lua/HScript backward compat (player=0 → opponent, player=1 → player).
+	 * Kept for Lua/HScript backward compat (player=0 â†’ opponent, player=1 â†’ player).
 	 */
 	private function generateStaticArrows(player:Int):Void
 	{
@@ -1876,7 +1879,7 @@ class PlayState extends MusicBeatState
 		}
 		doDeathCheck();
 
-		// ── Note spawning, movement and killing are handled inside each Strumline's update() ──
+		// â”€â”€ Note spawning, movement and killing are handled inside each Strumline's update() â”€â”€
 		// Strumlines are added to noteGroup so their update() is called automatically.
 
 		if (generatedMusic && !inCutscene)
@@ -2035,7 +2038,7 @@ class PlayState extends MusicBeatState
 		return pressed;
 	}
 
-	public function triggerEventNote(eventName:String, ?valuearray:Array<Note.Eventsvalue>)
+	public function triggerEventNote(eventName:String, ?valuearray:Array<objects.Note.Eventsvalue>)
 	{
 		EventHandler.callEvent(eventName, valuearray);
 	}
@@ -2449,7 +2452,6 @@ class PlayState extends MusicBeatState
 		if (plrInputNotes.length != 0)
 		{
 			final funnyNote:Note = plrInputNotes[0]; // front note
-			debug.Consolehandler.print('funnyNote: ' + funnyNote.special);
 			if (funnyNote.special && key == 4)
 			{
 				playerStrumline.hitNote(funnyNote);

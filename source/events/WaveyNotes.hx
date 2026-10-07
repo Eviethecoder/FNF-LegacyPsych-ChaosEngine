@@ -1,11 +1,11 @@
 package events;
+import objects.Note;
 
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxTween.FlxTweenType;
 import PlayState;
 import objects.Strumline;
 import flixel.FlxG;
-import Note;
 
 class WaveyNotes extends BaseEvent
 {

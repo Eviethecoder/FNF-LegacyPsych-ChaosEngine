@@ -1,5 +1,6 @@
 package;
 
+import objects.AttachedSprite;
 import openfl.display.Loader;
 import openfl.net.URLRequest;
 import openfl.events.Event;

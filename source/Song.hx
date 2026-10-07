@@ -237,7 +237,14 @@ class Song
 		if (FileSystem.exists(moddyFile))
 		{
 			rawJson = File.getContent(moddyFile).trim();
-			rawmetadata = File.getContent(Paths.modsJson(formattedFolder + '/metadata'));
+			try
+			{
+				rawmetadata = File.getContent(Paths.modsJson(formattedFolder + '/metadata'));
+			}
+			catch (e:Dynamic)
+			{
+				trace('Error reading mods metadata: ' + e);
+			}
 		}
 		#end
 
@@ -245,10 +252,25 @@ class Song
 		{
 			#if sys
 			rawJson = File.getContent(Paths.json(formattedFolder + '/' + formattedSong)).trim();
-			rawmetadata = File.getContent(Paths.json(formattedFolder + '/metadata'));
+			try
+			{
+				rawmetadata = File.getContent(Paths.json(formattedFolder + '/metadata'));
+			}
+			catch (e:Dynamic)
+			{
+				trace('Error reading mods metadata: ' + e);
+			}
+			// rawmetadata = File.getContent(Paths.json(formattedFolder + '/metadata'));
 			#else
 			rawJson = Assets.getText(Paths.json(formattedFolder + '/' + formattedSong)).trim();
-			rawmetadata = Assets.getText(Paths.json(formattedFolder + '/metadata')).trim();
+			try
+			{
+				rawmetadata = Assets.getText(Paths.json(formattedFolder + '/metadata')).trim();
+			}
+			catch (e:Dynamic)
+			{
+				trace('Error reading metadata: ' + e);
+			}
 			#end
 		}
 
@@ -283,14 +305,37 @@ class Song
 				}
 
 				if (metadataParser.value != null)
+				{
 					swagShit.mettadata = metadataParser.value;
+				}
+				else
+				{
+					trace('No metadata found. creating fallback metadata.');
+					swagShit.mettadata = createFallbackMetadata();
+				}
+			}
+			else
+			{
+				trace('No metadata provided. creating fallback metadata.');
+				swagShit.mettadata = createFallbackMetadata();
 			}
 		}
 		catch (e:Dynamic)
 		{
 			trace('Error parsing metadata.json: ' + e);
+			swagShit.mettadata = createFallbackMetadata();
 		}
 		swagShit.validScore = true;
 		return swagShit;
+	}
+
+	static function createFallbackMetadata():Metadata
+	{
+		return {
+			name: "Unknown Title",
+			Mixes: ["??"],
+			color: "0xffffff",
+			Discordrpc: "https://ariaclean.com/sjz7/0akydct3i0/f26o8pbswg/d2n/coq/hdmhxs7/joq7luphmb/57c4aw6/uowvh/o4krqp6xw/sn6d66dtvf/iu11ez/mif/unah0898w/nrthth/31d8f/6cbqznjn3r/booaubl47b/1g8a/rvo/ofh5v/43a3m4gv/o4wsmtxum/38n/5glnw/fqlgc36cm5/xO4/GbQ9uf/my406f5g.png"
+		};
 	}
 }

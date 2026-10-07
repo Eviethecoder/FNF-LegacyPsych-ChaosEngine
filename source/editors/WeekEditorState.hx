@@ -4,6 +4,7 @@ package editors;
 import Discord.DiscordClient;
 #end
 import flixel.FlxG;
+import objects.Alphabet;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.transition.FlxTransitionableState;

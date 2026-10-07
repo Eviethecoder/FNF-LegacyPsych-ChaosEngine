@@ -6,7 +6,7 @@ import flixel.FlxState;
 import openfl.Lib;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
-import Alphabet;
+import objects.Alphabet;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxGradient;
 import flixel.util.FlxColor;

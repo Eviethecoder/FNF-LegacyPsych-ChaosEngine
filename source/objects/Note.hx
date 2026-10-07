@@ -1,4 +1,5 @@
-package;
+package objects;
+import shaders.ColorSwap;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
