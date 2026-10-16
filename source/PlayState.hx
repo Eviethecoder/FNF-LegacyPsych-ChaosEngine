@@ -1,10 +1,10 @@
-package;
+﻿package;
+
 import objects.Note;
 import objects.NoteSplash;
 import objects.StrumNote;
 import objects.StrumNote.SustainSplash;
 import objects.FunkinSoundTray;
-
 import flixel.graphics.FlxGraphic;
 #if hxdiscord_rpc
 import Discord.DiscordClient;
@@ -222,49 +222,6 @@ class PlayState extends MusicBeatState
 
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 	var dialogueJson:DialogueFile = null;
-
-	var dadbattleBlack:BGSprite;
-	var dadbattleLight:BGSprite;
-	var dadbattleSmokes:FlxSpriteGroup;
-
-	var halloweenBG:BGSprite;
-	var halloweenWhite:BGSprite;
-
-	var phillyLightsColors:Array<FlxColor>;
-	var phillyWindow:BGSprite;
-	var phillyStreet:BGSprite;
-	var phillyTrain:BGSprite;
-	var blammedLightsBlack:FlxSprite;
-	var phillyWindowEvent:BGSprite;
-	var trainSound:FlxSound;
-
-	var phillyGlowGradient:PhillyGlow.PhillyGlowGradient;
-	var phillyGlowParticles:FlxTypedGroup<PhillyGlow.PhillyGlowParticle>;
-
-	var limoKillingState:Int = 0;
-	var limo:BGSprite;
-	var limoMetalPole:BGSprite;
-	var limoLight:BGSprite;
-	var limoCorpse:BGSprite;
-	var limoCorpseTwo:BGSprite;
-	var bgLimo:BGSprite;
-	var grpLimoParticles:FlxTypedGroup<BGSprite>;
-	var grpLimoDancers:FlxTypedGroup<BackgroundDancer>;
-	var fastCar:BGSprite;
-
-	var upperBoppers:BGSprite;
-	var bottomBoppers:BGSprite;
-	var santa:BGSprite;
-	var heyTimer:Float;
-
-	var bgGirls:BackgroundGirls;
-	var wiggleShit:WiggleEffect = new WiggleEffect();
-	var bgGhouls:BGSprite;
-
-	var tankWatchtower:BGSprite;
-	var tankGround:BGSprite;
-	var tankmanRun:FlxTypedGroup<TankmenBG>;
-	var foregroundSprites:FlxTypedGroup<BGSprite>;
 
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
@@ -1115,17 +1072,6 @@ class PlayState extends MusicBeatState
 				introAlts = introAssets.get('pixel');
 				antialias = false;
 			}
-
-			// head bopping for bg characters on Mall
-			if (curStage == 'mall')
-			{
-				if (!ClientPrefs.data.lowQuality)
-					upperBoppers.dance(true);
-
-				bottomBoppers.dance(true);
-				santa.dance(true);
-			}
-
 			switch (swagCounter)
 			{
 				case 0:
@@ -1571,9 +1517,6 @@ class PlayState extends MusicBeatState
 			if (songSpeedTween != null)
 				songSpeedTween.active = false;
 
-			if (carTimer != null)
-				carTimer.active = false;
-
 			var chars:Array<Character> = [stage.boyfriend, stage.gf, stage.dad];
 			for (char in chars)
 			{
@@ -1611,10 +1554,6 @@ class PlayState extends MusicBeatState
 				finishTimer.active = true;
 			if (songSpeedTween != null)
 				songSpeedTween.active = true;
-
-			if (carTimer != null)
-				carTimer.active = true;
-
 			var chars:Array<Character> = [stage.boyfriend, stage.gf, stage.dad];
 			for (char in chars)
 			{
@@ -2798,133 +2737,6 @@ class PlayState extends MusicBeatState
 		var splash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
 		splash.setupNoteSplash(x, y, data, skin, hue, sat, brt);
 		grpNoteSplashes.add(splash);
-	}
-
-	var fastCarCanDrive:Bool = true;
-
-	function resetFastCar():Void
-	{
-		fastCar.x = -12600;
-		fastCar.y = FlxG.random.int(140, 250);
-		fastCar.velocity.x = 0;
-		fastCarCanDrive = true;
-	}
-
-	var carTimer:FlxTimer;
-
-	function fastCarDrive()
-	{
-		// trace('Car drive');
-		FlxG.sound.play(Paths.soundRandom('carPass', 0, 1), 0.7);
-
-		fastCar.velocity.x = (FlxG.random.int(170, 220) / FlxG.elapsed) * 3;
-		fastCarCanDrive = false;
-		carTimer = new FlxTimer().start(2, function(tmr:FlxTimer)
-		{
-			resetFastCar();
-			carTimer = null;
-		});
-	}
-
-	var trainMoving:Bool = false;
-	var trainFrameTiming:Float = 0;
-	var trainCars:Int = 8;
-	var trainFinishing:Bool = false;
-	var trainCooldown:Int = 0;
-
-	function trainStart():Void
-	{
-		trainMoving = true;
-		if (!trainSound.playing)
-			trainSound.play(true);
-	}
-
-	var startedMoving:Bool = false;
-
-	function updateTrainPos():Void
-	{
-		if (trainSound.time >= 4700)
-		{
-			startedMoving = true;
-			if (stage.gf != null)
-			{
-				stage.gf.playAnim('hairBlow');
-				stage.gf.specialAnim = true;
-			}
-		}
-
-		if (startedMoving)
-		{
-			phillyTrain.x -= 400;
-
-			if (phillyTrain.x < -2000 && !trainFinishing)
-			{
-				phillyTrain.x = -1150;
-				trainCars -= 1;
-
-				if (trainCars <= 0)
-					trainFinishing = true;
-			}
-
-			if (phillyTrain.x < -4000 && trainFinishing)
-				trainReset();
-		}
-	}
-
-	function trainReset():Void
-	{
-		if (stage.gf != null)
-		{
-			stage.gf.danced = false; // Sets head to the correct position once the animation ends
-			stage.gf.playAnim('hairFall');
-			stage.gf.specialAnim = true;
-		}
-		phillyTrain.x = FlxG.width + 200;
-		trainMoving = false;
-		// trainSound.stop();
-		// trainSound.time = 0;
-		trainCars = 8;
-		trainFinishing = false;
-		startedMoving = false;
-	}
-
-	function lightningStrikeShit():Void
-	{
-		FlxG.sound.play(Paths.soundRandom('thunder_', 1, 2));
-		if (!ClientPrefs.data.lowQuality)
-			halloweenBG.animation.play('halloweem bg lightning strike');
-
-		lightningStrikeBeat = curBeat;
-		lightningOffset = FlxG.random.int(8, 24);
-
-		if (stage.boyfriend.animOffsets.exists('scared'))
-		{
-			stage.boyfriend.playAnim('scared', true);
-		}
-
-		if (stage.gf != null && stage.gf.animOffsets.exists('scared'))
-		{
-			stage.gf.playAnim('scared', true);
-		}
-
-		if (ClientPrefs.data.camZooms)
-		{
-			FlxG.camera.zoom += 0.015;
-			camHUD.zoom += 0.03;
-
-			if (!camZooming)
-			{ // Just a way for preventing it to be permanently zoomed until Skid & Pump hits a note
-				FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, 0.5);
-				FlxTween.tween(camHUD, {zoom: 1}, 0.5);
-			}
-		}
-
-		if (ClientPrefs.data.flashing)
-		{
-			halloweenWhite.alpha = 0.4;
-			FlxTween.tween(halloweenWhite, {alpha: 0.5}, 0.075);
-			FlxTween.tween(halloweenWhite, {alpha: 0}, 0.25, {startDelay: 0.15});
-		}
 	}
 
 	override function destroy()

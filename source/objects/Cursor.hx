@@ -4,11 +4,44 @@ package objects;
 //this is a port of the cursor from base fnf to psych engine. full credit to the base game team - https://github.com/FunkinCrew/Funkin/blob/main/source/funkin/input/Cursor.hx#L197
 import haxe.ui.backend.flixel.CursorHelper;
 import lime.app.Future;
+import haxe.io.Bytes;
+import haxe.io.BytesData;
 import openfl.display.BitmapData;
 import flixel.FlxG;
 
 class Cursor
 {
+  static var imguiTextureBitmap:BitmapData;
+
+  public static function updateImGuiTexture(upload:Int->Int->BytesData->Void):Void
+  {
+    var cursor = FlxG.mouse.cursor;
+    if (cursor == null || cursor.bitmapData == imguiTextureBitmap)
+      return;
+
+    var bitmapData = cursor.bitmapData;
+    var pixels = bitmapData.getPixels(bitmapData.rect);
+    if (pixels == null)
+    {
+      trace("Unable to read the HaxeFlixel mouse cursor bitmap for ImGui");
+      return;
+    }
+
+    var rgba = Bytes.alloc(bitmapData.width * bitmapData.height * 4);
+    for (i in 0...(bitmapData.width * bitmapData.height))
+    {
+      var color = pixels.readInt();
+      var offset = i * 4;
+      rgba.set(offset, (color >> 16) & 0xFF);
+      rgba.set(offset + 1, (color >> 8) & 0xFF);
+      rgba.set(offset + 2, color & 0xFF);
+      rgba.set(offset + 3, (color >>> 24) & 0xFF);
+    }
+
+    upload(bitmapData.width, bitmapData.height, rgba.getData());
+    imguiTextureBitmap = bitmapData;
+  }
+
   /**
    * The current cursor mode.
    * Set this value to change the cursor graphic.

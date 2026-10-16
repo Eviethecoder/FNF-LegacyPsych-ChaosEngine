@@ -93,6 +93,6 @@ class InitState extends flixel.FlxState
 		utility.Characterpreloader.charLookup();
 		utility.NoteSkinpreloader.noteskinLookup();
 
-		FlxG.switchState(Type.createInstance(TitleState, []));
+		FlxG.switchState(Type.createInstance(states.Imguitest, []));
 	}
 }

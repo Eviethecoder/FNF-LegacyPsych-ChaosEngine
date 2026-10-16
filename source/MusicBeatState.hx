@@ -55,7 +55,6 @@ class MusicBeatState extends FlxUIState
 		camBeat = FlxG.camera;
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;
 		super.create();
-
 		if (!skip)
 		{
 			openSubState(new CustomFadeTransition(0.7, true));
@@ -101,8 +100,8 @@ class MusicBeatState extends FlxUIState
 			FlxG.save.data.fullscreen = FlxG.fullscreen;
 
 		super.update(elapsed);
-	}
 
+	}
 	private function updateSection():Void
 	{
 		if (stepsToDo < 1)

@@ -17,6 +17,7 @@ class Constants
 		'genkeidamava',
 		'puppet_onetcc',
 		'luscious',
+		'bigcornel',
 		'frostiiz_',
 		'birbva'
 	];
