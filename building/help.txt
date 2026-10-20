@@ -1,0 +1,7 @@
+TO BUILD DEPENDENCIES RUN THE FOLLOWING:
+build-dependencies.bat (Windows)
+build-dependencies.sh (Linux/Mac)
+
+TO CREATE BUILDS RUN THE FOLLOWING:
+build-create.bat (Windows)
+build-create.sh (Linux/Mac)
