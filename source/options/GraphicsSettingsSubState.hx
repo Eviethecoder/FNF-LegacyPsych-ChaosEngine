@@ -1,7 +1,7 @@
 package options;
 
 #if hxdiscord_rpc
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 #end
 import flixel.FlxCamera;
 import flixel.FlxG;

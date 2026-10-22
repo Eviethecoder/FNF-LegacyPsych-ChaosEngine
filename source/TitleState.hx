@@ -1,6 +1,7 @@
 package;
+import backend.assets.Paths;
 
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 import objects.Alphabet;
 import flixel.FlxG;
 import flixel.FlxSprite;

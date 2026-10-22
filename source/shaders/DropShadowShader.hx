@@ -1,4 +1,5 @@
 package shaders;
+import backend.assets.Assets;
 import objects.AttachedSprite;
 
 import flixel.system.FlxAssets.FlxShader;

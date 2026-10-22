@@ -1,4 +1,5 @@
 package;
+import backend.assets.Paths;
 
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;

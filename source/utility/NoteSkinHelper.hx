@@ -4,7 +4,7 @@ import objects.NoteSplash;
 
 import ClientPrefs;
 import PlayState;
-import data.HudstyleData;
+import backend.assets.data.HudstyleData;
 import Character.AnimArray;
 
 typedef NoteSkin =

@@ -1,4 +1,5 @@
 package editors;
+import backend.assets.Paths;
 
 import backend.ui.PsychUIBox;
 import debug.Consolehandler;

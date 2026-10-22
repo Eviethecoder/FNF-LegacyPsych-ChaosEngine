@@ -1,11 +1,13 @@
-package states;
+package objects;
 
 import flixel.FlxG;
+import flixel.input.keyboard.FlxKey;
 import imgui.ImGui;
 import lime.graphics.RenderContext;
 import objects.Cursor;
+import openfl.events.KeyboardEvent;
 
-#if windows
+#if windows // if we dont do this it wont render
 @:cppFileCode('
 #ifdef _WIN32
 #include <windows.h>
@@ -204,16 +206,19 @@ static void imguiGlShutdown()
 #endif
 ')
 #end
-class ImguiState extends MusicBeatState
+class FlxImGui
 {
 	private var imguiGlReady:Bool = false;
 	private var imguiFrameReady:Bool = false;
 	private var imguiMouseWasVisible:Bool = false;
 	private var imguiMouseWasUsingSystemCursor:Bool = false;
+	private var drawImGuiCallback:Void->Void;
 
-	override function create():Void
+	public var colors:Dynamic;
+
+	public function new(drawImGuiCallback:Void->Void)
 	{
-		super.create();
+		this.drawImGuiCallback = drawImGuiCallback;
 		ImGui.createContext();
 
 		#if windows
@@ -222,6 +227,30 @@ class ImguiState extends MusicBeatState
 			trace('ImGui OpenGL3 backend failed to initialize');
 		else
 		{
+			var io = ImGui.getIO();
+			io.keyMap[ImGuiKey.Tab] = FlxKey.TAB;
+			io.keyMap[ImGuiKey.LeftArrow] = FlxKey.LEFT;
+			io.keyMap[ImGuiKey.RightArrow] = FlxKey.RIGHT;
+			io.keyMap[ImGuiKey.UpArrow] = FlxKey.UP;
+			io.keyMap[ImGuiKey.DownArrow] = FlxKey.DOWN;
+			io.keyMap[ImGuiKey.PageUp] = FlxKey.PAGEUP;
+			io.keyMap[ImGuiKey.PageDown] = FlxKey.PAGEDOWN;
+			io.keyMap[ImGuiKey.Home] = FlxKey.HOME;
+			io.keyMap[ImGuiKey.End] = FlxKey.END;
+			io.keyMap[ImGuiKey.Delete] = FlxKey.DELETE;
+			io.keyMap[ImGuiKey.Backspace] = FlxKey.BACKSPACE;
+			io.keyMap[ImGuiKey.Enter] = FlxKey.ENTER;
+			io.keyMap[ImGuiKey.Escape] = FlxKey.ESCAPE;
+			io.keyMap[ImGuiKey.Insert] = FlxKey.INSERT;
+			io.keyMap[ImGuiKey.Space] = FlxKey.SPACE;
+			io.keyMap[ImGuiKey.A] = FlxKey.A;
+			io.keyMap[ImGuiKey.C] = FlxKey.C;
+			io.keyMap[ImGuiKey.V] = FlxKey.V;
+			io.keyMap[ImGuiKey.X] = FlxKey.X;
+			io.keyMap[ImGuiKey.Y] = FlxKey.Y;
+			io.keyMap[ImGuiKey.Z] = FlxKey.Z;
+
+			FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onImGuiKeyDown);
 			imguiMouseWasVisible = FlxG.mouse.visible;
 			imguiMouseWasUsingSystemCursor = FlxG.mouse.useSystemCursor;
 			if (FlxG.mouse.cursor == null)
@@ -231,15 +260,41 @@ class ImguiState extends MusicBeatState
 			ImGui.getIO().mouseDrawCursor = false;
 			Cursor.updateImGuiTexture(uploadImGuiCursorTexture);
 		}
+		ImGui.styleColorsDark();
+		colors = ImGui.getStyle().colors;
+		colors[ImGuiCol.WindowBg] = ImVec4.create(0.16, 0.02, 0.02, 1.0);
+		colors[ImGuiCol.ChildBg] = ImVec4.create(0.12, 0.02, 0.02, 1.0);
+		colors[ImGuiCol.PopupBg] = ImVec4.create(0.18, 0.02, 0.02, 0.98);
+		colors[ImGuiCol.FrameBg] = ImVec4.create(0.35, 0.04, 0.04, 1.0);
+		colors[ImGuiCol.FrameBgHovered] = ImVec4.create(0.55, 0.06, 0.06, 1.0);
+		colors[ImGuiCol.FrameBgActive] = ImVec4.create(0.68, 0.08, 0.08, 1.0);
+		colors[ImGuiCol.TitleBg] = ImVec4.create(0.24, 0.02, 0.02, 1.0);
+		colors[ImGuiCol.TitleBgActive] = ImVec4.create(0.48, 0.03, 0.03, 1.0);
+		colors[ImGuiCol.MenuBarBg] = ImVec4.create(0.24, 0.02, 0.02, 1.0);
+		colors[ImGuiCol.ScrollbarGrab] = ImVec4.create(0.48, 0.04, 0.04, 1.0);
+		colors[ImGuiCol.ScrollbarGrabHovered] = ImVec4.create(0.65, 0.06, 0.06, 1.0);
+		colors[ImGuiCol.ScrollbarGrabActive] = ImVec4.create(0.78, 0.08, 0.08, 1.0);
+		colors[ImGuiCol.CheckMark] = ImVec4.create(1.0, 0.24, 0.24, 1.0);
+		colors[ImGuiCol.SliderGrab] = ImVec4.create(0.85, 0.08, 0.08, 1.0);
+		colors[ImGuiCol.SliderGrabActive] = ImVec4.create(1.0, 0.18, 0.18, 1.0);
+		colors[ImGuiCol.Button] = ImVec4.create(0.55, 0.04, 0.04, 1.0);
+		colors[ImGuiCol.ButtonHovered] = ImVec4.create(0.78, 0.06, 0.06, 1.0);
+		colors[ImGuiCol.ButtonActive] = ImVec4.create(0.92, 0.08, 0.08, 1.0);
+		colors[ImGuiCol.Header] = ImVec4.create(0.5, 0.04, 0.04, 1.0);
+		colors[ImGuiCol.HeaderHovered] = ImVec4.create(0.72, 0.06, 0.06, 1.0);
+		colors[ImGuiCol.HeaderActive] = ImVec4.create(0.86, 0.08, 0.08, 1.0);
+		colors[ImGuiCol.Tab] = ImVec4.create(0.36, 0.03, 0.03, 1.0);
+		colors[ImGuiCol.TabHovered] = ImVec4.create(0.72, 0.06, 0.06, 1.0);
+		colors[ImGuiCol.TabActive] = ImVec4.create(0.55, 0.04, 0.04, 1.0);
+		colors[ImGuiCol.TabUnfocused] = ImVec4.create(0.24, 0.02, 0.02, 1.0);
+		colors[ImGuiCol.TabUnfocusedActive] = ImVec4.create(0.38, 0.03, 0.03, 1.0);
 
 		FlxG.stage.window.onRender.add(onImGuiWindowRender, false, -10000);
 		#end
 	}
 
-	override function update(elapsed:Float):Void
+	public function newFrame(elapsed:Float):Void
 	{
-		super.update(elapsed);
-
 		if (!imguiGlReady)
 			return;
 
@@ -250,6 +305,31 @@ class ImguiState extends MusicBeatState
 		io.mouseDown[0] = FlxG.mouse.pressed;
 		io.mouseDown[1] = FlxG.mouse.pressedRight;
 		io.mouseWheel = FlxG.mouse.wheel;
+		io.keyCtrl = FlxG.keys.pressed.CONTROL;
+		io.keyAlt = FlxG.keys.pressed.ALT;
+		io.keyShift = FlxG.keys.pressed.SHIFT;
+		io.keySuper = FlxG.keys.pressed.WINDOWS;
+		io.keysDown[FlxKey.TAB] = FlxG.keys.pressed.TAB;
+		io.keysDown[FlxKey.LEFT] = FlxG.keys.pressed.LEFT;
+		io.keysDown[FlxKey.RIGHT] = FlxG.keys.pressed.RIGHT;
+		io.keysDown[FlxKey.UP] = FlxG.keys.pressed.UP;
+		io.keysDown[FlxKey.DOWN] = FlxG.keys.pressed.DOWN;
+		io.keysDown[FlxKey.PAGEUP] = FlxG.keys.pressed.PAGEUP;
+		io.keysDown[FlxKey.PAGEDOWN] = FlxG.keys.pressed.PAGEDOWN;
+		io.keysDown[FlxKey.HOME] = FlxG.keys.pressed.HOME;
+		io.keysDown[FlxKey.END] = FlxG.keys.pressed.END;
+		io.keysDown[FlxKey.INSERT] = FlxG.keys.pressed.INSERT;
+		io.keysDown[FlxKey.DELETE] = FlxG.keys.pressed.DELETE;
+		io.keysDown[FlxKey.BACKSPACE] = FlxG.keys.pressed.BACKSPACE;
+		io.keysDown[FlxKey.ENTER] = FlxG.keys.pressed.ENTER;
+		io.keysDown[FlxKey.ESCAPE] = FlxG.keys.pressed.ESCAPE;
+		io.keysDown[FlxKey.SPACE] = FlxG.keys.pressed.SPACE;
+		io.keysDown[FlxKey.A] = FlxG.keys.pressed.A;
+		io.keysDown[FlxKey.C] = FlxG.keys.pressed.C;
+		io.keysDown[FlxKey.V] = FlxG.keys.pressed.V;
+		io.keysDown[FlxKey.X] = FlxG.keys.pressed.X;
+		io.keysDown[FlxKey.Y] = FlxG.keys.pressed.Y;
+		io.keysDown[FlxKey.Z] = FlxG.keys.pressed.Z;
 
 		var cursor = FlxG.mouse.cursor;
 		Cursor.updateImGuiTexture(uploadImGuiCursorTexture);
@@ -258,7 +338,7 @@ class ImguiState extends MusicBeatState
 		untyped __cpp__('imguiGlNewFrame()');
 		#end
 		ImGui.newFrame();
-		drawImGui();
+		drawImGuiCallback();
 		if (cursor != null)
 		{
 			#if windows
@@ -276,8 +356,10 @@ class ImguiState extends MusicBeatState
 		#end
 	}
 
-	public function drawImGui():Void
+	function onImGuiKeyDown(event:KeyboardEvent):Void
 	{
+		if (event.charCode != 0)
+			ImGui.getIO().addInputCharactersUTF8(String.fromCharCode(event.charCode));
 	}
 
 	public function isImGuiReady():Bool
@@ -293,12 +375,15 @@ class ImguiState extends MusicBeatState
 		#end
 	}
 
-	override function destroy():Void
+	public function clean():Void
 	{
 		#if windows
 		FlxG.stage.window.onRender.remove(onImGuiWindowRender);
 		if (imguiGlReady)
+		{
+			FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onImGuiKeyDown);
 			untyped __cpp__('imguiGlShutdown()');
+		}
 		#end
 		if (imguiGlReady)
 		{
@@ -307,6 +392,5 @@ class ImguiState extends MusicBeatState
 		}
 		imguiFrameReady = false;
 		ImGui.destroyContext();
-		super.destroy();
 	}
 }

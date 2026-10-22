@@ -1,6 +1,7 @@
 package;
+import backend.assets.Paths;
 
-import data.StageData;
+import backend.assets.data.StageData;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import objects.FunkinMemory;

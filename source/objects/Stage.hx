@@ -16,7 +16,7 @@ import openfl.display.BlendMode;
 import objects.FunkinBackdrop;
 import debug.Consolehandler;
 import flixel.util.FlxAxes;
-import data.StageData;
+import backend.assets.data.StageData;
 import HaxeScript;
 import Character;
 

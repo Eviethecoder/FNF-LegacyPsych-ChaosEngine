@@ -1,4 +1,5 @@
 package;
+import backend.assets.Paths;
 
 import flixel.util.FlxColor;
 import flixel.FlxG;

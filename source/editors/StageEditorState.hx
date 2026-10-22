@@ -1,7 +1,8 @@
 package editors;
+import backend.assets.Paths;
 
 #if desktop
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 import lime.app.Application;
 import lime.ui.FileDialog;
 #end
@@ -9,7 +10,7 @@ import objects.FunkinSprite;
 import backend.ui.*;
 import objects.FunkinBackdrop;
 import flixel.util.FlxAxes;
-import data.StageData;
+import backend.assets.data.StageData;
 import flixel.FlxObject;
 import flixel.FlxCamera;
 import backend.ui.PsychUIEventHandler;

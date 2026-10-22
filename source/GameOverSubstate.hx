@@ -1,4 +1,6 @@
 package;
+import backend.assets.Paths;
+import backend.assets.data.WeekData;
 
 import flixel.FlxG;
 import flixel.FlxObject;

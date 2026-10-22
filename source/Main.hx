@@ -20,7 +20,7 @@ import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
 #if hxdiscord_rpc
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 #end
 import sys.FileSystem;
 import sys.io.File;

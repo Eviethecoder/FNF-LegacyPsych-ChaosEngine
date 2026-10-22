@@ -1,4 +1,4 @@
-package;
+package backend.assets;
 
 import animateatlas.AtlasFrameMaker;
 import flixel.math.FlxPoint;

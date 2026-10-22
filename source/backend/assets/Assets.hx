@@ -1,4 +1,5 @@
-package;
+package backend.assets;
+
 
 import openfl.utils.Future;
 

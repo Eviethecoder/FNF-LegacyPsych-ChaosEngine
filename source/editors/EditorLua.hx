@@ -28,7 +28,7 @@ import Controls;
 import DialogueBoxPsych;
 
 #if desktop
-import Discord;
+import backend.api.Discord;
 #end
 
 using StringTools;

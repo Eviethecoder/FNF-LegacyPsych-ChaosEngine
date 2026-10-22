@@ -1,4 +1,5 @@
 package objects;
+import backend.assets.Paths;
 
 import Character.AnimArray;
 import data.DialogueBoxutil.DialogueBoxData as BoxData;

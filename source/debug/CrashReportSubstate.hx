@@ -10,7 +10,7 @@ import objects.Alphabet;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxGradient;
 import flixel.util.FlxColor;
-import Paths;
+import backend.assets.Paths;
 import sys.io.File;
 import TitleState;
 import sys.FileSystem;

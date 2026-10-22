@@ -1,4 +1,7 @@
 ﻿package;
+import backend.assets.Paths;
+import backend.assets.data.WeekData;
+import backend.assets.data.ChartParser;
 
 import objects.Note;
 import objects.NoteSplash;
@@ -7,7 +10,7 @@ import objects.StrumNote.SustainSplash;
 import objects.FunkinSoundTray;
 import flixel.graphics.FlxGraphic;
 #if hxdiscord_rpc
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 #end
 import Section;
 import Song;

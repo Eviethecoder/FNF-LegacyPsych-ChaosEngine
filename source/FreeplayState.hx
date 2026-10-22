@@ -1,7 +1,8 @@
 package;
+import backend.assets.Paths;
 
 #if hxdiscord_rpc
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 #end
 import objects.Alphabet;
 import editors.ChartingState;
@@ -19,7 +20,7 @@ import flixel.tweens.FlxTween;
 import lime.utils.Assets;
 import flixel.sound.FlxSound;
 import openfl.utils.Assets as OpenFlAssets;
-import WeekData;
+import backend.assets.data.WeekData;
 #if MODS_ALLOWED
 import sys.FileSystem;
 #end

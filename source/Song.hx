@@ -1,10 +1,11 @@
 package;
+import backend.assets.Paths;
 
 import Section.SwagSection;
 import haxe.Json;
 import json2object.JsonParser;
 import lime.utils.Assets;
-import data.SongMetadata.Metadata;
+import backend.assets.data.SongMetadata.Metadata;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
@@ -282,7 +283,7 @@ class Song
 
 		var songJson:Dynamic = parseJSONshit(rawJson, rawmetadata);
 		if (jsonInput != 'events' && jsonInput != 'cameraevents')
-			data.StageData.loadDirectory(songJson);
+			backend.assets.data.StageData.loadDirectory(songJson);
 		onLoadJson(songJson);
 		return songJson;
 	}

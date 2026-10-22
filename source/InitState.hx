@@ -1,8 +1,10 @@
 package;
+import backend.assets.Paths;
+import backend.assets.data.WeekData;
 
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxG;
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 import lime.app.Application;
 import utility.Systeminfo;
 import utility.EventHandler;

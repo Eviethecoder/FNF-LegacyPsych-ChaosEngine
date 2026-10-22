@@ -1,7 +1,7 @@
 package objects;
 
 import ClientPrefs;
-import Paths;
+import backend.assets.Paths;
 import flixel.FlxSprite;
 
 using StringTools;

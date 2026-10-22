@@ -1,4 +1,6 @@
-package data;
+package backend.assets.data;
+import backend.assets.Paths;
+
 import objects.NoteSplash;
 
 import haxe.Json;

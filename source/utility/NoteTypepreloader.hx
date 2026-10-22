@@ -1,4 +1,5 @@
 package utility;
+import backend.assets.Paths;
 
 import haxe.Json;
 import json2object.JsonParser;

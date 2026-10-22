@@ -1,3 +1,4 @@
+import backend.assets.Paths;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.FlxG;

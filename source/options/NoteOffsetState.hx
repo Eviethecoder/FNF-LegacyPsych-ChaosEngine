@@ -1,4 +1,5 @@
 package options;
+import backend.assets.Paths;
 
 import flixel.util.FlxStringUtil;
 import flixel.tweens.FlxEase;

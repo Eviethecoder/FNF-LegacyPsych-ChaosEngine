@@ -1,7 +1,8 @@
 package options;
+import backend.assets.Paths;
 
 #if hxdiscord_rpc
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 #end
 import objects.Alphabet;
 import objects.AttachedText;

@@ -1,5 +1,6 @@
 package objects;
 
+import backend.assets.Assets;
 
 //this is a port of the cursor from base fnf to psych engine. full credit to the base game team - https://github.com/FunkinCrew/Funkin/blob/main/source/funkin/input/Cursor.hx#L197
 import haxe.ui.backend.flixel.CursorHelper;

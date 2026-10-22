@@ -1,7 +1,7 @@
 package utility;
 
 import HaxeScript;
-import Paths;
+import backend.assets.Paths;
 import StringTools;
 import sys.FileSystem;
 import flixel.FlxG;

@@ -1,4 +1,5 @@
 package editors;
+import backend.assets.Paths;
 
 import objects.DialogueBox;
 import flixel.FlxSprite;

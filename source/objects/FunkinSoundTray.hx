@@ -1,4 +1,5 @@
 package objects;
+import backend.assets.Paths;
 import utility.MathUtil;
 
 import flixel.system.ui.FlxSoundTray;

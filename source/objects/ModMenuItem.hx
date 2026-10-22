@@ -1,4 +1,5 @@
 package objects;
+import backend.assets.Paths;
 import flixel.addons.effects.FlxSkewedSprite;
 import flixel.util.FlxColor;
 import flixel.graphics.FlxGraphic;

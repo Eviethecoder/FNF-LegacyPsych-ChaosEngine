@@ -1,4 +1,4 @@
-package;
+package backend.api;
 
 #if hxdiscord_rpc
 import Sys.sleep;

@@ -1,7 +1,8 @@
 package editors;
+import backend.assets.Paths;
 
 #if hxdiscord_rpc
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 #end
 import flixel.FlxG;
 import objects.Alphabet;
@@ -32,7 +33,7 @@ import haxe.Json;
 import sys.io.File;
 import sys.FileSystem;
 #end
-import WeekData;
+import backend.assets.data.WeekData;
 
 using StringTools;
 

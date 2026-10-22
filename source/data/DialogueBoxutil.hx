@@ -1,4 +1,5 @@
 package data;
+import backend.assets.Paths;
 
 import haxe.Json;
 import Character.AnimArray;

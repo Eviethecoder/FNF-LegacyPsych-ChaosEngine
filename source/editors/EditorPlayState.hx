@@ -1,4 +1,5 @@
 package editors;
+import backend.assets.Paths;
 import objects.Note;
 import objects.NoteSplash;
 import objects.StrumNote;

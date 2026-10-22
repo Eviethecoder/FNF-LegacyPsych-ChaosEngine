@@ -1,13 +1,16 @@
 package states;
+import backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import imgui.ImGui;
+import objects.FlxImGui;
 import debug.Consolehandler;
 
-class Imguitest extends ImguiState
+class Imguitest extends MusicBeatState
 {
+	var imgui:FlxImGui;
 	var bg:FlxSprite;
 	var showWindow:Bool = true;
 	var charwindow:Bool = false;
@@ -37,34 +40,9 @@ class Imguitest extends ImguiState
 	override function create():Void
 	{
 		super.create();
+		imgui = new FlxImGui(drawImGui);
 		ImGui.styleColorsDark();
-		var colors = ImGui.getStyle().colors;
-		colors[ImGuiCol.WindowBg] = ImVec4.create(0.16, 0.02, 0.02, 1.0);
-		colors[ImGuiCol.ChildBg] = ImVec4.create(0.12, 0.02, 0.02, 1.0);
-		colors[ImGuiCol.PopupBg] = ImVec4.create(0.18, 0.02, 0.02, 0.98);
-		colors[ImGuiCol.FrameBg] = ImVec4.create(0.35, 0.04, 0.04, 1.0);
-		colors[ImGuiCol.FrameBgHovered] = ImVec4.create(0.55, 0.06, 0.06, 1.0);
-		colors[ImGuiCol.FrameBgActive] = ImVec4.create(0.68, 0.08, 0.08, 1.0);
-		colors[ImGuiCol.TitleBg] = ImVec4.create(0.24, 0.02, 0.02, 1.0);
-		colors[ImGuiCol.TitleBgActive] = ImVec4.create(0.48, 0.03, 0.03, 1.0);
-		colors[ImGuiCol.MenuBarBg] = ImVec4.create(0.24, 0.02, 0.02, 1.0);
-		colors[ImGuiCol.ScrollbarGrab] = ImVec4.create(0.48, 0.04, 0.04, 1.0);
-		colors[ImGuiCol.ScrollbarGrabHovered] = ImVec4.create(0.65, 0.06, 0.06, 1.0);
-		colors[ImGuiCol.ScrollbarGrabActive] = ImVec4.create(0.78, 0.08, 0.08, 1.0);
-		colors[ImGuiCol.CheckMark] = ImVec4.create(1.0, 0.24, 0.24, 1.0);
-		colors[ImGuiCol.SliderGrab] = ImVec4.create(0.85, 0.08, 0.08, 1.0);
-		colors[ImGuiCol.SliderGrabActive] = ImVec4.create(1.0, 0.18, 0.18, 1.0);
-		colors[ImGuiCol.Button] = ImVec4.create(0.55, 0.04, 0.04, 1.0);
-		colors[ImGuiCol.ButtonHovered] = ImVec4.create(0.78, 0.06, 0.06, 1.0);
-		colors[ImGuiCol.ButtonActive] = ImVec4.create(0.92, 0.08, 0.08, 1.0);
-		colors[ImGuiCol.Header] = ImVec4.create(0.5, 0.04, 0.04, 1.0);
-		colors[ImGuiCol.HeaderHovered] = ImVec4.create(0.72, 0.06, 0.06, 1.0);
-		colors[ImGuiCol.HeaderActive] = ImVec4.create(0.86, 0.08, 0.08, 1.0);
-		colors[ImGuiCol.Tab] = ImVec4.create(0.36, 0.03, 0.03, 1.0);
-		colors[ImGuiCol.TabHovered] = ImVec4.create(0.72, 0.06, 0.06, 1.0);
-		colors[ImGuiCol.TabActive] = ImVec4.create(0.55, 0.04, 0.04, 1.0);
-		colors[ImGuiCol.TabUnfocused] = ImVec4.create(0.24, 0.02, 0.02, 1.0);
-		colors[ImGuiCol.TabUnfocusedActive] = ImVec4.create(0.38, 0.03, 0.03, 1.0);
+
 		bg = new FlxSprite(-80).loadGraphic(Paths.image('ebotmenuBG-invert'));
 		bg.scrollFactor.set(0, 0);
 		bg.setGraphicSize(Std.int(bg.width * 1.175));
@@ -78,8 +56,9 @@ class Imguitest extends ImguiState
 	override function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+		imgui.newFrame(elapsed);
 
-		if (!isImGuiReady())
+		if (!imgui.isImGuiReady())
 			return;
 
 		bg.visible = !hideBg;
@@ -87,7 +66,7 @@ class Imguitest extends ImguiState
 		bg.angle += speed * elapsed * 10;
 	}
 
-	override public function drawImGui():Void
+	public function drawImGui():Void
 	{
 		if (ImGui.beginMainMenuBar())
 		{
@@ -97,6 +76,7 @@ class Imguitest extends ImguiState
 					charwindow = !charwindow;
 				ImGui.endMenu();
 			}
+
 			if (ImGui.beginMenu("Demo", true))
 			{
 				if (ImGui.menuItem("Show demo window", "", showDemoWindow, true))
@@ -372,5 +352,12 @@ class Imguitest extends ImguiState
 			ImGui.textUnformatted("Right-click popup");
 			ImGui.endPopup();
 		}
+	}
+
+	override function destroy():Void
+	{
+		if (imgui != null)
+			imgui.clean();
+		super.destroy();
 	}
 }

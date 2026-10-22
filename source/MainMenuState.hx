@@ -1,7 +1,9 @@
 package;
+import backend.assets.Paths;
+import backend.assets.data.WeekData;
 
 #if hxdiscord_rpc
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 #end
 import flixel.FlxG;
 import flixel.FlxObject;

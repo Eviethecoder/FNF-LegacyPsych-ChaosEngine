@@ -1,9 +1,10 @@
 package utility;
+import backend.assets.Paths;
 
 import sys.FileSystem;
 import sys.io.File;
 import haxe.io.Path;
-import data.SongMetadata.Metadata;
+import backend.assets.data.SongMetadata.Metadata;
 import json2object.JsonParser;
 
 using StringTools;

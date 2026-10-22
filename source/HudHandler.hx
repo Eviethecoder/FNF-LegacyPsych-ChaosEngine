@@ -1,4 +1,5 @@
 package;
+import backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -6,8 +7,8 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
-import data.HudstyleData;
-import data.HudstyleData.Hudstyle;
+import backend.assets.data.HudstyleData;
+import backend.assets.data.HudstyleData.Hudstyle;
 import objects.Bar;
 import ClientPrefs;
 import utility.Scripthandler;

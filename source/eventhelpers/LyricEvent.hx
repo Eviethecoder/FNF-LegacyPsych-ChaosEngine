@@ -1,5 +1,6 @@
 
 package eventhelpers;
+import backend.assets.Paths;
 
 import flixel.tweens.FlxTween;
 import flixel.FlxG;

@@ -1,7 +1,8 @@
 package;
+import backend.assets.Paths;
 
 #if hxdiscord_rpc
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 #end
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -19,7 +20,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.net.curl.CURLCode;
 import flixel.graphics.FlxGraphic;
-import WeekData;
+import backend.assets.data.WeekData;
 
 using StringTools;
 

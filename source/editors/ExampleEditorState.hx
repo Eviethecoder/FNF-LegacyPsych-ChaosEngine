@@ -1,7 +1,8 @@
 package editors;
+import backend.assets.Paths;
 
 #if desktop
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 #end
 import backend.ui.PsychUIBox;
 import backend.ui.PsychUIButton;

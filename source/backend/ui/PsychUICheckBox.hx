@@ -1,4 +1,5 @@
 package backend.ui;
+import backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.FlxSprite;

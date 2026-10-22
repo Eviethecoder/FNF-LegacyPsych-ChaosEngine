@@ -1,9 +1,10 @@
 package options;
+import backend.assets.Paths;
 import objects.Note;
 import shaders.ColorSwap;
 
 #if hxdiscord_rpc
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 #end
 import objects.Alphabet;
 import flixel.FlxG;

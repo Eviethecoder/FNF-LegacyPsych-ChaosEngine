@@ -1,4 +1,5 @@
 package objects;
+import backend.assets.Paths;
 
 import flixel.group.FlxSpriteGroup;
 import flixel.FlxSprite;

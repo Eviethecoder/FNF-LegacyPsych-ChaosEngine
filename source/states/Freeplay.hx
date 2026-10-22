@@ -1,4 +1,5 @@
 package states;
+import backend.assets.Paths;
 import utility.MathUtil;
 
 import flixel.FlxG;
@@ -27,7 +28,7 @@ import utility.Scripthandler;
 import flixel.FlxBasic;
 import sys.FileSystem;
 import haxe.io.Path;
-import data.SongMetadata.Metadata;
+import backend.assets.data.SongMetadata.Metadata;
 
 using StringTools;
 

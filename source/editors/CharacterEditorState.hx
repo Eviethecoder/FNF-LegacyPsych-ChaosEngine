@@ -1,7 +1,8 @@
 package editors;
+import backend.assets.Paths;
 
 #if desktop
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 import lime.app.Application;
 import lime.ui.FileDialog;
 #end

@@ -5,7 +5,6 @@ import objects.FunkinSprite;
 import objects.FunkinSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxColor;
-import Paths;
 import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -15,7 +14,7 @@ import flixel.sound.FlxSound;
 import json2object.JsonParser;
 import flash.media.Sound;
 import flixel.input.mouse.FlxMouseEvent;
-import data.SongMetadata.Metadata;
+import backend.assets.data.SongMetadata.Metadata;
 import openfl.utils.Assets;
 #if sys
 import sys.FileSystem;

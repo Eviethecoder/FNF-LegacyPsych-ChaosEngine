@@ -1,5 +1,7 @@
 package objects;
 
+import backend.assets.Paths;
+
 import insanity.Script;
 import insanity.Environment;
 import insanity.backend.Exception;

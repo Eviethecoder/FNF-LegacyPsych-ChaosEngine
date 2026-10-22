@@ -1,4 +1,5 @@
 package events;
+import backend.assets.Paths;
 import objects.Note;
 
 import flixel.FlxG;

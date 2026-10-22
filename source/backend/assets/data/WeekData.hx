@@ -1,4 +1,6 @@
-package;
+package backend.assets.data;
+import backend.assets.Paths;
+
 
 #if MODS_ALLOWED
 import sys.io.File;

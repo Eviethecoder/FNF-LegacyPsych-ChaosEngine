@@ -1,10 +1,11 @@
 package editors;
+import backend.assets.Paths;
 import objects.Note;
 import objects.StrumNote;
 
 #if hxdiscord_rpc
 import objects.AttachedSprite;
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 #end
 import flash.geom.Rectangle;
 import haxe.Json;
@@ -2679,7 +2680,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 					vocals.stop();
 
 				// if(_song.stage == null) _song.stage = stageDropDown.selectedLabel;
-				data.StageData.loadDirectory(_song);
+				backend.assets.data.StageData.loadDirectory(_song);
 				MusicBeatState.switchState(new LoadingState(new PlayState()));
 			}
 

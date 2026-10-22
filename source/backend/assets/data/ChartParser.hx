@@ -1,4 +1,5 @@
-package;
+package backend.assets.data;
+import backend.assets.Paths;
 
 import flixel.util.FlxStringUtil;
 

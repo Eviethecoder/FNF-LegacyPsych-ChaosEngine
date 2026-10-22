@@ -1,4 +1,5 @@
 package;
+import backend.assets.Paths;
 
 import objects.Alphabet;
 import flixel.FlxG;

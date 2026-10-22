@@ -1,7 +1,9 @@
 package;
+import backend.assets.Paths;
+import backend.assets.data.WeekData;
 
 #if desktop
-import Discord.DiscordClient;
+import backend.api.Discord.DiscordClient;
 #end
 import flash.text.TextField;
 import objects.AttachedSprite;

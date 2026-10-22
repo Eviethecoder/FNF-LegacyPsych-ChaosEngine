@@ -7,7 +7,7 @@ import sys.io.File;
 #end
 import haxe.Json;
 import haxe.io.Path;
-import Paths;
+import backend.assets.Paths;
 import debug.Consolehandler;
 import events.CameraMovement;
 import events.CameraZoom;

@@ -1,4 +1,5 @@
-package data;
+package backend.assets.data;
+
 
 typedef Metadata =
 {
