@@ -118,7 +118,7 @@ class Project extends HXProject {
         addHaxelib('tjson');
         addHaxelib('lucidtext');
         addHaxelib('json2object');
-        addHaxelib('Linc_imgui');
+        addHaxelib('linc_imgui');
         addHaxelib('hxjsonast');
         addHaxelib('foxlite');
         if (FEATURE_VIDEO_PLAYBACK.isEnabled(this)){
