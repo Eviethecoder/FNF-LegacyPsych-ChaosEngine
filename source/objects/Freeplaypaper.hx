@@ -1,6 +1,6 @@
 package objects;
-import utility.MathUtil;
 
+import utility.MathUtil;
 import objects.FunkinSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxColor;
@@ -16,6 +16,7 @@ import flash.media.Sound;
 import flixel.input.mouse.FlxMouseEvent;
 import backend.assets.data.SongMetadata.Metadata;
 import openfl.utils.Assets;
+import objects.Cursor;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
@@ -62,7 +63,7 @@ class Freeplaypaper extends FlxSpriteGroup
 		songname.x = backing.getGraphicMidpoint().x - (songname.width / 2);
 		songname.y = backing.getGraphicMidpoint().y - (songname.height / 2);
 
-		FlxMouseEvent.add(this, onMouseDown, null, onMouseOver, onMouseOut);
+		FlxMouseEvent.add(backing, onMouseDown, null, onMouseOver, onMouseOut, false, true, false);
 	}
 
 	function attemptmetadata(metadata:Metadata)
@@ -74,22 +75,25 @@ class Freeplaypaper extends FlxSpriteGroup
 		debug.Consolehandler.print(true);
 	}
 
-	function onMouseDown(sprite:FlxSpriteGroup)
+	function onMouseDown(sprite:FunkinSprite)
 	{
 		if (onclick != null && selected)
 			onclick();
 	}
 
-	function onMouseOver(sprite:FlxSpriteGroup)
+	function onMouseOver(sprite:FunkinSprite)
 	{
-		if (selected == false)
-			return;
-		scaletolerp = 1.105;
+		if (selected)
+		{
+			Cursor.cursorMode = Pointer;
+			scaletolerp = 1.105;
+		}
 	}
 
-	function onMouseOut(sprite:FlxSpriteGroup)
+	function onMouseOut(sprite:FunkinSprite)
 	{
 		scaletolerp = 1;
+		Cursor.cursorMode = Default;
 	}
 
 	public function toggleselected(isSelected:Bool)

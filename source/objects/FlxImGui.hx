@@ -2,9 +2,10 @@ package objects;
 
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
+import haxe.io.Bytes;
 import imgui.ImGui;
 import lime.graphics.RenderContext;
-import objects.Cursor;
+import openfl.display.BitmapData;
 import openfl.events.KeyboardEvent;
 
 #if windows // if we dont do this it wont render
@@ -161,65 +162,39 @@ static bool imguiGlLoad()
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM <stddef.h>
 #include "backends/imgui_impl_opengl3.cpp"
 
-static GLuint imguiCursorTexture = 0;
-
-static void imguiGlSetCursorTexture(int width, int height, Array<unsigned char> pixels)
-{
-    if (imguiCursorTexture == 0)
-        glGenTextures(1, &imguiCursorTexture);
-
-    GLint previousTexture = 0;
-    GLint previousUnpackAlignment = 4;
-    glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture);
-    glGetIntegerv(GL_UNPACK_ALIGNMENT, &previousUnpackAlignment);
-    glBindTexture(GL_TEXTURE_2D, imguiCursorTexture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels->GetBase());
-    glPixelStorei(GL_UNPACK_ALIGNMENT, previousUnpackAlignment);
-    glBindTexture(GL_TEXTURE_2D, previousTexture);
-}
-
-static void imguiGlDrawCursor(float x, float y, float width, float height)
-{
-    ImGui::GetForegroundDrawList()->AddImage(
-        (ImTextureID)(intptr_t)imguiCursorTexture,
-        ImVec2(x, y),
-        ImVec2(x + width, y + height),
-        ImVec2(0, 0),
-        ImVec2(1, 1));
-}
-
 static bool imguiGlInit() { return imguiGlLoad() && ImGui_ImplOpenGL3_Init(NULL); }
 static void imguiGlNewFrame() { ImGui_ImplOpenGL3_NewFrame(); }
 static void imguiGlRender() { ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); }
 static void imguiGlShutdown()
 {
     ImGui_ImplOpenGL3_Shutdown();
-    if (imguiCursorTexture != 0)
-        glDeleteTextures(1, &imguiCursorTexture);
-    imguiCursorTexture = 0;
 }
 #endif
 ')
 #end
 class FlxImGui
 {
-	private var imguiGlReady:Bool = false;
-	private var imguiFrameReady:Bool = false;
-	private var imguiMouseWasVisible:Bool = false;
-	private var imguiMouseWasUsingSystemCursor:Bool = false;
-	private var drawImGuiCallback:Void->Void;
+	private static var imguiContext:cpp.Star<ImGuiContext>;
+	private static var imguiGlReady:Bool = false;
+	private static var imguiFrameReady:Bool = false;
+	private static var drawCallbacks:Array<{id:Int, callback:Void->Void}> = [];
+	private static var nextCallbackId:Int = 0;
+	private static var mouseWasVisible:Bool = false;
+	private static var mouseWasUsingSystemCursor:Bool = false;
 
-	public var colors:Dynamic;
-
-	public function new(drawImGuiCallback:Void->Void)
+	public static function register(drawImGuiCallback:Void->Void):Int
 	{
-		this.drawImGuiCallback = drawImGuiCallback;
-		ImGui.createContext();
+		if (imguiContext == null)
+			initialize();
+
+		var id = nextCallbackId++;
+		drawCallbacks.push({id: id, callback: drawImGuiCallback});
+		return id;
+	}
+
+	private static function initialize():Void
+	{
+		imguiContext = ImGui.createContext();
 
 		#if windows
 		imguiGlReady = untyped __cpp__('imguiGlInit()');
@@ -251,26 +226,26 @@ class FlxImGui
 			io.keyMap[ImGuiKey.Z] = FlxKey.Z;
 
 			FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onImGuiKeyDown);
-			imguiMouseWasVisible = FlxG.mouse.visible;
-			imguiMouseWasUsingSystemCursor = FlxG.mouse.useSystemCursor;
-			if (FlxG.mouse.cursor == null)
-				FlxG.mouse.load();
-			FlxG.mouse.useSystemCursor = false;
-			FlxG.mouse.visible = false;
-			ImGui.getIO().mouseDrawCursor = false;
-			Cursor.updateImGuiTexture(uploadImGuiCursorTexture);
+			mouseWasVisible = FlxG.mouse.visible;
+			mouseWasUsingSystemCursor = FlxG.mouse.useSystemCursor;
+			FlxG.mouse.useSystemCursor = true;
+			FlxG.mouse.visible = true;
 		}
 		ImGui.styleColorsDark();
-		colors = ImGui.getStyle().colors;
+		var colors = ImGui.getStyle().colors;
 		colors[ImGuiCol.WindowBg] = ImVec4.create(0.16, 0.02, 0.02, 1.0);
 		colors[ImGuiCol.ChildBg] = ImVec4.create(0.12, 0.02, 0.02, 1.0);
 		colors[ImGuiCol.PopupBg] = ImVec4.create(0.18, 0.02, 0.02, 0.98);
+		colors[ImGuiCol.Border] = ImVec4.create(0.55, 0.08, 0.08, 0.5);
+		colors[ImGuiCol.BorderShadow] = ImVec4.create(0.0, 0.0, 0.0, 0.0);
 		colors[ImGuiCol.FrameBg] = ImVec4.create(0.35, 0.04, 0.04, 1.0);
 		colors[ImGuiCol.FrameBgHovered] = ImVec4.create(0.55, 0.06, 0.06, 1.0);
 		colors[ImGuiCol.FrameBgActive] = ImVec4.create(0.68, 0.08, 0.08, 1.0);
 		colors[ImGuiCol.TitleBg] = ImVec4.create(0.24, 0.02, 0.02, 1.0);
 		colors[ImGuiCol.TitleBgActive] = ImVec4.create(0.48, 0.03, 0.03, 1.0);
+		colors[ImGuiCol.TitleBgCollapsed] = ImVec4.create(0.18, 0.02, 0.02, 1.0);
 		colors[ImGuiCol.MenuBarBg] = ImVec4.create(0.24, 0.02, 0.02, 1.0);
+		colors[ImGuiCol.ScrollbarBg] = ImVec4.create(0.10, 0.01, 0.01, 0.53);
 		colors[ImGuiCol.ScrollbarGrab] = ImVec4.create(0.48, 0.04, 0.04, 1.0);
 		colors[ImGuiCol.ScrollbarGrabHovered] = ImVec4.create(0.65, 0.06, 0.06, 1.0);
 		colors[ImGuiCol.ScrollbarGrabActive] = ImVec4.create(0.78, 0.08, 0.08, 1.0);
@@ -283,21 +258,43 @@ class FlxImGui
 		colors[ImGuiCol.Header] = ImVec4.create(0.5, 0.04, 0.04, 1.0);
 		colors[ImGuiCol.HeaderHovered] = ImVec4.create(0.72, 0.06, 0.06, 1.0);
 		colors[ImGuiCol.HeaderActive] = ImVec4.create(0.86, 0.08, 0.08, 1.0);
+		colors[ImGuiCol.Separator] = ImVec4.create(0.55, 0.08, 0.08, 0.5);
+		colors[ImGuiCol.SeparatorHovered] = ImVec4.create(0.72, 0.06, 0.06, 0.78);
+		colors[ImGuiCol.SeparatorActive] = ImVec4.create(0.86, 0.08, 0.08, 1.0);
+		colors[ImGuiCol.ResizeGrip] = ImVec4.create(0.55, 0.04, 0.04, 0.2);
+		colors[ImGuiCol.ResizeGripHovered] = ImVec4.create(0.78, 0.06, 0.06, 0.67);
+		colors[ImGuiCol.ResizeGripActive] = ImVec4.create(0.92, 0.08, 0.08, 0.95);
 		colors[ImGuiCol.Tab] = ImVec4.create(0.36, 0.03, 0.03, 1.0);
 		colors[ImGuiCol.TabHovered] = ImVec4.create(0.72, 0.06, 0.06, 1.0);
 		colors[ImGuiCol.TabActive] = ImVec4.create(0.55, 0.04, 0.04, 1.0);
 		colors[ImGuiCol.TabUnfocused] = ImVec4.create(0.24, 0.02, 0.02, 1.0);
 		colors[ImGuiCol.TabUnfocusedActive] = ImVec4.create(0.38, 0.03, 0.03, 1.0);
+		colors[ImGuiCol.PlotLines] = ImVec4.create(0.85, 0.08, 0.08, 1.0);
+		colors[ImGuiCol.PlotLinesHovered] = ImVec4.create(1.0, 0.18, 0.18, 1.0);
+		colors[ImGuiCol.PlotHistogram] = ImVec4.create(0.85, 0.08, 0.08, 1.0);
+		colors[ImGuiCol.PlotHistogramHovered] = ImVec4.create(1.0, 0.18, 0.18, 1.0);
+		colors[ImGuiCol.TableHeaderBg] = ImVec4.create(0.35, 0.03, 0.03, 1.0);
+		colors[ImGuiCol.TableBorderStrong] = ImVec4.create(0.55, 0.08, 0.08, 1.0);
+		colors[ImGuiCol.TableBorderLight] = ImVec4.create(0.35, 0.04, 0.04, 1.0);
+		colors[ImGuiCol.TableRowBg] = ImVec4.create(0.0, 0.0, 0.0, 0.0);
+		colors[ImGuiCol.TableRowBgAlt] = ImVec4.create(0.65, 0.06, 0.06, 0.1);
+		colors[ImGuiCol.TextSelectedBg] = ImVec4.create(0.85, 0.08, 0.08, 0.35);
+		colors[ImGuiCol.DragDropTarget] = ImVec4.create(1.0, 0.24, 0.24, 0.9);
+		colors[ImGuiCol.NavHighlight] = ImVec4.create(1.0, 0.24, 0.24, 1.0);
+		colors[ImGuiCol.NavWindowingHighlight] = ImVec4.create(1.0, 0.24, 0.24, 0.7);
+		colors[ImGuiCol.NavWindowingDimBg] = ImVec4.create(0.8, 0.0, 0.0, 0.2);
+		colors[ImGuiCol.ModalWindowDimBg] = ImVec4.create(0.8, 0.0, 0.0, 0.35);
 
 		FlxG.stage.window.onRender.add(onImGuiWindowRender, false, -10000);
 		#end
 	}
 
-	public function newFrame(elapsed:Float):Void
+	public static function newFrame(elapsed:Float):Void
 	{
-		if (!imguiGlReady)
+		if (!imguiGlReady || imguiFrameReady || drawCallbacks.length == 0)
 			return;
 
+		ImGui.setCurrentContext(imguiContext);
 		var io = ImGui.getIO();
 		io.displaySize = ImVec2.create(FlxG.stage.window.width, FlxG.stage.window.height);
 		io.deltaTime = elapsed > 0 ? elapsed : 1 / 60;
@@ -331,52 +328,55 @@ class FlxImGui
 		io.keysDown[FlxKey.Y] = FlxG.keys.pressed.Y;
 		io.keysDown[FlxKey.Z] = FlxG.keys.pressed.Z;
 
-		var cursor = FlxG.mouse.cursor;
-		Cursor.updateImGuiTexture(uploadImGuiCursorTexture);
-
 		#if windows
 		untyped __cpp__('imguiGlNewFrame()');
 		#end
 		ImGui.newFrame();
-		drawImGuiCallback();
-		if (cursor != null)
-		{
-			#if windows
-			untyped __cpp__('imguiGlDrawCursor({0}, {1}, {2}, {3})', io.mousePos.x + cursor.x, io.mousePos.y + cursor.y, cursor.width, cursor.height);
-			#end
-		}
+		for (entry in drawCallbacks.copy())
+			entry.callback();
 		ImGui.render();
 		imguiFrameReady = true;
 	}
 
-	function uploadImGuiCursorTexture(width:Int, height:Int, pixels:haxe.io.BytesData):Void
-	{
-		#if windows
-		untyped __cpp__('imguiGlSetCursorTexture({0}, {1}, {2})', width, height, pixels);
-		#end
-	}
-
-	function onImGuiKeyDown(event:KeyboardEvent):Void
+	private static function onImGuiKeyDown(event:KeyboardEvent):Void
 	{
 		if (event.charCode != 0)
+		{
+			ImGui.setCurrentContext(imguiContext);
 			ImGui.getIO().addInputCharactersUTF8(String.fromCharCode(event.charCode));
+		}
 	}
 
-	public function isImGuiReady():Bool
+	public static function isImGuiReady():Bool
 	{
 		return imguiGlReady;
 	}
 
-	function onImGuiWindowRender(_:RenderContext):Void
+	private static function onImGuiWindowRender(_:RenderContext):Void
 	{
 		#if windows
-		if (imguiGlReady && imguiFrameReady)
-			untyped __cpp__('imguiGlRender()');
+		if (imguiGlReady)
+		{
+			if (imguiFrameReady)
+			{
+				ImGui.setCurrentContext(imguiContext);
+				untyped __cpp__('imguiGlRender()');
+				imguiFrameReady = false;
+			}
+		}
 		#end
 	}
 
-	public function clean():Void
+	public static function unregister(id:Int):Void
 	{
+		drawCallbacks = drawCallbacks.filter(function(entry) return entry.id != id);
+		if (drawCallbacks.length > 0)
+			return;
+
+		if (imguiContext == null)
+			return;
+
+		ImGui.setCurrentContext(imguiContext);
 		#if windows
 		FlxG.stage.window.onRender.remove(onImGuiWindowRender);
 		if (imguiGlReady)
@@ -387,10 +387,11 @@ class FlxImGui
 		#end
 		if (imguiGlReady)
 		{
-			FlxG.mouse.visible = imguiMouseWasVisible;
-			FlxG.mouse.useSystemCursor = imguiMouseWasUsingSystemCursor;
+			FlxG.mouse.visible = mouseWasVisible;
+			FlxG.mouse.useSystemCursor = mouseWasUsingSystemCursor;
 		}
 		imguiFrameReady = false;
-		ImGui.destroyContext();
+		ImGui.destroyContext(imguiContext);
+		imguiContext = null;
 	}
 }

@@ -1,23 +1,18 @@
 package states;
-import backend.assets.Paths;
 
+import backend.assets.Paths;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import imgui.ImGui;
 import objects.FlxImGui;
-import debug.Consolehandler;
 
 class Imguitest extends MusicBeatState
 {
-	var imgui:FlxImGui;
+	var imgui:Int = -1;
 	var bg:FlxSprite;
 	var showWindow:Bool = true;
-	var charwindow:Bool = false;
-	var characterIndex:Int = 0;
-	var characterItems:Array<String> = ["Dad", "Bf", "Gf"];
 	var hideBg:Bool = false;
-	var charbuttonpressed:Bool = false;
 	var speed:cpp.Float32 = 1.0;
 	var tint:Array<cpp.Float32> = [0.64, 0.09, 0.6];
 	var enabled:Bool = true;
@@ -40,8 +35,7 @@ class Imguitest extends MusicBeatState
 	override function create():Void
 	{
 		super.create();
-		imgui = new FlxImGui(drawImGui);
-		ImGui.styleColorsDark();
+		imgui = FlxImGui.register(drawImGui);
 
 		bg = new FlxSprite(-80).loadGraphic(Paths.image('ebotmenuBG-invert'));
 		bg.scrollFactor.set(0, 0);
@@ -56,9 +50,9 @@ class Imguitest extends MusicBeatState
 	override function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-		imgui.newFrame(elapsed);
+		FlxImGui.newFrame(elapsed);
 
-		if (!imgui.isImGuiReady())
+		if (!FlxImGui.isImGuiReady())
 			return;
 
 		bg.visible = !hideBg;
@@ -70,13 +64,6 @@ class Imguitest extends MusicBeatState
 	{
 		if (ImGui.beginMainMenuBar())
 		{
-			if (ImGui.beginMenu("Character Window", true))
-			{
-				if (ImGui.menuItem("Show character window", "", charwindow, true))
-					charwindow = !charwindow;
-				ImGui.endMenu();
-			}
-
 			if (ImGui.beginMenu("Demo", true))
 			{
 				if (ImGui.menuItem("Show demo window", "", showDemoWindow, true))
@@ -90,45 +77,6 @@ class Imguitest extends MusicBeatState
 				ImGui.endMenu();
 			}
 			ImGui.endMainMenuBar();
-		}
-
-		if (charwindow)
-		{
-			var charWindowVisible = ImGui.begin("Chorus Char Window", charwindow);
-			if (charWindowVisible)
-			{
-				ImGui.textUnformatted("A character window.");
-				if (ImGui.beginTabBar("Character Window Tabs", 0))
-				{
-					if (ImGui.beginTabItem("Character Base"))
-					{
-						if (ImGui.beginCombo("Characters", characterItems[characterIndex], 0))
-						{
-							for (i in 0...characterItems.length)
-							{
-								var isSelected = characterIndex == i;
-								if (ImGui.selectable(characterItems[i], isSelected, 0, ImVec2.create()))
-									characterIndex = i;
-							}
-							ImGui.endCombo();
-							ImGui.sameLine();
-						}
-						if (ImGui.button("Reload Character"))
-							Consolehandler.print("Reload Character button pressed");
-						ImGui.sameLine();
-						if (ImGui.button("Load Template"))
-							Consolehandler.print("Load Template button pressed");
-						if (ImGui.radioButton("Flip Y", charbuttonpressed))
-						{
-							charbuttonpressed = !charbuttonpressed;
-							Consolehandler.print("Flip Y button value: " + charbuttonpressed);
-						}
-						ImGui.endTabItem();
-					}
-					ImGui.endTabBar();
-				}
-			}
-			ImGui.end();
 		}
 
 		if (showDemoWindow)
@@ -356,8 +304,11 @@ class Imguitest extends MusicBeatState
 
 	override function destroy():Void
 	{
-		if (imgui != null)
-			imgui.clean();
+		if (imgui >= 0)
+		{
+			FlxImGui.unregister(imgui);
+			imgui = -1;
+		}
 		super.destroy();
 	}
 }

@@ -1,7 +1,7 @@
 package objects;
+
 import backend.assets.Paths;
 import shaders.ColorSwap;
-
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
@@ -217,10 +217,6 @@ class Note extends FlxSpriteGroup
 		{
 			switch (value)
 			{
-				case 'special':
-					this.special = true;
-					notegraphic.shader = null;
-				// reloadNote('Huds/NoteTypes/', 'SpecialNOTE_assets-notes');
 				case 'Alt Animation':
 					animSuffix = '-alt';
 				case 'GF Sing':
@@ -411,7 +407,7 @@ class Note extends FlxSpriteGroup
 			if (thisx != 0 && thisy != 0)
 				notegraphic.offset.set(thisx, thisy);
 		}
-		trace('Playing animation: ' + anim + ' with offset:  ' + notegraphic.offset);
+
 		notegraphic.animation.play(anim, force);
 	}
 
@@ -472,13 +468,17 @@ class Note extends FlxSpriteGroup
 		}
 		notegraphic.updateHitbox();
 
-		if (animName != null)
-		{
-			playAnim(animName, true);
-		}
-
 		if (special)
+		{
 			playAnim('note-Special', true);
+		}
+		else
+		{
+			if (animName != null)
+			{
+				playAnim(animName, true);
+			}
+		}
 	}
 
 	public function addOffset(name:String,

@@ -1,41 +1,33 @@
 package debug;
 
-import debug.ConsolePlugin;
-import debug.ConsoleLogType;
-import HaxeScript.AnyValue;
-
 class Consolehandler
 {
-	public static function print(value:AnyValue, ?pos:haxe.PosInfos)
+	public static function print(value:Dynamic, ?pos:haxe.PosInfos):Void
 	{
-		var location = pos.className;
-		var text = Std.string(value);
-		if (ConsolePlugin.instance != null && ConsolePlugin.instance.ui != null)
-		{
-			ConsolePlugin.instance.ui.print('$location: $text', NORMAL);
-			ConsolePlugin.instance.togglevisible(true);
-		}
+		GameConsole.print(formatMessage(value, pos));
+		openConsole();
 	}
 
-	public static function warn(value:AnyValue, ?pos:haxe.PosInfos)
+	public static function warn(value:Dynamic, ?pos:haxe.PosInfos):Void
 	{
-		var location = pos.className;
-		var text = Std.string(value);
-		if (ConsolePlugin.instance != null && ConsolePlugin.instance.ui != null)
-		{
-			ConsolePlugin.instance.ui.printFromClass(location, ' $text', 0xFFFF44, WARNING);
-			ConsolePlugin.instance.togglevisible(true);
-		}
+		GameConsole.warn(Std.string(value), pos);
+		openConsole();
 	}
 
-	public static function error(value:AnyValue, ?pos:haxe.PosInfos)
+	public static function error(value:Dynamic, ?pos:haxe.PosInfos):Void
 	{
-		var location = pos.className;
-		var text = Std.string(value);
-		if (ConsolePlugin.instance != null && ConsolePlugin.instance.ui != null)
-		{
-			ConsolePlugin.instance.ui.print('$location: $text', ERROR);
-			ConsolePlugin.instance.togglevisible(true);
-		}
+		GameConsole.error(Std.string(value), pos);
+	}
+
+	static function formatMessage(value:Dynamic, ?pos:haxe.PosInfos):String
+	{
+		var location = pos != null ? pos.className : "?";
+		return '$location: ${Std.string(value)}';
+	}
+
+	static function openConsole():Void
+	{
+		if (GameConsole.instance != null)
+			GameConsole.instance.open();
 	}
 }

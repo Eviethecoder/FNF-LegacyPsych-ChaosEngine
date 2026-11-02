@@ -112,8 +112,10 @@ class Paths
 		for (candidate in candidates)
 		{
 			if (FileSystem.exists(candidate))
+			{
 				trace('redirecting asset path from $path to $candidate');
 				return candidate;
+			}
 		}
 		#end
 

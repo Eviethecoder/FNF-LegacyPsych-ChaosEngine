@@ -1,6 +1,6 @@
 package objects;
-import utility.MathUtil;
 
+import utility.MathUtil;
 import objects.FunkinSprite;
 import objects.FunkinSprite;
 import flixel.group.FlxSpriteGroup;
@@ -29,7 +29,7 @@ class RenderSprite extends FunkinSprite
 	public function new(x:Float = 0, y:Float = 0)
 	{
 		super(x, y);
-		FlxMouseEvent.add(this, onMouseDown, onMouseUp, null, null);
+		FlxMouseEvent.add(this, onMouseDown, onMouseUp, null, null, false, true, false);
 	}
 
 	function onMouseDown(sprite:RenderSprite)

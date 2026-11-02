@@ -8,8 +8,7 @@ import flixel.FlxState;
 import openfl.Assets;
 import openfl.Lib;
 import debug.FPSCounter;
-import debug.ConsoleCore;
-import debug.ConsolePlugin;
+import debug.GameConsole;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.display.StageScaleMode;
@@ -103,8 +102,7 @@ class Main extends Sprite
 		FlxG.mouse.visible = false;
 		#end
 
-		ConsoleCore.instance = new ConsoleCore();
-		FlxG.plugins.add(new ConsolePlugin());
+		GameConsole.init();
 	}
 
 	static var isHandlingCrash:Bool = false;

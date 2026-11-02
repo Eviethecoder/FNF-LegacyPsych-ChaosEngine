@@ -3,6 +3,7 @@ import backend.assets.Paths;
 import utility.MathUtil;
 
 import flixel.FlxG;
+import flixel.input.mouse.FlxMouseEvent;
 import flixel.addons.ui.FlxUIState;
 import flixel.text.FlxText;
 import flixel.math.FlxRect;
@@ -140,6 +141,7 @@ class Freeplay extends MusicBeatState
 			paper.toggleselected(i == curSelected);
 			i++;
 		}
+		FlxMouseEvent.reorder();
 		changeSelection(0);
 		scoretolerp = scorenum;
 	}

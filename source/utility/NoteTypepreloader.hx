@@ -30,12 +30,18 @@ class NoteTypepreloader
 	{
 		var directories:Array<String> = [
 			Paths.getPreloadPath('data/custom_notetypes/'),
+			Paths.getPreloadPath('custom_notetypes/'),
 			Paths.mods('data/custom_notetypes/'),
+			Paths.mods('custom_notetypes/'),
 		];
-		for (mod in Paths.getGlobalMods())
+		var mods:Array<String> = Paths.getGlobalMods().copy();
+		if (Paths.currentModDirectory != null && Paths.currentModDirectory.length > 0 && mods.indexOf(Paths.currentModDirectory) < 0)
+			mods.push(Paths.currentModDirectory);
+		for (mod in mods)
+		{
 			directories.push(Paths.mods(mod + '/data/custom_notetypes/'));
-
-		trace(directories);
+			directories.push(Paths.mods(mod + '/custom_notetypes/'));
+		}
 
 		var found:Map<String, Bool> = new Map<String, Bool>();
 		lookup(directories, found);
