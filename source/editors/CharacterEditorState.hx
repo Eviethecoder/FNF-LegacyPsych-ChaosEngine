@@ -1,8 +1,10 @@
 package editors;
-import backend.assets.Paths;
 
-#if desktop
+import backend.assets.Paths;
+#if FEATURE_DISCORD_RPC
 import backend.api.Discord.DiscordClient;
+#end
+#if desktop
 import lime.app.Application;
 import lime.ui.FileDialog;
 #end
@@ -1543,7 +1545,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 
 	function updatePresence()
 	{
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("Character Editor", "Character: " + daAnim, leHealthIcon.getCharacter());
 		#end

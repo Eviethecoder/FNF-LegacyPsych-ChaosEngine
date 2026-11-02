@@ -1,10 +1,12 @@
 package;
+
 import backend.assets.Paths;
 import backend.assets.data.WeekData;
-
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxG;
+#if FEATURE_DISCORD_RPC
 import backend.api.Discord.DiscordClient;
+#end
 import lime.app.Application;
 import utility.Systeminfo;
 import utility.EventHandler;
@@ -84,6 +86,7 @@ class InitState extends flixel.FlxState
 		FunkinMemory.loadPerminateAssets();
 		EventHandler.setupAllEventData();
 
+		#if FEATURE_DISCORD_RPC
 		if (!DiscordClient.isInitialized)
 		{
 			DiscordClient.initialize();
@@ -92,6 +95,7 @@ class InitState extends flixel.FlxState
 				DiscordClient.shutdown();
 			});
 		}
+		#end
 		utility.Characterpreloader.charLookup();
 		utility.NoteSkinpreloader.noteskinLookup();
 

@@ -1,8 +1,8 @@
 package options;
+
 import backend.assets.Paths;
 import utility.InputFormatter;
-
-#if hxdiscord_rpc
+#if FEATURE_DISCORD_RPC
 import backend.api.Discord.DiscordClient;
 #end
 import objects.Alphabet;

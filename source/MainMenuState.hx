@@ -1,8 +1,8 @@
 package;
+
 import backend.assets.Paths;
 import backend.assets.data.WeekData;
-
-#if hxdiscord_rpc
+#if FEATURE_DISCORD_RPC
 import backend.api.Discord.DiscordClient;
 #end
 import flixel.FlxG;
@@ -67,7 +67,7 @@ class MainMenuState extends MusicBeatState
 
 		WeekData.loadTheFirstEnabledMod();
 
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
 		#end

@@ -1,9 +1,9 @@
 package editors;
+
 import backend.assets.Paths;
 import backend.assets.data.WeekData;
-
-#if hxdiscord_rpc
 import objects.Alphabet;
+#if FEATURE_DISCORD_RPC
 import backend.api.Discord.DiscordClient;
 #end
 import flixel.FlxG;
@@ -37,6 +37,7 @@ class MasterEditorMenu extends MusicBeatState
 		// '3dtest',
 		'Chart Editor'
 	];
+
 	private var grpTexts:FlxTypedGroup<Alphabet>;
 	private var directories:Array<String> = [null];
 
@@ -47,7 +48,7 @@ class MasterEditorMenu extends MusicBeatState
 	override function create()
 	{
 		FlxG.camera.bgColor = FlxColor.BLACK;
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("Editors Main Menu", null);
 		#end

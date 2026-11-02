@@ -1,6 +1,6 @@
 package;
-import backend.assets.Paths;
 
+import backend.assets.Paths;
 import objects.Note;
 import objects.StrumNote;
 import haxe.Rest;
@@ -142,7 +142,9 @@ class HaxeScript
 		adddvar(script, "FlxRuntimeShader", flixel.addons.display.FlxRuntimeShader);
 		adddvar(script, "Note", Note);
 		adddvar(script, "ClientPrefs", ClientPrefs);
+		#if FEATURE_VIDEO_PLAYBACK
 		adddvar(script, "VideoSprite", objects.VideoSprite);
+		#end
 		adddvar(script, "easeFromString", getFlxEaseByString);
 		adddvar(script, "FlxSpriteGroup", flixel.group.FlxSpriteGroup);
 		adddvar(script, "colorFromString", FlxColor.fromString);

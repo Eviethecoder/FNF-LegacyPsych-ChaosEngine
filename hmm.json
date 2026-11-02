@@ -6,7 +6,7 @@
       "name": "lime",
       "type": "git",
       "dir": null,
-      "ref": "dev-funkin",
+      "ref": "268dacfb2609766e14bef9ea5b669e91501852d2",
       "url": "https://github.com/FunkinCrew/lime"
     },
     {
@@ -20,7 +20,7 @@
       "name": "openfl",
       "type": "git",
       "dir": null,
-      "ref": "master",
+      "ref": "74a51908a116d6df74be1083e219abb9fa057636",
       "url": "https://github.com/FunkinCrew/openfl"
     },
 
@@ -28,7 +28,7 @@
       "name": "flixel",
       "type": "git",
       "dir": null,
-      "ref": "dev",
+      "ref": "141f23c400c0508c76d5a09a143f5ce6790f8122",
       "url": "https://github.com/FunkinCrew/flixel"
     },
     {

@@ -1,7 +1,9 @@
 package;
-import backend.assets.Paths;
 
+import backend.assets.Paths;
+#if FEATURE_DISCORD_RPC
 import backend.api.Discord.DiscordClient;
+#end
 import objects.Alphabet;
 import flixel.FlxG;
 import flixel.FlxSprite;

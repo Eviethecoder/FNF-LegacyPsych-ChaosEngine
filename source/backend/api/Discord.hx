@@ -1,6 +1,6 @@
 package backend.api;
 
-#if hxdiscord_rpc
+#if FEATURE_DISCORD_RPC
 import Sys.sleep;
 import lime.app.Application;
 import hxdiscord_rpc.Discord;

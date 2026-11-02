@@ -1,8 +1,10 @@
 package editors;
-import backend.assets.Paths;
 
-#if desktop
+import backend.assets.Paths;
+#if FEATURE_DISCORD_RPC
 import backend.api.Discord.DiscordClient;
+#end
+#if desktop
 import lime.app.Application;
 import lime.ui.FileDialog;
 #end
@@ -146,7 +148,7 @@ class StageEditorState extends MusicBeatState implements PsychUIEvent
 		// buildCharacterUI();
 		loadStageFromData(curStage);
 
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		DiscordClient.changePresence("Stage Editor", "Editing: " + curStage);
 		#end
 
@@ -423,7 +425,7 @@ class StageEditorState extends MusicBeatState implements PsychUIEvent
 		}
 
 		stageDirectory.text = file.directory;
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		DiscordClient.changePresence("Stage Editor", "Editing: " + curStage);
 		#end
 	}

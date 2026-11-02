@@ -1,15 +1,15 @@
 ﻿package;
+
 import backend.assets.Paths;
 import backend.assets.data.WeekData;
 import backend.assets.data.ChartParser;
-
 import objects.Note;
 import objects.NoteSplash;
 import objects.StrumNote;
 import objects.StrumNote.SustainSplash;
 import objects.FunkinSoundTray;
 import flixel.graphics.FlxGraphic;
-#if hxdiscord_rpc
+#if FEATURE_DISCORD_RPC
 import backend.api.Discord.DiscordClient;
 #end
 import Section;
@@ -60,7 +60,9 @@ import openfl.filters.ShaderFilter;
 import sys.FileSystem;
 import sys.io.File;
 #end
+#if FEATURE_VIDEO_PLAYBACK
 import objects.VideoSprite;
+#end
 import HaxeScript.AnyValue;
 import utility.*;
 
@@ -258,7 +260,7 @@ class PlayState extends MusicBeatState
 
 	var songLength:Float = 0;
 
-	#if desktop
+	#if FEATURE_DISCORD_RPC
 	// Discord RPC variables
 	var storyDifficultyText:String = "";
 	var detailsText:String = "";
@@ -357,7 +359,7 @@ class PlayState extends MusicBeatState
 		Conductor.mapBPMChanges(SONG);
 		Conductor.bpm = SONG.bpm;
 
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		storyDifficultyText = CoolUtil.difficulties[storyDifficulty];
 
 		// String that contains the mode defined here so it isn't necessary to call changePresence for each mode
@@ -668,7 +670,7 @@ class PlayState extends MusicBeatState
 
 		precacheList.set('alphabet', 'image');
 
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		// Updating Discord Rich Presence.
 		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", SONG.mettadata.Discordrpc, iconP2.getCharacter());
 		#end
@@ -777,11 +779,13 @@ class PlayState extends MusicBeatState
 		return null;
 	}
 
+	#if FEATURE_VIDEO_PLAYBACK
 	public var videoCutscene:VideoSprite = null;
+	#end
 
 	public function startVideo(name:String, forMidSong:Bool = false, canSkip:Bool = true, loop:Bool = false, playOnLoad:Bool = true)
 	{
-		#if VIDEOS_ALLOWED
+		#if FEATURE_VIDEO_PLAYBACK
 		inCutscene = !forMidSong;
 		canPause = forMidSong;
 
@@ -1291,7 +1295,7 @@ class PlayState extends MusicBeatState
 		FlxTween.tween(hud.timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 		FlxTween.tween(hud.timeTxt, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		// Updating Discord Rich Presence (with Time Left)
 		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", SONG.mettadata.Discordrpc, iconP2.getCharacter(), true,
 			songLength);
@@ -1577,7 +1581,7 @@ class PlayState extends MusicBeatState
 			paused = false;
 			setFunctionOnScripts('onResume', []);
 
-			#if desktop
+			#if FEATURE_DISCORD_RPC
 			if (startTimer != null && startTimer.finished)
 			{
 				DiscordClient.changePresence(detailsText, SONG.song
@@ -1600,7 +1604,7 @@ class PlayState extends MusicBeatState
 
 	override public function onFocus():Void
 	{
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		if (health > 0 && !paused)
 		{
 			if (Conductor.songPosition > 0.0)
@@ -1625,7 +1629,7 @@ class PlayState extends MusicBeatState
 
 	override public function onFocusLost():Void
 	{
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		if (health > 0 && !paused)
 		{
 			DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", SONG.mettadata.Discordrpc, iconP2.getCharacter());
@@ -1887,7 +1891,7 @@ class PlayState extends MusicBeatState
 			openSubState(new PauseSubState(stage.boyfriend.getScreenPosition().x, stage.boyfriend.getScreenPosition().y));
 		}
 
-		#if hxdiscord_rpc
+		#if FEATURE_DISCORD_RPC
 		DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", SONG.mettadata.Discordrpc, iconP2.getCharacter());
 		#end
 	}
@@ -1900,7 +1904,7 @@ class PlayState extends MusicBeatState
 		MusicBeatState.switchState(new ChartingState());
 		chartingMode = true;
 
-		#if hxdiscord_rpc
+		#if FEATURE_DISCORD_RPC
 		DiscordClient.changePresence("Chart Editor", null, SONG.mettadata.Discordrpc, null, true);
 		#end
 	}
@@ -1946,7 +1950,7 @@ class PlayState extends MusicBeatState
 
 				// MusicBeatState.switchState(new GameOverState(stage.boyfriend.getScreenPosition().x, stage.boyfriend.getScreenPosition().y));
 
-				#if desktop
+				#if FEATURE_DISCORD_RPC
 				// Game Over doesn't get his own variable because it's only used here
 				DiscordClient.changePresence("Game Over - " + detailsText, SONG.song + " (" + storyDifficultyText + ")", SONG.mettadata.Discordrpc,
 					iconP2.getCharacter());

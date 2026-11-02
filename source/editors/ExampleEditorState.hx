@@ -1,7 +1,7 @@
 package editors;
-import backend.assets.Paths;
 
-#if desktop
+import backend.assets.Paths;
+#if FEATURE_DISCORD_RPC
 import backend.api.Discord.DiscordClient;
 #end
 import backend.ui.PsychUIBox;
@@ -54,16 +54,18 @@ class ExampleEditorState extends MusicBeatState implements PsychUIEvent
 
 		buildDemoUI();
 
-		infoText = new FlxText(12, 12, FlxG.width - 24,
+		infoText = new FlxText(12, 12, FlxG.width
+			- 24,
 			'EXAMPLE EDITOR (PSYCH UI DEMO)\n'
 			+ 'UI panel shows: Input, Steppers, Dropdown, Checkbox, Buttons\n'
 			+ 'Arrow Keys: Move preview\n'
-			+ 'ESC: Return to Editor Menu', 20);
+			+ 'ESC: Return to Editor Menu',
+			20);
 		infoText.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		infoText.borderSize = 1;
 		add(infoText);
 
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		DiscordClient.changePresence("Example Editor", "Template / sandbox state");
 		#end
 
@@ -82,11 +84,16 @@ class ExampleEditorState extends MusicBeatState implements PsychUIEvent
 		{
 			switch (selected)
 			{
-				case 'Red': preview.color = FlxColor.RED;
-				case 'Green': preview.color = FlxColor.GREEN;
-				case 'Blue': preview.color = FlxColor.BLUE;
-				case 'White': preview.color = FlxColor.WHITE;
-				default: preview.color = FlxColor.CYAN;
+				case 'Red':
+					preview.color = FlxColor.RED;
+				case 'Green':
+					preview.color = FlxColor.GREEN;
+				case 'Blue':
+					preview.color = FlxColor.BLUE;
+				case 'White':
+					preview.color = FlxColor.WHITE;
+				default:
+					preview.color = FlxColor.CYAN;
 			}
 		}, 130);
 
@@ -110,7 +117,8 @@ class ExampleEditorState extends MusicBeatState implements PsychUIEvent
 
 		var applyLabelButton:PsychUIButton = new PsychUIButton(95, 230, 'Apply Label', function()
 		{
-			infoText.text = 'EXAMPLE EDITOR (PSYCH UI DEMO)\nLabel: ' + labelInput.text
+			infoText.text = 'EXAMPLE EDITOR (PSYCH UI DEMO)\nLabel: '
+				+ labelInput.text
 				+ '\nUI panel shows: Input, Steppers, Dropdown, Checkbox, Buttons\n'
 				+ 'Arrow Keys: Move preview\nESC: Return to Editor Menu';
 		}, 90, 20);
@@ -127,7 +135,8 @@ class ExampleEditorState extends MusicBeatState implements PsychUIEvent
 		uiGroup.add(applyLabelButton);
 
 		var tab = uiBox.getTab('PsychUI Demo');
-		if (tab != null) tab.menu = uiGroup;
+		if (tab != null)
+			tab.menu = uiGroup;
 	}
 
 	override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>)
@@ -153,12 +162,17 @@ class ExampleEditorState extends MusicBeatState implements PsychUIEvent
 	override function update(elapsed:Float)
 	{
 		var moveSpeed:Float = 350 * elapsed;
-		if(FlxG.keys.pressed.SHIFT) moveSpeed *= 2;
+		if (FlxG.keys.pressed.SHIFT)
+			moveSpeed *= 2;
 
-		if (FlxG.keys.pressed.LEFT) preview.x -= moveSpeed;
-		if (FlxG.keys.pressed.RIGHT) preview.x += moveSpeed;
-		if (FlxG.keys.pressed.UP) preview.y -= moveSpeed;
-		if (FlxG.keys.pressed.DOWN) preview.y += moveSpeed;
+		if (FlxG.keys.pressed.LEFT)
+			preview.x -= moveSpeed;
+		if (FlxG.keys.pressed.RIGHT)
+			preview.x += moveSpeed;
+		if (FlxG.keys.pressed.UP)
+			preview.y -= moveSpeed;
+		if (FlxG.keys.pressed.DOWN)
+			preview.y += moveSpeed;
 
 		if (autoRotate)
 		{

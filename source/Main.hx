@@ -1,6 +1,6 @@
 package;
-import objects.FunkinSoundTray;
 
+import objects.FunkinSoundTray;
 import flixel.graphics.FlxGraphic;
 import flixel.FlxG;
 import flixel.FlxGame;
@@ -19,7 +19,7 @@ import lime.app.Application;
 import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
-#if hxdiscord_rpc
+#if FEATURE_DISCORD_RPC
 import backend.api.Discord.DiscordClient;
 #end
 import sys.FileSystem;

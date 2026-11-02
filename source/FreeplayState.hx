@@ -1,7 +1,7 @@
 package;
-import backend.assets.Paths;
 
-#if hxdiscord_rpc
+import backend.assets.Paths;
+#if FEATURE_DISCORD_RPC
 import backend.api.Discord.DiscordClient;
 #end
 import objects.Alphabet;
@@ -65,7 +65,7 @@ class FreeplayState extends MusicBeatState
 		PlayState.isStoryMode = false;
 		WeekData.reloadWeekFiles(false);
 
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
 		#end

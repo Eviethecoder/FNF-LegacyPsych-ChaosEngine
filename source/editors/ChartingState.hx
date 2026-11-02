@@ -1,10 +1,10 @@
 package editors;
+
 import backend.assets.Paths;
 import objects.Note;
 import objects.StrumNote;
-
-#if hxdiscord_rpc
 import objects.AttachedSprite;
+#if FEATURE_DISCORD_RPC
 import backend.api.Discord.DiscordClient;
 #end
 import flash.geom.Rectangle;
@@ -310,7 +310,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 
 		// Paths.clearMemory();
 
-		#if desktop
+		#if FEATURE_DISCORD_RPC
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("Chart Editor", StringTools.replace(_song.song, '-', ' '));
 		#end

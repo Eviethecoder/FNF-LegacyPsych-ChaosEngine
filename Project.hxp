@@ -42,7 +42,6 @@ final EXCLUDE_ASSETS_NATIVE:Array<String> = ["*.mp3"];
 
 final REDIRECT_ASSETS_FOLDER:FeatureFlag = "REDIRECT_ASSETS_FOLDER";
 final PRELOAD_ALL:FeatureFlag = "PRELOAD_ALL";
-final VIDEOS_ALLOWED:FeatureFlag = "VIDEOS_ALLOWED";
 final HXCPP_CHECK_POINTER:FeatureFlag = "HXCPP_CHECK_POINTER";
 final HXCPP_STACK_LINE:FeatureFlag = "HXCPP_STACK_LINE";
 final MODS_ALLOWED:FeatureFlag = "MODS_ALLOWED";
@@ -114,7 +113,9 @@ class Project extends HXProject {
         addHaxelib('haxeui-flixel');
         addHaxelib('haxeui-core');
         addHaxelib('uniontypes');
+        #if FEATURE_DISCORD_RPC
         addHaxelib('hxdiscord_rpc');
+        #end
         addHaxelib('tjson');
         addHaxelib('lucidtext');
         addHaxelib('json2object');
@@ -123,7 +124,7 @@ class Project extends HXProject {
         addHaxelib('foxlite');
         if (FEATURE_VIDEO_PLAYBACK.isEnabled(this)){
             info('videos allowed, adding library hxvlc');
-            addHaxelib('hxvlc');
+            //addHaxelib('hxvlc');
         }
         if (isWindows()) addHaxelib('sl-windows-api');
     }
@@ -158,13 +159,12 @@ class Project extends HXProject {
     function configureFeatureFlags() {
         FEATURE_OPEN_URL.apply(this, true);
         FEATURE_PARTIAL_SOUNDS.apply(this, true);
-        FEATURE_VIDEO_PLAYBACK.apply(this, true);
+        FEATURE_VIDEO_PLAYBACK.apply(this, false);
 
         FEATURE_DEBUG_FUNCTIONS.apply(this, isDebug());
         FEATURE_LOG_TRACE.apply(this, isDebug());
 
-        FEATURE_DISCORD_RPC.apply(this, isDesktop() && !FEATURE_DEBUG_FUNCTIONS.isEnabled(this));
-        VIDEOS_ALLOWED.apply(this, true);
+        FEATURE_DISCORD_RPC.apply(this, /**isDesktop() && !FEATURE_DEBUG_FUNCTIONS.isEnabled(this)**/false);
         EMBED_ASSETS.apply(this, isWeb());
         MODS_ALLOWED.apply(this, true);
         PRELOAD_ALL.apply(this, !isWeb());
@@ -467,7 +467,7 @@ class Project extends HXProject {
     }
     public function info(message:String):Void {
 
-        Sys.println('[INFO] ${message}');
+        Sys.println('[INFO] $message');
 
     }
 }
