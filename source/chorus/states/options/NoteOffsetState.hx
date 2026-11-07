@@ -1,5 +1,7 @@
-package options;
-import backend.assets.Paths;
+package chorus.states.options;
+
+import chorus.backend.base.MusicBeatState;
+import chorus.backend.assets.Paths;
 
 import flixel.util.FlxStringUtil;
 import flixel.tweens.FlxEase;
@@ -11,7 +13,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxColor;
 import flixel.FlxSprite;
 import flixel.FlxCamera;
-import objects.Alphabet;
+import chorus.objects.misc.Alphabet;
 import flixel.FlxG;
 import flixel.ui.FlxBar;
 import flixel.math.FlxPoint;

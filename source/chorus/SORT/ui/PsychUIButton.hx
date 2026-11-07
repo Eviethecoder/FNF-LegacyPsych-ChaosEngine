@@ -1,11 +1,11 @@
-package backend.ui;
+package chorus.sort.ui;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import backend.ui.PsychUIBox.UIStyleData;
+import chorus.sort.ui.PsychUIBox.UIStyleData;
 
 class PsychUIButton extends FlxSpriteGroup
 {

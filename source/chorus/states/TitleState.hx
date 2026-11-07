@@ -1,16 +1,18 @@
-package;
+package chorus.states;
 
-import backend.assets.Paths;
+import chorus.backend.base.MusicBeatState;
+
+import chorus.backend.assets.Paths;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
-import objects.Alphabet;
+import chorus.objects.misc.Alphabet;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.input.keyboard.FlxKey;
 import flixel.addons.display.FlxGridOverlay;
-import debug.Consolehandler;
+import chorus.backend.debug.Consolehandler;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.transition.TransitionData;
@@ -21,7 +23,7 @@ import openfl.display.BitmapData;
 import sys.FileSystem;
 import sys.io.File;
 #end
-import options.GraphicsSettingsSubState;
+import chorus.substates.options.GraphicsSettingsSubState;
 // import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.frames.FlxFrame;
@@ -38,7 +40,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.app.Application;
-import openfl.Assets;
+import chorus.backend.assets.Assets;
 
 using StringTools;
 

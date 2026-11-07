@@ -1,19 +1,20 @@
-package;
+package chorus.states;
 
-import backend.assets.Paths;
-import backend.assets.data.WeekData;
+import chorus.backend.assets.Paths;
+import chorus.backend.assets.data.WeekData;
+import chorus.backend.base.MusicBeatState;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import objects.Cursor;
-import transitions.StickerSubState;
+import chorus.objects.misc.Cursor;
+import chorus.backend.transitions.StickerSubState;
 import flixel.FlxCamera;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.effects.FlxFlicker;
-import shaders.AngleMask;
+import chorus.backend.graphics.shaders.AngleMask;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
@@ -21,9 +22,9 @@ import flixel.math.FlxMath;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import states.Freeplay;
+import chorus.states.Freeplay;
 import lime.app.Application;
-import editors.MasterEditorMenu;
+import chorus.states.MasterEditorMenu;
 import flixel.input.keyboard.FlxKey;
 
 using StringTools;

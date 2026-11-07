@@ -1,4 +1,4 @@
-package backend.ui;
+package chorus.sort.ui;
 
 import flixel.FlxG;
 

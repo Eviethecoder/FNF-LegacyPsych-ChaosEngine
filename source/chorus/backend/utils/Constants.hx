@@ -1,3 +1,4 @@
+package chorus.backend.utils;
 import lime.app.Application;
 
 /**

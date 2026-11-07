@@ -1,9 +1,9 @@
-package utility;
-import backend.assets.Paths;
+package chorus.backend.utils;
+import chorus.backend.assets.Paths;
 
 import haxe.Json;
 import json2object.JsonParser;
-import utility.NoteSkinHelper.NoteData;
+import chorus.backend.utils.NoteSkinHelper.NoteData;
 #if sys
 import sys.io.File;
 import sys.FileSystem;

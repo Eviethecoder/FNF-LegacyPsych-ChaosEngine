@@ -1,8 +1,10 @@
-package;
-import backend.assets.Paths;
-import backend.assets.data.WeekData;
+package chorus.substates;
 
-import objects.Alphabet;
+import chorus.backend.base.MusicBeatSubstate;
+import chorus.backend.assets.Paths;
+import chorus.backend.assets.data.WeekData;
+
+import chorus.objects.misc.Alphabet;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
@@ -13,7 +15,7 @@ import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import utility.Scripthandler;
+import chorus.backend.scripting.Scripthandler;
 import flixel.util.FlxColor;
 import flixel.FlxCamera;
 import flixel.util.FlxStringUtil;

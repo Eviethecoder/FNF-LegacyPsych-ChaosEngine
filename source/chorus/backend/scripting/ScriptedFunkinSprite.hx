@@ -1,10 +1,10 @@
-package scriptobjects;
-import backend.assets.Paths;
+package chorus.backend.scripting;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
-import objects.FunkinSprite;
-import HaxeScript;
+import chorus.objects.misc.FunkinSprite;
+import chorus.backend.scripting.HaxeScript;
 
 class ScriptedFunkinSprite extends FunkinSprite
 {

@@ -1,5 +1,5 @@
-package utility;
-import objects.Note;
+package chorus.backend.utils;
+import chorus.objects.game.Note;
 
 #if sys
 import sys.FileSystem;
@@ -7,18 +7,18 @@ import sys.io.File;
 #end
 import haxe.Json;
 import haxe.io.Path;
-import backend.assets.Paths;
-import debug.Consolehandler;
-import events.CameraMovement;
-import events.CameraZoom;
-import events.BaseEvent;
-import events.ScriptedEvent;
-import events.BPMChange;
-import events.CharacterChange;
-import events.LyricEvent;
-import events.PlayAnim;
-import events.WaveyNotes;
-import events.ChangeScrollSpeed;
+import chorus.backend.assets.Paths;
+import chorus.backend.debug.Consolehandler;
+import chorus.backend.chartevents.CameraMovement;
+import chorus.backend.chartevents.CameraZoom;
+import chorus.backend.base.BaseEvent;
+import chorus.backend.scripting.ScriptedEvent;
+import chorus.backend.chartevents.BPMChange;
+import chorus.backend.chartevents.CharacterChange;
+import chorus.backend.chartevents.LyricEvent;
+import chorus.backend.chartevents.PlayAnim;
+import chorus.backend.chartevents.WaveyNotes;
+import chorus.backend.chartevents.ChangeScrollSpeed;
 
 using StringTools;
 

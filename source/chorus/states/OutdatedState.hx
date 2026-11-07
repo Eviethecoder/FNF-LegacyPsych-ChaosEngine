@@ -1,5 +1,7 @@
-package;
-import backend.assets.Paths;
+package chorus.states;
+
+import chorus.backend.base.MusicBeatState;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.FlxSprite;

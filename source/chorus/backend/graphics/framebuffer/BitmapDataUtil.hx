@@ -1,4 +1,4 @@
-package graphics.framebuffer;
+package chorus.backend.graphics.framebuffer;
 
 import openfl.display.BitmapData;
 import openfl.display3D.Context3D;

@@ -2,7 +2,7 @@ package flixel.addons.display;
 
 import flixel.FlxBasic;
 import flixel.FlxG;
-import objects.FunkinSprite;
+import chorus.objects.misc.FunkinSprite;
 import flixel.FlxCamera;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;

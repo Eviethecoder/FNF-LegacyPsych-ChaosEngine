@@ -1,10 +1,12 @@
-package editors;
-import backend.assets.Paths;
+package chorus.states.editors;
 
-import backend.ui.PsychUIBox;
-import debug.Consolehandler;
-import backend.ui.PsychUIButton;
-import backend.ui.PsychUIInputText;
+import chorus.backend.base.MusicBeatState;
+import chorus.backend.assets.Paths;
+
+import chorus.sort.ui.PsychUIBox;
+import chorus.backend.debug.Consolehandler;
+import chorus.sort.ui.PsychUIButton;
+import chorus.sort.ui.PsychUIInputText;
 import flixel.FlxG;
 import openfl.utils.ByteArray;
 import lime.app.Application;

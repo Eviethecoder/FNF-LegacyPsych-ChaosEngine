@@ -1,13 +1,13 @@
-package objects;
-import backend.assets.Paths;
+package chorus.objects.game;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
-import shaders.RGBPalette;
-import utility.NoteSkinHelper;
-import Character.AnimArray;
-import shaders.RGBPalette.RGBShaderReference;
+import chorus.backend.graphics.shaders.RGBPalette;
+import chorus.backend.utils.NoteSkinHelper;
+import chorus.objects.stages.Character.AnimArray;
+import chorus.backend.graphics.shaders.RGBPalette.RGBShaderReference;
 import flixel.util.FlxColor;
 
 using StringTools;

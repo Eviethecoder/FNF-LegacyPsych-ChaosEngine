@@ -1,8 +1,8 @@
-package objects;
+package chorus.objects.misc;
 
-import ClientPrefs;
-import CoolUtil;
-import backend.assets.Paths;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.CoolUtil;
+import chorus.backend.assets.Paths;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;

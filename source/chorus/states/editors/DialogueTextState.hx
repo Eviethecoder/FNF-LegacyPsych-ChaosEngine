@@ -1,11 +1,11 @@
-package editors;
-import backend.assets.Paths;
+package chorus.states.editors;
+import chorus.backend.assets.Paths;
 
-import objects.DialogueBox;
+import chorus.objects.dialogue.DialogueBox;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.util.FlxColor;
-import MusicBeatState;
+import chorus.backend.base.MusicBeatState;
 
 class DialogueTextState extends MusicBeatState
 {

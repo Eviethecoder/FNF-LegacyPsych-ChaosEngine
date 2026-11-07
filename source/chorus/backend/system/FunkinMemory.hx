@@ -1,14 +1,14 @@
-package objects;
-import backend.assets.Paths;
+package chorus.backend.system;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.graphics.FlxGraphic;
 import openfl.display.BitmapData;
-import openfl.utils.Assets as OpenFlAssets;
+import chorus.backend.assets.Assets as OpenFlAssets;
 import openfl.utils.AssetType;
-import lime.utils.Assets;
+import chorus.backend.assets.Assets;
 import flash.media.Sound;
-import ClientPrefs;
+import chorus.backend.utils.ClientPrefs;
 #if sys
 import sys.FileSystem;
 #end

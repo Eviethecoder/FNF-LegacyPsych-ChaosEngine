@@ -1,4 +1,4 @@
-package backend.assets;
+package chorus.backend.assets;
 
 
 import openfl.utils.Future;

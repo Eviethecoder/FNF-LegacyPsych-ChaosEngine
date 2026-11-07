@@ -1,5 +1,5 @@
-package backend.ui;
-import backend.assets.Paths;
+package chorus.sort.ui;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -7,7 +7,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 
-import backend.ui.PsychUIBox.UIStyleData;
+import chorus.sort.ui.PsychUIBox.UIStyleData;
 
 using StringTools;
 

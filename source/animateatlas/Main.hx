@@ -1,4 +1,4 @@
-package;
+package animateatlas;
 
 import animateatlas.JSONData.AtlasData;
 import openfl.display.BitmapData;
@@ -10,7 +10,7 @@ import animateatlas.HelperEnums.LoopMode;
 import openfl.events.Event;
 import openfl.display.Tilemap;
 import openfl.display.Tileset;
-import openfl.Assets;
+import chorus.backend.assets.Assets;
 import haxe.Json;
 import animateatlas.tilecontainer.TileAnimationLibrary;
 import animateatlas.tilecontainer.TileContainerMovieClip;

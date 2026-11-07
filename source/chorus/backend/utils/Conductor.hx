@@ -1,7 +1,9 @@
-package;
-import objects.Note;
+package chorus.backend.utils;
 
-import Song.SwagSong;
+import chorus.backend.save.Rating;
+import chorus.objects.game.Note;
+
+import chorus.backend.utils.Song.SwagSong;
 
 /**
  * ...

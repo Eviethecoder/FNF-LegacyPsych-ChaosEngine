@@ -1,4 +1,4 @@
-package objects;
+package chorus.objects.misc;
 
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;

@@ -1,22 +1,24 @@
-package editors;
+package chorus.states.editors;
 
-import backend.assets.Paths;
+import chorus.backend.base.MusicBeatState;
+
+import chorus.backend.assets.Paths;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
 #if desktop
 import lime.app.Application;
 import lime.ui.FileDialog;
 #end
-import objects.FunkinSprite;
+import chorus.objects.misc.FunkinSprite;
 import backend.ui.*;
-import objects.FunkinBackdrop;
+import chorus.objects.stages.FunkinBackdrop;
 import flixel.util.FlxAxes;
-import backend.assets.data.StageData;
+import chorus.backend.assets.data.StageData;
 import flixel.FlxObject;
 import flixel.FlxCamera;
-import backend.ui.PsychUIEventHandler;
-import backend.ui.Prompt.BasePrompt;
+import chorus.sort.ui.PsychUIEventHandler;
+import chorus.sort.ui.Prompt.BasePrompt;
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import openfl.display.BlendMode;

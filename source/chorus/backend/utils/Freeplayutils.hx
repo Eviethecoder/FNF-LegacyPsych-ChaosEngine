@@ -1,10 +1,10 @@
-package utility;
-import backend.assets.Paths;
+package chorus.backend.utils;
+import chorus.backend.assets.Paths;
 
 import sys.FileSystem;
 import sys.io.File;
 import haxe.io.Path;
-import backend.assets.data.SongMetadata.Metadata;
+import chorus.backend.assets.data.SongMetadata.Metadata;
 import json2object.JsonParser;
 
 using StringTools;

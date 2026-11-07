@@ -1,4 +1,4 @@
-package;
+package chorus.backend.graphics.shaders;
 
 import flixel.util.FlxColor;
 import openfl.display.ShaderParameter;

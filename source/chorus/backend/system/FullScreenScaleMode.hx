@@ -1,5 +1,5 @@
-package ;
-import utility.MathUtil;
+package chorus.backend.system;
+import chorus.backend.utils.MathUtil;
 
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -10,7 +10,7 @@ import flixel.util.FlxVerticalAlign;
 import flixel.FlxG;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
-import objects.FunkinCamera;
+import chorus.objects.misc.FunkinCamera;
 
 class FullScreenScaleMode extends flixel.system.scaleModes.BaseScaleMode
 {

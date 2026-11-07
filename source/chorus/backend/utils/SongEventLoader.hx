@@ -1,14 +1,14 @@
-package utility;
+package chorus.backend.utils;
 
 import flixel.util.FlxColor;
 import flixel.FlxG;
-import openfl.utils.Assets;
-import lime.utils.Assets as LimeAssets;
+import chorus.backend.assets.Assets;
+import chorus.backend.assets.Assets as LimeAssets;
 import lime.utils.AssetLibrary;
 import lime.utils.AssetManifest;
 import flixel.FlxBasic;
 import json2object.JsonParser;
-import event.BaseEvent;
+import chorus.backend.base.BaseEvent;
 import flixel.sound.FlxSound;
 import macro.ClassMacro;
 
@@ -16,7 +16,7 @@ import macro.ClassMacro;
 import sys.io.File;
 import sys.FileSystem;
 #else
-import openfl.utils.Assets;
+import chorus.backend.assets.Assets;
 #end
 
 using StringTools;

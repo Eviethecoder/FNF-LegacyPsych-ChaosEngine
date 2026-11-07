@@ -1,15 +1,17 @@
-package editors;
+package chorus.states.editors;
 
-import utility.Characterpreloader;
-import backend.assets.Paths;
-import Character;
+import chorus.backend.base.MusicBeatState;
+
+import chorus.backend.utils.Characterpreloader;
+import chorus.backend.assets.Paths;
+import chorus.objects.stages.Character;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import imgui.ImGui;
-import objects.FlxImGui;
+import chorus.sort.objects.FlxImGui;
 import flixel.FlxObject;
-import debug.Consolehandler;
+import chorus.backend.debug.Consolehandler;
 
 class NewCharEditor extends MusicBeatState
 {

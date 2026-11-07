@@ -1,7 +1,9 @@
-package;
-import backend.assets.Paths;
+package chorus.backend.scripting;
 
-import Conductor.BPMChangeEvent;
+import chorus.backend.base.MusicBeatState;
+import chorus.backend.assets.Paths;
+
+import chorus.backend.utils.Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.addons.ui.FlxUIState;
 import flixel.math.FlxRect;

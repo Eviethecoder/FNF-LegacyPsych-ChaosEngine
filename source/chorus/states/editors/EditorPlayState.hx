@@ -1,8 +1,10 @@
-package editors;
-import backend.assets.Paths;
-import objects.Note;
-import objects.NoteSplash;
-import objects.StrumNote;
+package chorus.states.editors;
+
+import chorus.backend.base.MusicBeatState;
+import chorus.backend.assets.Paths;
+import chorus.objects.game.Note;
+import chorus.objects.game.NoteSplash;
+import chorus.objects.game.StrumNote;
 
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.addons.transition.FlxTransitionableState;
@@ -20,8 +22,8 @@ import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
 import flixel.input.keyboard.FlxKey;
 import openfl.events.KeyboardEvent;
-import Section;
-import Song;
+import chorus.backend.utils.Section;
+import chorus.backend.utils.Song;
 
 using StringTools;
 

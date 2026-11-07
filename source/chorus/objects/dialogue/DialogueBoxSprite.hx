@@ -1,9 +1,9 @@
-package objects;
-import backend.assets.Paths;
+package chorus.objects.dialogue;
+import chorus.backend.assets.Paths;
 
-import Character.AnimArray;
-import data.DialogueBoxutil.DialogueBoxData as BoxData;
-import shaders.RGBPalette;
+import chorus.objects.stages.Character.AnimArray;
+import chorus.backend.utils.DialogueBoxutil.DialogueBoxData as BoxData;
+import chorus.backend.graphics.shaders.RGBPalette;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.util.FlxColor;
 

@@ -1,6 +1,6 @@
-package;
-import backend.assets.Paths;
-import objects.Note;
+package chorus.objects.stages;
+import chorus.backend.assets.Paths;
+import chorus.objects.game.Note;
 
 import flixel.FlxG;
 import animateatlas.AtlasFrameMaker;
@@ -11,18 +11,18 @@ import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
 import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
-import debug.Consolehandler;
-import utility.Characterpreloader;
-import Section.SwagSection;
+import chorus.backend.debug.Consolehandler;
+import chorus.backend.utils.Characterpreloader;
+import chorus.backend.utils.Section.SwagSection;
 import sys.io.File;
 import sys.FileSystem;
-import utility.Scripthandler;
+import chorus.backend.scripting.Scripthandler;
 import openfl.utils.AssetType;
-import openfl.utils.Assets;
+import chorus.backend.assets.Assets;
 import json2object.JsonParser;
-import objects.FunkinSprite;
-import HaxeScript.AnyValue;
-import utility.Scripthandler;
+import chorus.objects.misc.FunkinSprite;
+import chorus.backend.scripting.HaxeScript.AnyValue;
+import chorus.backend.scripting.Scripthandler;
 
 using StringTools;
 

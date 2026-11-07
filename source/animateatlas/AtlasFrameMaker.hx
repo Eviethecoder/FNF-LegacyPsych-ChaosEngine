@@ -1,10 +1,10 @@
 package animateatlas;
-import backend.assets.Paths;
+import chorus.backend.assets.Paths;
 import flixel.util.FlxDestroyUtil;
 import openfl.geom.Rectangle;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
-import openfl.Assets;
+import chorus.backend.assets.Assets;
 import haxe.Json;
 import openfl.display.BitmapData;
 import animateatlas.JSONData.AtlasData;

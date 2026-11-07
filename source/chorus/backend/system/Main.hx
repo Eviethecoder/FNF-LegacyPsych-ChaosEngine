@@ -1,14 +1,14 @@
-package;
+package chorus.backend.system;
 
-import objects.FunkinSoundTray;
+import chorus.backend.system.FunkinSoundTray;
 import flixel.graphics.FlxGraphic;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
-import openfl.Assets;
+import chorus.backend.assets.Assets;
 import openfl.Lib;
-import debug.FPSCounter;
-import debug.GameConsole;
+import chorus.backend.debug.FPSCounter;
+import chorus.backend.debug.GameConsole;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.display.StageScaleMode;
@@ -19,12 +19,12 @@ import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.Process;
-import debug.FunkinDebugDisplay;
+import chorus.backend.debug.FunkinDebugDisplay;
 
 using StringTools;
 

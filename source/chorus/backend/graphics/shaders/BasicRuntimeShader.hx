@@ -1,4 +1,4 @@
-package shaders;
+package chorus.backend.graphics.shaders;
 
 import flixel.addons.display.FlxRuntimeShader;
 import openfl.display.BitmapData;

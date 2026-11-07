@@ -1,14 +1,14 @@
-package events;
+package chorus.backend.chartevents;
 
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import PlayState;
+import chorus.states.PlayState;
 import flixel.FlxBasic;
-import utility.Scripthandler;
+import chorus.backend.scripting.Scripthandler;
 import flixel.math.FlxPoint;
-import HaxeScript;
-import objects.FunkinSprite;
+import chorus.backend.scripting.HaxeScript;
+import chorus.objects.misc.FunkinSprite;
 
 using StringTools;
 

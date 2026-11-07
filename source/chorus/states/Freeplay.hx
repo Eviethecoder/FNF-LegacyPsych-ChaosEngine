@@ -1,6 +1,8 @@
-package states;
-import backend.assets.Paths;
-import utility.MathUtil;
+package chorus.states;
+
+import chorus.backend.base.MusicBeatState;
+import chorus.backend.assets.Paths;
+import chorus.backend.utils.MathUtil;
 
 import flixel.FlxG;
 import flixel.input.mouse.FlxMouseEvent;
@@ -9,27 +11,27 @@ import flixel.text.FlxText;
 import flixel.math.FlxRect;
 import flixel.util.FlxTimer;
 import debug.*;
-import utility.Freeplayutils;
+import chorus.backend.utils.Freeplayutils;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.sound.FlxSound;
-import editors.ChartingState;
-import PlayState;
-import objects.FunkinSprite;
-import objects.RenderSprite;
-import objects.Freeplaypaper;
+import chorus.states.editors.ChartingState;
+import chorus.states.PlayState;
+import chorus.objects.misc.FunkinSprite;
+import chorus.objects.freeplay.RenderSprite;
+import chorus.objects.freeplay.Freeplaypaper;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxState;
 import flixel.FlxCamera;
 import flixel.math.FlxPoint;
-import utility.Scripthandler;
+import chorus.backend.scripting.Scripthandler;
 import flixel.FlxBasic;
 import sys.FileSystem;
 import haxe.io.Path;
-import backend.assets.data.SongMetadata.Metadata;
+import chorus.backend.assets.data.SongMetadata.Metadata;
 
 using StringTools;
 

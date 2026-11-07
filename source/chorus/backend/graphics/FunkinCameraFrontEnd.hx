@@ -1,8 +1,8 @@
-package graphics;
+package chorus.backend.graphics;
 
 import flixel.FlxCamera;
 import flixel.system.frontEnds.CameraFrontEnd;
-import objects.FunkinCamera;
+import chorus.objects.misc.FunkinCamera;
 
 /**
  * A `CameraFrontEnd` override that uses `FunkinCamera`!

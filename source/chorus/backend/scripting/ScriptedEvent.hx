@@ -1,13 +1,13 @@
-package events;
-import objects.Note;
+package chorus.backend.scripting;
+import chorus.objects.game.Note;
 
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import utility.Scripthandler;
-import PlayState;
+import chorus.backend.scripting.Scripthandler;
+import chorus.states.PlayState;
 import flixel.FlxBasic;
-import HaxeScript;
+import chorus.backend.scripting.HaxeScript;
 
 using StringTools;
 

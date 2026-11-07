@@ -1,9 +1,9 @@
-package data;
-import backend.assets.Paths;
+package chorus.backend.utils;
+import chorus.backend.assets.Paths;
 
 import haxe.Json;
-import Character.AnimArray;
-import ClientPrefs;
+import chorus.objects.stages.Character.AnimArray;
+import chorus.backend.utils.ClientPrefs;
 import json2object.JsonParser;
 #if sys
 import sys.io.File;

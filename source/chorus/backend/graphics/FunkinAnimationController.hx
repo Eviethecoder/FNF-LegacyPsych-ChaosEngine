@@ -1,11 +1,11 @@
-package graphics;
+package chorus.backend.graphics;
 
 import flixel.animation.FlxAnimationController;
-import objects.FunkinSprite;
+import chorus.objects.misc.FunkinSprite;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxFrame;
-import debug.Consolehandler;
+import chorus.backend.debug.Consolehandler;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxSignal;
 

@@ -1,10 +1,10 @@
-package shaders;
+package chorus.backend.graphics.shaders;
 
 import flixel.system.FlxAssets.FlxShader;
 import openfl.display.BitmapData;
 import openfl.display.ShaderParameter;
 import openfl.display.ShaderParameterType;
-import openfl.utils.Assets;
+import chorus.backend.assets.Assets;
 
 typedef Light =
 {

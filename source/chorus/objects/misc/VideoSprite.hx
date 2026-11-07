@@ -1,4 +1,4 @@
-package objects;
+package chorus.objects.misc;
 
 import flixel.addons.display.FlxPieDial;
 import flixel.group.FlxSpriteGroup;

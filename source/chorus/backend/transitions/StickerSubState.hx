@@ -1,6 +1,8 @@
-package transitions;
-import backend.assets.Paths;
-import backend.assets.data.WeekData;
+package chorus.backend.transitions;
+
+import chorus.backend.base.MusicBeatSubstate;
+import chorus.backend.assets.Paths;
+import chorus.backend.assets.data.WeekData;
 
 
 
@@ -8,7 +10,7 @@ import backend.assets.data.WeekData;
 
 import flixel.FlxSprite;
 import haxe.Json;
-import lime.utils.Assets;
+import chorus.backend.assets.Assets;
 // import flxtyped group
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxTimer;
@@ -28,7 +30,7 @@ import sys.io.File;
 #end
 
 using Lambda;
-using utility.IteratorTools; //pslice shit 
+using chorus.backend.utils.IteratorTools; //pslice shit 
 using StringTools;
 
 class StickerSubState extends MusicBeatSubstate

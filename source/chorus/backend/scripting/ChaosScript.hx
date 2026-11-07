@@ -1,6 +1,6 @@
-package objects;
+package chorus.backend.scripting;
 
-import backend.assets.Paths;
+import chorus.backend.assets.Paths;
 
 import insanity.Script;
 import insanity.Environment;

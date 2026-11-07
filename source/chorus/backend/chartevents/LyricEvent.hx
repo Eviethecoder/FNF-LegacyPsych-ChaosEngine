@@ -1,6 +1,6 @@
-package events;
-import backend.assets.Paths;
-import objects.Note;
+package chorus.backend.chartevents;
+import chorus.backend.assets.Paths;
+import chorus.objects.game.Note;
 
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -12,9 +12,9 @@ import flixel.util.FlxTimer;
 import json2object.JsonParser;
 import sys.FileSystem;
 import sys.io.File;
-import Conductor;
-import HealthIcon;
-import PlayState;
+import chorus.backend.utils.Conductor;
+import chorus.objects.game.HealthIcon;
+import chorus.states.PlayState;
 
 typedef LyricFormat =
 {

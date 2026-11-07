@@ -1,8 +1,10 @@
-package editors;
+package chorus.states.editors;
 
-import backend.assets.Paths;
+import chorus.backend.base.MusicBeatState;
+
+import chorus.backend.assets.Paths;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
 #if desktop
 import lime.app.Application;
@@ -21,23 +23,23 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.FlxGraphic;
-import objects.Cursor;
+import chorus.objects.misc.Cursor;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import backend.ui.PsychUIBox;
-import backend.ui.PsychUIButton;
-import backend.ui.PsychUICheckBox;
-import backend.ui.PsychUIDropDownMenu;
-import backend.ui.PsychUIInputText;
-import backend.ui.PsychUINumericStepper;
-import backend.ui.PsychUIEventHandler.PsychUIEvent;
+import chorus.sort.ui.PsychUIBox;
+import chorus.sort.ui.PsychUIButton;
+import chorus.sort.ui.PsychUICheckBox;
+import chorus.sort.ui.PsychUIDropDownMenu;
+import chorus.sort.ui.PsychUIInputText;
+import chorus.sort.ui.PsychUINumericStepper;
+import chorus.sort.ui.PsychUIEventHandler.PsychUIEvent;
 import flixel.ui.FlxSpriteButton;
 import openfl.net.FileReference;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import haxe.Json;
-import Character;
-import utility.Characterpreloader;
+import chorus.objects.stages.Character;
+import chorus.backend.utils.Characterpreloader;
 import flixel.system.debug.Icon;
 import lime.system.Clipboard;
 import flixel.animation.FlxAnimation;

@@ -1,4 +1,4 @@
-package macros;
+package chorus.backend.macros;
 
 #if !display
 #if macro

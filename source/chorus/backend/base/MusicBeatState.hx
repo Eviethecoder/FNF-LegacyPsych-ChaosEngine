@@ -1,13 +1,14 @@
-package;
-import backend.assets.Paths;
+package chorus.backend.base;
+import chorus.backend.assets.Paths;
+import chorus.backend.system.Controls;
 
-import Conductor.BPMChangeEvent;
+import chorus.backend.utils.Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.addons.ui.FlxUIState;
 import flixel.text.FlxText;
 import flixel.math.FlxRect;
 import flixel.util.FlxTimer;
-import utility.Characterpreloader;
+import chorus.backend.utils.Characterpreloader;
 import debug.*;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.tweens.FlxEase;
@@ -18,8 +19,8 @@ import flixel.util.FlxGradient;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxState;
 import flixel.FlxCamera;
-import utility.SignalDispatcher;
-import utility.Scripthandler;
+import chorus.backend.utils.SignalDispatcher;
+import chorus.backend.scripting.Scripthandler;
 import flixel.util.FlxSignal;
 import flixel.FlxBasic;
 

@@ -1,4 +1,4 @@
-package backend.assets;
+package chorus.backend.assets;
 
 import animateatlas.AtlasFrameMaker;
 import flixel.math.FlxPoint;
@@ -10,17 +10,17 @@ import haxe.xml.Access;
 import openfl.system.System;
 import flixel.FlxG;
 import flixel.graphics.frames.FlxAtlasFrames;
-import debug.Consolehandler;
+import chorus.backend.debug.Consolehandler;
 import openfl.utils.AssetType;
-import openfl.utils.Assets as OpenFlAssets;
-import lime.utils.Assets;
+import chorus.backend.assets.Assets as OpenFlAssets;
+import chorus.backend.assets.Assets;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
 #end
 import haxe.Json;
 import flash.media.Sound;
-import objects.FunkinMemory;
+import chorus.backend.system.FunkinMemory;
 
 using StringTools;
 class Paths

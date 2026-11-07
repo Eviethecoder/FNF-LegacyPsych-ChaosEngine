@@ -1,11 +1,11 @@
-package objects;
-import backend.assets.Paths;
+package chorus.objects.dialogue;
+import chorus.backend.assets.Paths;
 
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxRect;
-import data.DialogueBoxutil;
-import data.DialogueBoxutil.DialogueBoxData as BoxData;
-import data.DialogueBoxutil.RGBArray as RGBArray;
+import chorus.backend.utils.DialogueBoxutil;
+import chorus.backend.utils.DialogueBoxutil.DialogueBoxData as BoxData;
+import chorus.backend.utils.DialogueBoxutil.RGBArray as RGBArray;
 import flixel.util.FlxColor;
 import misc.FlxBitmapTextFactory;
 import com.bitdecay.lucidtext.TypeOptions;

@@ -1,13 +1,13 @@
-package;
-import backend.assets.Paths;
+package chorus.objects.game;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
 import meta.data.*;
-import objects.FunkinSprite;
-import utility.FunkinInterface;
-import Character.IconData as IconData;
+import chorus.objects.misc.FunkinSprite;
+import chorus.backend.utils.FunkinInterface;
+import chorus.objects.stages.Character.IconData as IconData;
 
 using StringTools;
 

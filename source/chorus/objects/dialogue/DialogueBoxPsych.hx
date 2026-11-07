@@ -1,5 +1,5 @@
-package;
-import backend.assets.Paths;
+package chorus.objects.dialogue;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -13,12 +13,12 @@ import flixel.util.FlxTimer;
 import flixel.FlxSubState;
 import haxe.Json;
 import haxe.format.JsonParser;
-import objects.Alphabet;
+import chorus.objects.misc.Alphabet;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
 #end
-import openfl.utils.Assets;
+import chorus.backend.assets.Assets;
 
 using StringTools;
 

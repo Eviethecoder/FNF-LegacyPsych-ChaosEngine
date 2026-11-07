@@ -1,4 +1,4 @@
-package shaders;
+package chorus.backend.graphics.shaders;
 
 import flixel.FlxG;
 import flixel.system.FlxAssets.FlxShader;

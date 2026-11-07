@@ -1,11 +1,12 @@
-package;
-import backend.assets.Paths;
+package chorus.backend.utils;
+import chorus.backend.assets.Paths;
 
-import Section.SwagSection;
+import chorus.backend.utils.Section.SwagSection;
 import haxe.Json;
 import json2object.JsonParser;
-import lime.utils.Assets;
-import backend.assets.data.SongMetadata.Metadata;
+import chorus.backend.assets.Assets;
+import chorus.backend.base.EventUnion;
+import chorus.backend.assets.data.SongMetadata.Metadata;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
@@ -47,7 +48,7 @@ typedef EventData =
 typedef EventValue =
 {
 	var name:String;
-	var value:events.EventUnion;
+	var value:EventUnion;
 }
 
 //// "what"?

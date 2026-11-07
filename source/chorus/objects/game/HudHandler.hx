@@ -1,5 +1,5 @@
-package;
-import backend.assets.Paths;
+package chorus.objects.game;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -7,11 +7,11 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
-import backend.assets.data.HudstyleData;
-import backend.assets.data.HudstyleData.Hudstyle;
-import objects.Bar;
-import ClientPrefs;
-import utility.Scripthandler;
+import chorus.backend.assets.data.HudstyleData;
+import chorus.backend.assets.data.HudstyleData.Hudstyle;
+import chorus.sort.objects.Bar;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.scripting.Scripthandler;
 
 using StringTools;
 

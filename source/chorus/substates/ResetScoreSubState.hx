@@ -1,6 +1,9 @@
-import backend.assets.Paths;
-import backend.assets.data.WeekData;
-import objects.Alphabet;
+package chorus.substates;
+
+import chorus.backend.base.MusicBeatSubstate;
+import chorus.backend.assets.Paths;
+import chorus.backend.assets.data.WeekData;
+import chorus.objects.misc.Alphabet;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;

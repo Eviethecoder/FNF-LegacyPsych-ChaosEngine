@@ -1,14 +1,14 @@
-package events;
-import objects.Note;
+package chorus.backend.chartevents;
+import chorus.objects.game.Note;
 
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import PlayState;
-import utility.Scripthandler;
-import debug.Consolehandler;
+import chorus.states.PlayState;
+import chorus.backend.scripting.Scripthandler;
+import chorus.backend.debug.Consolehandler;
 import flixel.graphics.frames.FlxFramesCollection;
-import HaxeScript;
+import chorus.backend.scripting.HaxeScript;
 
 @:keep
 typedef CharacterchangeData =

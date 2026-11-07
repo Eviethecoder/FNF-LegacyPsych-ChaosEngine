@@ -1,13 +1,15 @@
-package;
+package chorus.states;
 
-import backend.assets.Paths;
+import chorus.backend.base.MusicBeatState;
+
+import chorus.backend.assets.Paths;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
 import flixel.FlxG;
 import flixel.FlxSprite;
-import transitions.StickerSubState;
-import objects.FunkinMemory;
+import chorus.backend.transitions.StickerSubState;
+import chorus.backend.system.FunkinMemory;
 import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -20,7 +22,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.net.curl.CURLCode;
 import flixel.graphics.FlxGraphic;
-import backend.assets.data.WeekData;
+import chorus.backend.assets.data.WeekData;
 
 using StringTools;
 

@@ -1,14 +1,14 @@
-package backend.ui;
-import backend.assets.Paths;
+package chorus.sort.ui;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
-import MusicBeatState;
-import MusicBeatSubstate;
-import backend.ui.PsychUIButton;
+import chorus.backend.base.MusicBeatState;
+import chorus.backend.base.MusicBeatSubstate;
+import chorus.sort.ui.PsychUIButton;
 
 // Exit confirmation prompt used on all editors, for convenience
 class ExitConfirmationPrompt extends Prompt

@@ -1,5 +1,5 @@
-package backend.assets.data;
-import backend.assets.Paths;
+package chorus.backend.assets.data;
+import chorus.backend.assets.Paths;
 
 import flixel.util.FlxStringUtil;
 

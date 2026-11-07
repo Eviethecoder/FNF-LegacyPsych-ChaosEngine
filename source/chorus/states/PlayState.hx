@@ -1,23 +1,27 @@
-﻿package;
+package chorus.states;
 
-import backend.assets.Paths;
-import backend.assets.data.WeekData;
-import backend.assets.data.ChartParser;
-import objects.Note;
-import objects.NoteSplash;
-import objects.StrumNote;
-import objects.StrumNote.SustainSplash;
-import objects.FunkinSoundTray;
+import chorus.objects.stages.Character;
+import chorus.backend.utils.Vocals;
+import chorus.backend.base.MusicBeatState;
+
+import chorus.backend.assets.Paths;
+import chorus.backend.assets.data.WeekData;
+import chorus.backend.assets.data.ChartParser;
+import chorus.objects.game.Note;
+import chorus.objects.game.NoteSplash;
+import chorus.objects.game.StrumNote;
+import chorus.objects.game.StrumNote.SustainSplash;
+import chorus.backend.system.FunkinSoundTray;
 import flixel.graphics.FlxGraphic;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
-import Section;
-import Song;
-import WiggleEffect.WiggleEffectType;
+import chorus.backend.utils.Section;
+import chorus.backend.utils.Song;
+import chorus.backend.graphics.shaders.WiggleEffect.WiggleEffectType;
 import flixel.FlxBasic;
-import objects.FunkinMemory;
-import objects.FunkinCamera;
+import chorus.backend.system.FunkinMemory;
+import chorus.objects.misc.FunkinCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -39,19 +43,19 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSort;
 import flixel.util.FlxStringUtil;
 import flixel.util.FlxTimer;
-import openfl.utils.Assets as OpenFlAssets;
-import editors.ChartingState;
-import editors.CharacterEditorState;
+import chorus.backend.assets.Assets as OpenFlAssets;
+import chorus.states.editors.ChartingState;
+import chorus.states.editors.CharacterEditorState;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.keyboard.FlxKey;
-import objects.Note.EventNote;
+import chorus.objects.game.Note.EventNote;
 import openfl.events.KeyboardEvent;
 import flixel.util.FlxSave;
 import animateatlas.AtlasFrameMaker;
-import objects.Stage;
-import HaxeScript;
-import DialogueBoxPsych;
-import scriptobjects.ScriptableMusicBeatSubState;
+import chorus.objects.stages.Stage;
+import chorus.backend.scripting.HaxeScript;
+import chorus.objects.dialogue.DialogueBoxPsych;
+import chorus.backend.scripting.ScriptableMusicBeatSubState;
 #if !flash
 import flixel.addons.display.FlxRuntimeShader;
 import openfl.filters.ShaderFilter;
@@ -61,9 +65,9 @@ import sys.FileSystem;
 import sys.io.File;
 #end
 #if FEATURE_VIDEO_PLAYBACK
-import objects.VideoSprite;
+import chorus.objects.misc.VideoSprite;
 #end
-import HaxeScript.AnyValue;
+import chorus.backend.scripting.HaxeScript.AnyValue;
 import utility.*;
 
 using StringTools;

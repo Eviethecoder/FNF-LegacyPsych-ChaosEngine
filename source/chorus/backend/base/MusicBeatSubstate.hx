@@ -1,13 +1,14 @@
-package;
+package chorus.backend.base;
 
-import Conductor.BPMChangeEvent;
+import chorus.backend.system.Controls;
+import chorus.backend.utils.Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.FlxSubState;
 import flixel.FlxBasic;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import MusicBeatState.DebugText;
+import chorus.backend.base.MusicBeatState.DebugText;
 
 class MusicBeatSubstate extends FlxSubState
 {

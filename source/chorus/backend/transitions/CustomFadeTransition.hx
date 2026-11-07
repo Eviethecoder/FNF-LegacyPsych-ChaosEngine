@@ -1,6 +1,8 @@
-package;
+package chorus.backend.transitions;
 
-import Conductor.BPMChangeEvent;
+import chorus.backend.base.MusicBeatSubstate;
+
+import chorus.backend.utils.Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.addons.ui.FlxUIState;
 import flixel.math.FlxRect;

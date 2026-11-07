@@ -1,11 +1,11 @@
-package objects;
-import backend.assets.Paths;
-import utility.MathUtil;
+package chorus.backend.system;
+import chorus.backend.assets.Paths;
+import chorus.backend.utils.MathUtil;
 
 import flixel.system.ui.FlxSoundTray;
 import openfl.display.Bitmap;
 import openfl.utils.AssetType;
-import openfl.utils.Assets;
+import chorus.backend.assets.Assets;
 import flixel.FlxG;
 import json2object.JsonParser;
 import openfl.geom.ColorTransform;

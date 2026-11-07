@@ -1,7 +1,7 @@
-package;
-import backend.assets.Paths;
+package chorus.objects.credits;
+import chorus.backend.assets.Paths;
 
-import objects.AttachedSprite;
+import chorus.objects.misc.AttachedSprite;
 import openfl.display.Loader;
 import openfl.net.URLRequest;
 import openfl.events.Event;

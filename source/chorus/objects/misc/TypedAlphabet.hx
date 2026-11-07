@@ -1,7 +1,7 @@
-package;
-import backend.assets.Paths;
+package chorus.objects.misc;
+import chorus.backend.assets.Paths;
 
-import objects.Alphabet;
+import chorus.objects.misc.Alphabet;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;

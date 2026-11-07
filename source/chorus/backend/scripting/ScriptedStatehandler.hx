@@ -1,5 +1,5 @@
-package;
-import backend.assets.Paths;
+package chorus.backend.scripting;
+import chorus.backend.assets.Paths;
 
 import sys.FileSystem;
 import haxe.ds.StringMap;

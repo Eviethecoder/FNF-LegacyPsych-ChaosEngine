@@ -1,6 +1,6 @@
-package;
-import backend.assets.Paths;
-import backend.assets.data.WeekData;
+package chorus.objects;
+import chorus.backend.assets.Paths;
+import chorus.backend.assets.data.WeekData;
 
 import flixel.FlxG;
 import flixel.FlxSprite;

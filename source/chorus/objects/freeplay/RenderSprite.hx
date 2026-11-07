@@ -1,8 +1,8 @@
-package objects;
+package chorus.objects.freeplay;
 
-import utility.MathUtil;
-import objects.FunkinSprite;
-import objects.FunkinSprite;
+import chorus.backend.utils.MathUtil;
+import chorus.objects.misc.FunkinSprite;
+import chorus.objects.misc.FunkinSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxColor;
 import flixel.FlxG;
@@ -14,8 +14,8 @@ import flixel.sound.FlxSound;
 import json2object.JsonParser;
 import flash.media.Sound;
 import flixel.input.mouse.FlxMouseEvent;
-import backend.assets.data.SongMetadata.Metadata;
-import openfl.utils.Assets;
+import chorus.backend.assets.data.SongMetadata.Metadata;
+import chorus.backend.assets.Assets;
 #if sys
 import sys.FileSystem;
 import sys.io.File;

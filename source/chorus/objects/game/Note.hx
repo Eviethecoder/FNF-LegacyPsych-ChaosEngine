@@ -1,7 +1,7 @@
-package objects;
+package chorus.objects.game;
 
-import backend.assets.Paths;
-import shaders.ColorSwap;
+import chorus.backend.assets.Paths;
+import chorus.backend.graphics.shaders.ColorSwap;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
@@ -9,14 +9,15 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import flash.display.BitmapData;
-import editors.ChartingState;
-import objects.FunkinSprite;
+import chorus.states.editors.ChartingState;
+import chorus.objects.misc.FunkinSprite;
 import haxe.ds.StringMap;
-import utility.Scripthandler;
-import Character.AnimArray;
-import HaxeScript;
-import shaders.RGBPalette;
-import shaders.RGBPalette.RGBShaderReference;
+import chorus.backend.scripting.Scripthandler;
+import chorus.objects.stages.Character.AnimArray;
+import chorus.backend.base.EventUnion;
+import chorus.backend.scripting.HaxeScript;
+import chorus.backend.graphics.shaders.RGBPalette;
+import chorus.backend.graphics.shaders.RGBPalette.RGBShaderReference;
 
 using StringTools;
 
@@ -30,7 +31,7 @@ typedef EventNote =
 typedef Eventsvalue =
 {
 	name:String,
-	value:events.EventUnion
+	value:EventUnion
 }
 
 typedef NoteSplashData =

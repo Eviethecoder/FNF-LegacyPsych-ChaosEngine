@@ -1,11 +1,13 @@
-package;
+package chorus.states;
 
-import backend.assets.Paths;
+import chorus.backend.base.MusicBeatState;
+
+import chorus.backend.assets.Paths;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
-import objects.Alphabet;
-import objects.AttachedSprite;
+import chorus.objects.misc.Alphabet;
+import chorus.objects.misc.AttachedSprite;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -17,7 +19,7 @@ import flixel.math.FlxMath;
 import sys.FileSystem;
 import sys.io.File;
 import flixel.tweens.FlxEase;
-import openfl.Assets;
+import chorus.backend.assets.Assets;
 import haxe.Json;
 
 using StringTools;

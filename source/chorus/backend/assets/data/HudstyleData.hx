@@ -1,14 +1,16 @@
-package backend.assets.data;
-import backend.assets.Paths;
+package chorus.backend.assets.data;
 
-import objects.NoteSplash;
+import chorus.backend.scripting.HaxeScript;
+import chorus.backend.assets.Paths;
+
+import chorus.objects.game.NoteSplash;
 
 import haxe.Json;
-import Character.AnimArray as AnimArray;
-import ClientPrefs;
-import utility.Scripthandler;
-import utility.NoteSkinHelper;
-import utility.NoteSkinHelper.NoteSkin;
+import chorus.objects.stages.Character.AnimArray as AnimArray;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.scripting.Scripthandler;
+import chorus.backend.utils.NoteSkinHelper;
+import chorus.backend.utils.NoteSkinHelper.NoteSkin;
 #if sys
 import sys.io.File;
 import sys.FileSystem;

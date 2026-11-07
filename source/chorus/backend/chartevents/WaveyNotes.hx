@@ -1,10 +1,10 @@
-package events;
-import objects.Note;
+package chorus.backend.chartevents;
+import chorus.objects.game.Note;
 
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxTween.FlxTweenType;
-import PlayState;
-import objects.Strumline;
+import chorus.states.PlayState;
+import chorus.objects.game.Strumline;
 import flixel.FlxG;
 
 class WaveyNotes extends BaseEvent

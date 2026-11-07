@@ -1,6 +1,8 @@
-package;
-import backend.assets.Paths;
-import backend.assets.data.WeekData;
+package chorus.substates;
+
+import chorus.backend.base.MusicBeatSubstate;
+import chorus.backend.assets.Paths;
+import chorus.backend.assets.data.WeekData;
 
 import flixel.FlxG;
 import flixel.FlxObject;

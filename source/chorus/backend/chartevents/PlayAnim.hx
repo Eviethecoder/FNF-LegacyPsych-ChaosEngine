@@ -1,4 +1,4 @@
-package events;
+package chorus.backend.chartevents;
 
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -10,9 +10,9 @@ import flixel.util.FlxTimer;
 import json2object.JsonParser;
 import sys.FileSystem;
 import sys.io.File;
-import Conductor;
-import HealthIcon;
-import PlayState;
+import chorus.backend.utils.Conductor;
+import chorus.objects.game.HealthIcon;
+import chorus.states.PlayState;
 
 class PlayAnim extends BaseEvent
 {

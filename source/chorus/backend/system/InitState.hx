@@ -1,22 +1,22 @@
-package;
+package chorus.backend.system;
 
-import backend.assets.Paths;
-import backend.assets.data.WeekData;
+import chorus.backend.assets.Paths;
+import chorus.backend.assets.data.WeekData;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxG;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
 import lime.app.Application;
-import utility.Systeminfo;
-import utility.EventHandler;
-import utility.NoteTypepreloader;
-import utility.NoteSkinHelper;
-import objects.FunkinMemory;
+import chorus.backend.debug.Systeminfo;
+import chorus.backend.utils.EventHandler;
+import chorus.backend.utils.NoteTypepreloader;
+import chorus.backend.utils.NoteSkinHelper;
+import chorus.backend.system.FunkinMemory;
 import flixel.system.debug.log.LogStyle;
 import foxlite.renderer.FoxRenderer;
 import flixel.util.FlxSignal;
-import utility.SignalDispatcher;
+import chorus.backend.utils.SignalDispatcher;
 
 /**
  * Handles initialization of variables when first opening the game.

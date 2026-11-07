@@ -1,4 +1,4 @@
-package objects;
+package chorus.objects.misc;
 
 import flixel.FlxCamera;
 import flixel.tweens.FlxTween;

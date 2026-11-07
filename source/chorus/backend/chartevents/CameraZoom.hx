@@ -1,11 +1,11 @@
-package events;
+package chorus.backend.chartevents;
 
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import PlayState;
-import utility.Scripthandler;
-import HaxeScript;
+import chorus.states.PlayState;
+import chorus.backend.scripting.Scripthandler;
+import chorus.backend.scripting.HaxeScript;
 
 @:keep
 class CameraZoom extends BaseEvent

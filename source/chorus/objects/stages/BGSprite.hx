@@ -1,11 +1,11 @@
-package;
-import backend.assets.Paths;
+package chorus.objects.stages;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
-import objects.FunkinSprite;
-import objects.FunkinMemory;
-import Character.AnimArray as AnimArray;
+import chorus.objects.misc.FunkinSprite;
+import chorus.backend.system.FunkinMemory;
+import chorus.objects.stages.Character.AnimArray as AnimArray;
 
 class BGSprite extends FunkinSprite
 {

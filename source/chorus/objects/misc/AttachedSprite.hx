@@ -1,7 +1,7 @@
-package objects;
+package chorus.objects.misc;
 
-import ClientPrefs;
-import backend.assets.Paths;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.assets.Paths;
 import flixel.FlxSprite;
 
 using StringTools;

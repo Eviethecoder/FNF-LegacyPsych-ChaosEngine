@@ -1,12 +1,12 @@
-package utility;
+package chorus.backend.scripting;
 
-import HaxeScript;
-import backend.assets.Paths;
+import chorus.backend.scripting.HaxeScript;
+import chorus.backend.assets.Paths;
 import StringTools;
 import sys.FileSystem;
 import flixel.FlxG;
 import flixel.util.FlxColor;
-import openfl.utils.Assets as OpenFlAssets;
+import chorus.backend.assets.Assets as OpenFlAssets;
 import Std;
 
 class Scripthandler

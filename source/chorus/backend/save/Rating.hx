@@ -1,5 +1,5 @@
-package;
-import objects.NoteSplash;
+package chorus.backend.save;
+import chorus.objects.game.NoteSplash;
 
 class Rating
 {

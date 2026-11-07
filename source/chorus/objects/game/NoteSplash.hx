@@ -1,12 +1,12 @@
-package objects;
-import backend.assets.Paths;
+package chorus.objects.game;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
-import shaders.RGBPalette;
+import chorus.backend.graphics.shaders.RGBPalette;
 import flixel.util.FlxColor;
-import shaders.RGBPalette.RGBShaderReference;
+import chorus.backend.graphics.shaders.RGBPalette.RGBShaderReference;
 
 typedef RGB =
 {

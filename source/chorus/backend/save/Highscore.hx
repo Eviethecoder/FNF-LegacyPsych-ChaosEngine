@@ -1,5 +1,5 @@
-package;
-import backend.assets.Paths;
+package chorus.backend.save;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxG;
 

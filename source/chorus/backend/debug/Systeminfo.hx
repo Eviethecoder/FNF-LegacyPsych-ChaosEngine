@@ -1,4 +1,4 @@
-package utility;
+package chorus.backend.debug;
 import openfl.Lib;
 import flixel.FlxG;
 import openfl.events.UncaughtErrorEvent;

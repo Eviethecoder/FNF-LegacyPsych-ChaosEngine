@@ -1,9 +1,9 @@
-package objects;
-import backend.assets.Paths;
+package chorus.objects.stages;
+import chorus.backend.assets.Paths;
 
 import flixel.util.FlxAxes;
-import Character.AnimArray;
-import objects.FunkinMemory;
+import chorus.objects.stages.Character.AnimArray;
+import chorus.backend.system.FunkinMemory;
 import flixel.addons.display.FlxBackdrop;
 
 class FunkinBackdrop extends FlxBackdrop

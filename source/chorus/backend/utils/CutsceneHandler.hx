@@ -1,5 +1,5 @@
-package;
-import backend.assets.Paths;
+package chorus.backend.utils;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxCamera;
 import flixel.FlxG;

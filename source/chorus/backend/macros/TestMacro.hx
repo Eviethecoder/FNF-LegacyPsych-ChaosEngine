@@ -1,4 +1,4 @@
-package macros;
+package chorus.backend.macros;
 
 #if macro 
 import haxe.macro.ExprTools;

@@ -1,12 +1,14 @@
-package;
+package chorus.states;
 
-import backend.assets.Paths;
-import backend.assets.data.WeekData;
+import chorus.backend.base.MusicBeatState;
+
+import chorus.backend.assets.Paths;
+import chorus.backend.assets.data.WeekData;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
 import flash.text.TextField;
-import objects.AttachedSprite;
+import chorus.objects.misc.AttachedSprite;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
@@ -17,9 +19,9 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
-import lime.utils.Assets;
+import chorus.backend.assets.Assets;
 import flixel.sound.FlxSound;
-import openfl.utils.Assets as OpenFlAssets;
+import chorus.backend.assets.Assets as OpenFlAssets;
 import sys.io.File;
 import sys.FileSystem;
 import haxe.Json;
@@ -29,8 +31,8 @@ import flash.geom.Rectangle;
 import flixel.ui.FlxButton;
 import flixel.FlxBasic;
 import sys.io.File;
-import objects.ModMenuItem;
-import objects.FunkinMemory;
+import chorus.objects.ModMenuItem;
+import chorus.backend.system.FunkinMemory;
 
 /*import haxe.zip.Reader;
 	import haxe.zip.Entry;

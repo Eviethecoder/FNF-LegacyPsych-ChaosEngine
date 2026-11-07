@@ -1,10 +1,10 @@
-package shaders;
-import backend.assets.Assets;
-import objects.AttachedSprite;
+package chorus.backend.graphics.shaders;
+import chorus.backend.assets.Assets;
+import chorus.objects.misc.AttachedSprite;
 
 import flixel.system.FlxAssets.FlxShader;
 import flixel.util.FlxColor;
-import objects.FunkinSprite;
+import chorus.objects.misc.FunkinSprite;
 import flixel.math.FlxAngle;
 import flixel.graphics.frames.FlxFrame;
 import openfl.display.BitmapData;

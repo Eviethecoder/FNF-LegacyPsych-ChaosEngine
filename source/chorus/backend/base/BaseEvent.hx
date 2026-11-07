@@ -1,12 +1,13 @@
-package events;
-import objects.Note;
+package chorus.backend.base;
+import chorus.objects.game.Note.EventNote;
+import chorus.objects.game.Note.Eventsvalue;
 
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import PlayState;
+import chorus.states.PlayState;
 import flixel.FlxBasic;
-import HaxeScript;
+import chorus.backend.scripting.HaxeScript;
 
 using StringTools;
 
@@ -38,7 +39,7 @@ class BaseEvent extends FlxBasic
 	public var eventName:String = "";
 	public var eventScript:HaxeScript;
 
-	public var eventData:Array<objects.Note.Eventsvalue> = [];
+	public var eventData:Array<Eventsvalue> = [];
 
 	public function new()
 	{
@@ -49,7 +50,7 @@ class BaseEvent extends FlxBasic
 	{
 	}
 
-	public function precacheEvent(daevent:objects.Note.EventNote):Void
+	public function precacheEvent(daevent:EventNote):Void
 	{
 	}
 

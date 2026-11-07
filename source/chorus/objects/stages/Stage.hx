@@ -1,7 +1,7 @@
-package objects;
+package chorus.objects.stages;
 
-import HaxeScript.AnyValue;
-import objects.FunkinSprite;
+import chorus.backend.scripting.HaxeScript.AnyValue;
+import chorus.objects.misc.FunkinSprite;
 import flixel.FlxBasic;
 import flixel.FlxObject;
 import flixel.FlxG;
@@ -11,14 +11,14 @@ import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxColor;
 import flixel.util.FlxSort;
-import utility.Scripthandler;
+import chorus.backend.scripting.Scripthandler;
 import openfl.display.BlendMode;
-import objects.FunkinBackdrop;
-import debug.Consolehandler;
+import chorus.objects.stages.FunkinBackdrop;
+import chorus.backend.debug.Consolehandler;
 import flixel.util.FlxAxes;
-import backend.assets.data.StageData;
-import HaxeScript;
-import Character;
+import chorus.backend.assets.data.StageData;
+import chorus.backend.scripting.HaxeScript;
+import chorus.objects.stages.Character;
 
 using StringTools;
 

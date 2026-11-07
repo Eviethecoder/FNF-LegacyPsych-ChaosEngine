@@ -176,8 +176,8 @@ class Project extends HXProject {
      function configureCustomMacros()
   {
     // This macro allows addition of new functionality to existing Flixel. --> the hscript shit and the flxbackdrop extension change
-    addHaxeMacro("addMetadata('@:build(macros.FlxMacro.buildFlxBasic())', 'flixel.FlxBasic')");
-    // addHaxeMacro("addMetadata('@:preBuild(macros.Backdropclasschange.changeExtend())', 'flixel.addons.display.FlxBackdrop')");
+    addHaxeMacro("addMetadata('@:build(chorus.backend.macros.FlxMacro.buildFlxBasic())', 'flixel.FlxBasic')");
+    // addHaxeMacro("addMetadata('@:preBuild(chorus.backend.macros.Backdropclasschange.changeExtend())', 'flixel.addons.display.FlxBackdrop')");
 
   }
 

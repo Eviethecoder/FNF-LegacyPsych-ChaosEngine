@@ -1,10 +1,10 @@
-package debug;
+package chorus.backend.debug;
 
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
 import imgui.ImGui;
-import objects.FlxImGui;
+import chorus.sort.objects.FlxImGui;
 import imgui.TextBuffer;
 
 using StringTools;

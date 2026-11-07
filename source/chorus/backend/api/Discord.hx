@@ -1,9 +1,9 @@
-package backend.api;
+package chorus.backend.api;
 
 #if FEATURE_DISCORD_RPC
 import Sys.sleep;
 import lime.app.Application;
-import hxdiscord_rpc.Discord;
+import chorus.backend.api.Discord;
 import hxdiscord_rpc.Types;
 
 class DiscordClient

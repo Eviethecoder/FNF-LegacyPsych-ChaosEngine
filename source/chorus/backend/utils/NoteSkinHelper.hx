@@ -1,11 +1,11 @@
-package utility;
-import objects.Note;
-import objects.NoteSplash;
+package chorus.backend.utils;
+import chorus.objects.game.Note;
+import chorus.objects.game.NoteSplash;
 
-import ClientPrefs;
-import PlayState;
-import backend.assets.data.HudstyleData;
-import Character.AnimArray;
+import chorus.backend.utils.ClientPrefs;
+import chorus.states.PlayState;
+import chorus.backend.assets.data.HudstyleData;
+import chorus.objects.stages.Character.AnimArray;
 
 typedef NoteSkin =
 {

@@ -1,10 +1,10 @@
-package utility;
-import backend.assets.Paths;
+package chorus.backend.utils;
+import chorus.backend.assets.Paths;
 
 import flixel.util.FlxColor;
 import flixel.FlxG;
-import openfl.utils.Assets;
-import lime.utils.Assets as LimeAssets;
+import chorus.backend.assets.Assets;
+import chorus.backend.assets.Assets as LimeAssets;
 import lime.utils.AssetLibrary;
 import lime.utils.AssetManifest;
 import json2object.JsonParser;
@@ -14,7 +14,7 @@ import flixel.sound.FlxSound;
 import sys.io.File;
 import sys.FileSystem;
 #else
-import openfl.utils.Assets;
+import chorus.backend.assets.Assets;
 #end
 
 using StringTools;

@@ -1,4 +1,4 @@
-package;
+package chorus.backend.utils;
 
 import flixel.FlxG;
 import flixel.util.FlxSave;

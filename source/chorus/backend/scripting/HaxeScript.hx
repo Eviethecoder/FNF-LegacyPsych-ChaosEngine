@@ -1,8 +1,8 @@
-package;
+package chorus.backend.scripting;
 
-import backend.assets.Paths;
-import objects.Note;
-import objects.StrumNote;
+import chorus.backend.assets.Paths;
+import chorus.objects.game.Note;
+import chorus.objects.game.StrumNote;
 import haxe.Rest;
 import flixel.FlxCamera;
 import openfl.geom.Rectangle;
@@ -13,10 +13,10 @@ import lime.app.Application;
 import flixel.util.FlxAxes;
 import lime.ui.WindowAttributes;
 import flixel.FlxState;
-import PlayState;
+import chorus.states.PlayState;
 import flixel.util.FlxColor;
 import flixel.addons.display.FlxBackdrop;
-import objects.ChaosScript;
+import chorus.backend.scripting.ChaosScript;
 import flixel.tweens.FlxTween;
 import openfl.display.BlendMode;
 import flixel.input.keyboard.FlxKey;

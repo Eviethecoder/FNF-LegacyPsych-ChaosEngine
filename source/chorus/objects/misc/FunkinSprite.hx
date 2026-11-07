@@ -1,10 +1,10 @@
-package objects;
+package chorus.objects.misc;
 
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.graphics.FlxGraphic;
 import flixel.tweens.FlxTween;
-import graphics.FunkinAnimationController;
+import chorus.backend.graphics.FunkinAnimationController;
 import flixel.FlxG;
 import openfl.display.BitmapData;
 import flixel.math.FlxRect;

@@ -1,8 +1,8 @@
-package editors;
+package chorus.substates.editors;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import MusicBeatSubstate;
+import chorus.backend.base.MusicBeatSubstate;
 import flixel.ui.FlxButton;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;

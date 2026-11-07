@@ -1,5 +1,5 @@
-package objects;
-import backend.assets.Paths;
+package chorus.sort.objects;
+import chorus.backend.assets.Paths;
 
 import flixel.group.FlxSpriteGroup;
 import flixel.FlxSprite;

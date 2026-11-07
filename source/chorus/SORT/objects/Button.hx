@@ -1,10 +1,10 @@
 
-package objects;
-import backend.assets.Paths;
+package chorus.sort.objects;
+import chorus.backend.assets.Paths;
 import flixel.addons.effects.FlxSkewedSprite;
 import flixel.util.FlxColor;
 import flixel.graphics.FlxGraphic;
-import objects.FunkinSprite;
+import chorus.objects.misc.FunkinSprite;
 import flixel.tweens.FlxTween;
 import flixel.FlxG;
 import openfl.display.BitmapData;

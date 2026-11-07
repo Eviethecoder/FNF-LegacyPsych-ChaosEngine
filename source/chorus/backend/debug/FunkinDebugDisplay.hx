@@ -1,7 +1,7 @@
-package debug;
+package chorus.backend.debug;
 
 import flixel.util.FlxStringUtil;
-import debug.FunkinStatsGraph;
+import chorus.backend.debug.FunkinStatsGraph;
 import flixel.FlxG;
 import openfl.display.Shape;
 import openfl.display.Sprite;

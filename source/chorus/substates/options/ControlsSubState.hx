@@ -1,12 +1,14 @@
-package options;
+package chorus.substates.options;
 
-import backend.assets.Paths;
-import utility.InputFormatter;
+import chorus.backend.base.MusicBeatSubstate;
+
+import chorus.backend.assets.Paths;
+import chorus.backend.utils.InputFormatter;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
-import objects.Alphabet;
-import objects.AttachedText;
+import chorus.objects.misc.Alphabet;
+import chorus.objects.misc.AttachedText;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
@@ -14,7 +16,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import lime.utils.Assets;
+import chorus.backend.assets.Assets;
 import flixel.FlxSubState;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -25,7 +27,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.FlxGraphic;
-import Controls;
+import chorus.backend.system.Controls;
 
 using StringTools;
 

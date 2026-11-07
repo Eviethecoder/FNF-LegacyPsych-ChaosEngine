@@ -1,4 +1,4 @@
-package utility;
+package chorus.backend.utils;
 
 import flixel.FlxG;
 

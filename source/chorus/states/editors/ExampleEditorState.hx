@@ -1,16 +1,18 @@
-package editors;
+package chorus.states.editors;
 
-import backend.assets.Paths;
+import chorus.backend.base.MusicBeatState;
+
+import chorus.backend.assets.Paths;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
-import backend.ui.PsychUIBox;
-import backend.ui.PsychUIButton;
-import backend.ui.PsychUICheckBox;
-import backend.ui.PsychUIDropDownMenu;
-import backend.ui.PsychUIEventHandler.PsychUIEvent;
-import backend.ui.PsychUIInputText;
-import backend.ui.PsychUINumericStepper;
+import chorus.sort.ui.PsychUIBox;
+import chorus.sort.ui.PsychUIButton;
+import chorus.sort.ui.PsychUICheckBox;
+import chorus.sort.ui.PsychUIDropDownMenu;
+import chorus.sort.ui.PsychUIEventHandler.PsychUIEvent;
+import chorus.sort.ui.PsychUIInputText;
+import chorus.sort.ui.PsychUINumericStepper;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;

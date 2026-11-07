@@ -1,6 +1,6 @@
-package options;
+package chorus.backend.base;
 
-import objects.Alphabet;
+import chorus.objects.misc.Alphabet;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
@@ -8,7 +8,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import lime.utils.Assets;
+import chorus.backend.assets.Assets;
 import flixel.FlxSubState;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -18,7 +18,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.FlxGraphic;
-import Controls;
+import chorus.backend.system.Controls;
 
 using StringTools;
 

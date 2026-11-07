@@ -1,17 +1,17 @@
-package objects;
-import backend.assets.Paths;
+package chorus.objects.game;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
-import Section.SwagSection;
+import chorus.backend.utils.Section.SwagSection;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.util.FlxSort;
-import editors.ChartingState;
-import Song.ChartNoteData;
+import chorus.states.editors.ChartingState;
+import chorus.backend.utils.Song.ChartNoteData;
 
 using StringTools;
 

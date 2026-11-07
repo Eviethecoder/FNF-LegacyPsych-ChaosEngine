@@ -1,5 +1,5 @@
-package;
-import backend.assets.Paths;
+package chorus.sort;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -7,7 +7,7 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import sys.io.File;
 import sys.FileSystem;
 #end
-import openfl.utils.Assets;
+import chorus.backend.assets.Assets;
 import haxe.Json;
 import haxe.format.JsonParser;
 

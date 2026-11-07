@@ -1,11 +1,13 @@
-package states;
+package chorus.states;
 
-import backend.assets.Paths;
+import chorus.backend.base.MusicBeatState;
+
+import chorus.backend.assets.Paths;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import imgui.ImGui;
-import objects.FlxImGui;
+import chorus.sort.objects.FlxImGui;
 
 class Imguitest extends MusicBeatState
 {

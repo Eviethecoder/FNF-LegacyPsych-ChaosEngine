@@ -1,5 +1,5 @@
-package objects;
-import backend.assets.Paths;
+package chorus.objects;
+import chorus.backend.assets.Paths;
 import flixel.addons.effects.FlxSkewedSprite;
 import flixel.util.FlxColor;
 import flixel.graphics.FlxGraphic;
@@ -8,7 +8,7 @@ import flixel.FlxG;
 import openfl.display.BitmapData;
 import flixel.math.FlxRect;
 import flixel.text.FlxText;
-import objects.AttachedSprite;
+import chorus.objects.misc.AttachedSprite;
 import flixel.math.FlxPoint;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.FlxCamera;

@@ -1,4 +1,4 @@
-package events;
+package chorus.backend.chartevents;
 
 class BPMChange extends BaseEvent
 {

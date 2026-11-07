@@ -1,4 +1,6 @@
-package backend.assets.data;
+package chorus.backend.assets.data;
+
+import chorus.objects.stages.Character.AnimArray;
 
 
 typedef Metadata =
@@ -48,7 +50,7 @@ typedef RenderData =
 	var rendergraphic:Null<String>;
 
 	@:optional
-	var animdata:Null<Array<Character.AnimArray>>;
+	var animdata:Null<Array<AnimArray>>;
 }
 
 typedef SongItemData =
@@ -57,5 +59,5 @@ typedef SongItemData =
 	var itemgraphic:Null<String>;
 
 	@:optional
-	var animdata:Null<Array<Character.AnimArray>>;
+	var animdata:Null<Array<AnimArray>>;
 }

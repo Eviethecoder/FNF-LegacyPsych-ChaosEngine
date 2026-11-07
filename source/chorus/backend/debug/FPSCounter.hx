@@ -1,4 +1,4 @@
-package debug;
+package chorus.backend.debug;
 
 import flixel.FlxG;
 import openfl.text.TextField;

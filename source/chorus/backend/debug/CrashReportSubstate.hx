@@ -1,4 +1,4 @@
-package debug;
+package chorus.backend.debug;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -6,13 +6,13 @@ import flixel.FlxState;
 import openfl.Lib;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
-import objects.Alphabet;
+import chorus.objects.misc.Alphabet;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxGradient;
 import flixel.util.FlxColor;
-import backend.assets.Paths;
+import chorus.backend.assets.Paths;
 import sys.io.File;
-import TitleState;
+import chorus.states.TitleState;
 import sys.FileSystem;
 
 using StringTools;

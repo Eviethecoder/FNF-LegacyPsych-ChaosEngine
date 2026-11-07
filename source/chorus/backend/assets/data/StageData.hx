@@ -1,15 +1,17 @@
-package backend.assets.data;
-import backend.assets.Paths;
+package chorus.backend.assets.data;
+
+import chorus.objects.stages.Character.AnimArray;
+import chorus.backend.assets.Paths;
 
 
 #if MODS_ALLOWED
 import sys.io.File;
 import sys.FileSystem;
 #else
-import openfl.utils.Assets;
+import chorus.backend.assets.Assets;
 #end
 import json2object.JsonParser;
-import Song;
+import chorus.backend.utils.Song;
 
 using StringTools;
 
@@ -104,7 +106,7 @@ typedef PropData =
 	 * the assets animation data. optional -- if not present, it will use a static image
 	 */
 	@:optional
-	var animations:Null<Array<Character.AnimArray>>;
+	var animations:Null<Array<AnimArray>>;
 
 	/**
 	 * The type of prop. This corresponds to a prop or sprite class, Defaults to BGSprite

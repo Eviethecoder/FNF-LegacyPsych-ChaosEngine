@@ -1,11 +1,13 @@
-package;
+package chorus.states;
 
-import backend.assets.Paths;
+import chorus.backend.base.MusicBeatState;
+
+import chorus.backend.assets.Paths;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
-import objects.Alphabet;
-import editors.ChartingState;
+import chorus.objects.misc.Alphabet;
+import chorus.states.editors.ChartingState;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
@@ -14,13 +16,13 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import utility.Characterpreloader;
-import lime.utils.Assets;
+import chorus.backend.utils.Characterpreloader;
+import chorus.backend.assets.Assets;
 import flixel.tweens.FlxTween;
-import lime.utils.Assets;
+import chorus.backend.assets.Assets;
 import flixel.sound.FlxSound;
-import openfl.utils.Assets as OpenFlAssets;
-import backend.assets.data.WeekData;
+import chorus.backend.assets.Assets as OpenFlAssets;
+import chorus.backend.assets.data.WeekData;
 #if MODS_ALLOWED
 import sys.FileSystem;
 #end

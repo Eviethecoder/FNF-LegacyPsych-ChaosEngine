@@ -1,38 +1,45 @@
-package editors;
+package chorus.states.editors;
 
-import backend.assets.Paths;
-import objects.Note;
-import objects.StrumNote;
-import objects.AttachedSprite;
+import chorus.backend.utils.Vocals;
+import chorus.backend.base.MusicBeatState;
+
+import chorus.backend.assets.Paths;
+import chorus.objects.game.Note;
+import chorus.objects.game.StrumNote;
+import chorus.objects.stages.Character.IconData;
+import chorus.objects.misc.AttachedSprite;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
 import flash.geom.Rectangle;
 import haxe.Json;
 import haxe.format.JsonParser;
 import haxe.io.Bytes;
-import Conductor.BPMChangeEvent;
-import Section.SwagSection;
-import events.BaseEvent;
-import Song.SwagSong;
+import chorus.backend.utils.Conductor.BPMChangeEvent;
+import chorus.backend.utils.Section.SwagSection;
+import chorus.backend.base.BaseEvent;
+import chorus.backend.utils.Song.SwagSong;
+import chorus.backend.utils.Song.EventData;
+import chorus.backend.utils.Song.EventValue;
+import chorus.backend.utils.Song;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
-import debug.Consolehandler;
-import objects.Cursor;
+import chorus.backend.debug.Consolehandler;
+import chorus.objects.misc.Cursor;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.transition.FlxTransitionableState;
-import backend.ui.PsychUIBox;
-import backend.ui.PsychUICheckBox;
-import backend.ui.PsychUIInputText;
-import backend.ui.Prompt;
-import backend.ui.PsychUINumericStepper;
-import backend.ui.PsychUISlider;
-import backend.ui.PsychUIButton;
-import backend.ui.PsychUIDropDownMenu;
-import backend.ui.PsychUIEventHandler.PsychUIEvent;
+import chorus.sort.ui.PsychUIBox;
+import chorus.sort.ui.PsychUICheckBox;
+import chorus.sort.ui.PsychUIInputText;
+import chorus.sort.ui.Prompt;
+import chorus.sort.ui.PsychUINumericStepper;
+import chorus.sort.ui.PsychUISlider;
+import chorus.sort.ui.PsychUIButton;
+import chorus.sort.ui.PsychUIDropDownMenu;
+import chorus.sort.ui.PsychUIEventHandler.PsychUIEvent;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
@@ -43,20 +50,20 @@ import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import objects.FunkinSprite;
+import chorus.objects.misc.FunkinSprite;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxSort;
 import lime.media.AudioBuffer;
-import lime.utils.Assets;
+import chorus.backend.assets.Assets;
 import openfl.events.Event;
 import flixel.util.FlxTimer;
 import openfl.events.IOErrorEvent;
 import openfl.media.Sound;
 import openfl.net.FileReference;
-import openfl.utils.Assets as OpenFlAssets;
+import chorus.backend.assets.Assets as OpenFlAssets;
 import openfl.utils.ByteArray;
-import editors.ChartHelpSubstate;
+import chorus.substates.editors.ChartHelpSubstate;
 #if desktop
 import lime.app.Application;
 import lime.ui.FileDialog;
@@ -1389,14 +1396,14 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		{
 			if (curSelectedNote != null && isSelectableEvent(curSelectedNote))
 			{
-				var selectedEvent:Song.EventData = getSelectedEventData();
+				var selectedEvent:EventData = getSelectedEventData();
 				if (selectedEvent != null)
 				{
 					var eventArray = isCameraEvent() ? _song.cameraevents : _song.events;
 					var selectedTime:Float = selectedEvent.strumTime;
 					eventArray.remove(selectedEvent);
 
-					var remaining:Array<Song.EventData> = [];
+					var remaining:Array<EventData> = [];
 					for (eventData in eventArray)
 					{
 						if (eventData != null && Math.abs(eventData.strumTime - selectedTime) < 0.0001)
@@ -1429,9 +1436,9 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 			if (curSelectedNote != null && isSelectableEvent(curSelectedNote))
 			{
 				var eventArray = isCameraEvent() ? _song.cameraevents : _song.events;
-				var typed:Song.EventData = curSelectedNote;
+				var typed:EventData = curSelectedNote;
 				var defaultValues:Array<Dynamic> = ['', ''];
-				var newEvent:Song.EventData = makeSongEvent(typed.strumTime, '', defaultValues);
+				var newEvent:EventData = makeSongEvent(typed.strumTime, '', defaultValues);
 				eventArray.push(newEvent);
 				curSelectedNote = typed;
 				curEventSelected = Std.int(getCurrentEventLength()) - 1;
@@ -1699,18 +1706,18 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 	{
 		if (!isTypedSongEvent(event))
 			return 0;
-		var typed:Song.EventData = event;
+		var typed:EventData = event;
 		return typed.strumTime;
 	}
 
-	function getEventArrayForReference(event:Dynamic):Array<Song.EventData>
+	function getEventArrayForReference(event:Dynamic):Array<EventData>
 	{
 		return isCameraSongEvent(event) ? _song.cameraevents : _song.events;
 	}
 
-	function getEventsAtTime(eventArray:Array<Song.EventData>, strumTime:Float):Array<Song.EventData>
+	function getEventsAtTime(eventArray:Array<EventData>, strumTime:Float):Array<EventData>
 	{
-		var grouped:Array<Song.EventData> = [];
+		var grouped:Array<EventData> = [];
 		if (eventArray == null)
 			return grouped;
 
@@ -1723,7 +1730,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		return grouped;
 	}
 
-	function getEventEntryFromTyped(eventData:Song.EventData):Array<Dynamic>
+	function getEventEntryFromTyped(eventData:EventData):Array<Dynamic>
 	{
 		var entry:Array<Dynamic> = [eventData.name];
 		if (eventData.values == null)
@@ -1753,7 +1760,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 	{
 		if (!isTypedSongEvent(event))
 			return [];
-		var typed:Song.EventData = event;
+		var typed:EventData = event;
 		return [getEventEntryFromTyped(typed)];
 	}
 
@@ -1762,8 +1769,8 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		if (!isTypedSongEvent(event))
 			return [];
 
-		var typed:Song.EventData = event;
-		var grouped:Array<Song.EventData> = getEventsAtTime(getEventArrayForReference(event), typed.strumTime);
+		var typed:EventData = event;
+		var grouped:Array<EventData> = getEventsAtTime(getEventArrayForReference(event), typed.strumTime);
 		var entries:Array<Array<Dynamic>> = [];
 		for (eventData in grouped)
 		{
@@ -1772,15 +1779,15 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		return entries;
 	}
 
-	function getSelectedEventData():Song.EventData
+	function getSelectedEventData():EventData
 	{
 		if (curSelectedNote == null)
 			return null;
 		if (!isTypedSongEvent(curSelectedNote))
 			return null;
 
-		var typed:Song.EventData = curSelectedNote;
-		var grouped:Array<Song.EventData> = getEventsAtTime(getEventArrayForReference(curSelectedNote), typed.strumTime);
+		var typed:EventData = curSelectedNote;
+		var grouped:Array<EventData> = getEventsAtTime(getEventArrayForReference(curSelectedNote), typed.strumTime);
 		if (grouped.length < 1)
 			return null;
 
@@ -1809,7 +1816,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 
 	function setCurrentEventName(name:String):Void
 	{
-		var selectedEvent:Song.EventData = getSelectedEventData();
+		var selectedEvent:EventData = getSelectedEventData();
 		if (selectedEvent == null)
 			return;
 		selectedEvent.name = name;
@@ -1859,7 +1866,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 	{
 		if (valueIndex < 1)
 			return '';
-		var selectedEvent:Song.EventData = getSelectedEventData();
+		var selectedEvent:EventData = getSelectedEventData();
 		if (selectedEvent == null)
 			return '';
 		if (selectedEvent.values == null || selectedEvent.values.length < valueIndex)
@@ -1877,7 +1884,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 
 	function setCurrentEventValue(valueIndex:Int, value:Dynamic):Void
 	{
-		var selectedEvent:Song.EventData = getSelectedEventData();
+		var selectedEvent:EventData = getSelectedEventData();
 		if (selectedEvent == null)
 			return;
 
@@ -1941,9 +1948,9 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		return 0;
 	}
 
-	function makeSongEvent(strumTime:Float, name:String, values:Array<Dynamic>):Song.EventData
+	function makeSongEvent(strumTime:Float, name:String, values:Array<Dynamic>):EventData
 	{
-		var copiedValues:Array<Song.EventValue> = [];
+		var copiedValues:Array<EventValue> = [];
 		if (values != null)
 		{
 			for (i in 0...values.length)
@@ -2408,7 +2415,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 						value = 0;
 					if (isTypedSongEvent(curSelectedNote))
 					{
-						var typedEvent:Song.EventData = curSelectedNote;
+						var typedEvent:EventData = curSelectedNote;
 						typedEvent.strumTime = value;
 					}
 					else
@@ -4648,9 +4655,9 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		return FlxSort.byValues(FlxSort.ASCENDING, getEventTime(Obj1), getEventTime(Obj2));
 	}
 
-	function serializeEventList(eventList:Array<Song.EventData>):Array<Song.EventData>
+	function serializeEventList(eventList:Array<EventData>):Array<EventData>
 	{
-		var output:Array<Song.EventData> = [];
+		var output:Array<EventData> = [];
 		if (eventList == null)
 			return output;
 
@@ -4659,7 +4666,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 			if (eventData == null)
 				continue;
 
-			var values:Array<Song.EventValue> = [];
+			var values:Array<EventValue> = [];
 			if (eventData.values != null)
 			{
 				for (i in 0...eventData.values.length)
@@ -4721,7 +4728,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		return output;
 	}
 
-	function returniconformat(icon:String):Character.IconData
+	function returniconformat(icon:String):IconData
 	{
 		return {
 			healthicon: icon,

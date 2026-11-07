@@ -1,13 +1,13 @@
-package backend.assets.data;
-import backend.assets.Paths;
+package chorus.backend.assets.data;
+import chorus.backend.assets.Paths;
 
 
 #if MODS_ALLOWED
 import sys.io.File;
 import sys.FileSystem;
 #end
-import lime.utils.Assets;
-import openfl.utils.Assets as OpenFlAssets;
+import chorus.backend.assets.Assets;
+import chorus.backend.assets.Assets as OpenFlAssets;
 import haxe.Json;
 import haxe.format.JsonParser;
 import flixel.util.FlxColor;

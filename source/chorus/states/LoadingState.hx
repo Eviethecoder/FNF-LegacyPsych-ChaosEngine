@@ -1,10 +1,12 @@
-package;
-import backend.assets.Paths;
+package chorus.states;
 
-import backend.assets.data.StageData;
+import chorus.backend.base.MusicBeatState;
+import chorus.backend.assets.Paths;
+
+import chorus.backend.assets.data.StageData;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import objects.FunkinMemory;
+import chorus.backend.system.FunkinMemory;
 
 class LoadingState extends MusicBeatState
 {

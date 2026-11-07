@@ -1,4 +1,4 @@
-package debug;
+package chorus.backend.debug;
 
 class Consolehandler
 {

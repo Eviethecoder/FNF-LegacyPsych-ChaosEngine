@@ -1,6 +1,6 @@
-package;
-import backend.assets.Paths;
-import objects.Note;
+package chorus.states;
+import chorus.backend.assets.Paths;
+import chorus.objects.game.Note;
 
 import flixel.FlxG;
 import flixel.FlxSprite;

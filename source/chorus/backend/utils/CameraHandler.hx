@@ -1,11 +1,11 @@
-package eventhelpers;
+package chorus.backend.utils;
 
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import objects.FunkinSprite;
-import PlayState;
-import Character;
+import chorus.objects.misc.FunkinSprite;
+import chorus.states.PlayState;
+import chorus.objects.stages.Character;
 
 using StringTools;
 

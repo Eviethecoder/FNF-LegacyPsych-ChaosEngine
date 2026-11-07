@@ -1,5 +1,5 @@
-package backend.ui;
-import backend.assets.Paths;
+package chorus.sort.ui;
+import chorus.backend.assets.Paths;
 
 import flixel.FlxCamera;
 import flixel.FlxG;

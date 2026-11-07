@@ -1,10 +1,11 @@
-package editors;
+package chorus.states;
 
-import backend.assets.Paths;
-import backend.assets.data.WeekData;
-import objects.Alphabet;
+import chorus.backend.base.MusicBeatState;
+import chorus.backend.assets.Paths;
+import chorus.backend.assets.data.WeekData;
+import chorus.objects.misc.Alphabet;
 #if FEATURE_DISCORD_RPC
-import backend.api.Discord.DiscordClient;
+import chorus.backend.api.Discord.DiscordClient;
 #end
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -14,7 +15,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import editors.Welcometest;
+import chorus.states.editors.Welcometest;
 import flixel.sound.FlxSound;
 #if MODS_ALLOWED
 import sys.FileSystem;
