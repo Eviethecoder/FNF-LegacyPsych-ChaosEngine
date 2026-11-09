@@ -5,6 +5,7 @@ import flixel.util.FlxColor;
 import flixel.FlxG;
 import chorus.backend.assets.Assets;
 import chorus.backend.assets.Assets as LimeAssets;
+import chorus.objects.stages.Character.CharacterFile;
 import lime.utils.AssetLibrary;
 import lime.utils.AssetManifest;
 import json2object.JsonParser;
@@ -25,19 +26,19 @@ using StringTools;
  */
 class Characterpreloader
 {
-    public static var charmap:Map<String,Character.CharacterFile > = [];
+    public static var charmap:Map<String,CharacterFile> = [];
     public static function addchartomap(path:String, file:String){
         var rawJson = File.getContent(path);
-        var charjsonpraser:JsonParser<Character.CharacterFile> = new JsonParser<Character.CharacterFile>();
+        var charjsonpraser:JsonParser<CharacterFile> = new JsonParser<CharacterFile>();
         charjsonpraser.fromJson(rawJson, path);
-		var json:Character.CharacterFile = charjsonpraser.value;
+		var json:CharacterFile = charjsonpraser.value;
 
         validatejson(json, file);
      
     };
 
-    public static function grabchardata(char:String):Character.CharacterFile{
-        var json:Character.CharacterFile;
+    public static function grabchardata(char:String):CharacterFile{
+        var json:CharacterFile;
         if (charmap.get(char) == null){
 
             json = charmap.get(Constants.DEFAULT_CHARACTER);
@@ -48,7 +49,7 @@ class Characterpreloader
         return json;
     }
 
-    public static function validatejson(input:Character.CharacterFile, file:String){
+    public static function validatejson(input:CharacterFile, file:String){
  
         if(input.image == null){  //once more 100 percent required json variables are here add them
 

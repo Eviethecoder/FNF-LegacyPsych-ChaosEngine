@@ -12,6 +12,11 @@ import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.util.FlxSort;
 import chorus.states.editors.ChartingState;
 import chorus.backend.utils.Song.ChartNoteData;
+import chorus.objects.stages.Character;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.Conductor;
+import chorus.backend.debug.Consolehandler;
+import chorus.states.PlayState;
 
 using StringTools;
 
@@ -674,7 +679,7 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 
 		if (note.special == true)
 		{
-			debug.Consolehandler.print('ALLL NOTES BEING HIT');
+			Consolehandler.print('ALLL NOTES BEING HIT');
 			for (strum in strumNotes.members)
 			{
 				if (strum != null)

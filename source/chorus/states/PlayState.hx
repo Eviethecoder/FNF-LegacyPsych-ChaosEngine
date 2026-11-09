@@ -3,12 +3,25 @@ package chorus.states;
 import chorus.objects.stages.Character;
 import chorus.backend.utils.Vocals;
 import chorus.backend.base.MusicBeatState;
-
 import chorus.backend.assets.Paths;
 import chorus.backend.assets.data.WeekData;
 import chorus.backend.assets.data.ChartParser;
+import chorus.backend.save.Rating;
+import chorus.backend.save.Highscore;
+import chorus.backend.debug.Consolehandler;
+import chorus.backend.scripting.Scripthandler;
+import chorus.backend.transitions.CustomFadeTransition;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.Conductor;
+import chorus.backend.utils.Constants;
+import chorus.backend.utils.CoolUtil;
+import chorus.backend.utils.EventHandler;
+import chorus.backend.utils.SignalDispatcher;
 import chorus.objects.game.Note;
 import chorus.objects.game.NoteSplash;
+import chorus.objects.game.HudHandler;
+import chorus.objects.game.HealthIcon;
+import chorus.objects.game.Strumline;
 import chorus.objects.game.StrumNote;
 import chorus.objects.game.StrumNote.SustainSplash;
 import chorus.backend.system.FunkinSoundTray;
@@ -18,6 +31,7 @@ import chorus.backend.api.Discord.DiscordClient;
 #end
 import chorus.backend.utils.Section;
 import chorus.backend.utils.Song;
+import chorus.backend.utils.Song.EventData;
 import chorus.backend.graphics.shaders.WiggleEffect.WiggleEffectType;
 import flixel.FlxBasic;
 import chorus.backend.system.FunkinMemory;
@@ -33,7 +47,6 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.text.FlxText;
-import eventhelpers.*;
 import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
@@ -46,9 +59,13 @@ import flixel.util.FlxTimer;
 import chorus.backend.assets.Assets as OpenFlAssets;
 import chorus.states.editors.ChartingState;
 import chorus.states.editors.CharacterEditorState;
+import chorus.states.Freeplay;
+import chorus.substates.GameOverSubstate;
+import chorus.substates.PauseSubState;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.keyboard.FlxKey;
 import chorus.objects.game.Note.EventNote;
+import chorus.objects.game.Note.Eventsvalue;
 import openfl.events.KeyboardEvent;
 import flixel.util.FlxSave;
 import animateatlas.AtlasFrameMaker;
@@ -68,7 +85,6 @@ import sys.io.File;
 import chorus.objects.misc.VideoSprite;
 #end
 import chorus.backend.scripting.HaxeScript.AnyValue;
-import utility.*;
 
 using StringTools;
 
@@ -141,10 +157,10 @@ class PlayState extends MusicBeatState
 	// â”€â”€ Strumlines (own arrows + notes for each lane) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	/** Opponent (CPU) strumline. */
-	public var opponentStrumline:objects.Strumline;
+	public var opponentStrumline:chorus.objects.game.Strumline;
 
 	/** Player strumline. */
-	public var playerStrumline:objects.Strumline;
+	public var playerStrumline:chorus.objects.game.Strumline;
 
 	/**
 	 * Combined strum arrows from both lanes.
@@ -163,7 +179,6 @@ class PlayState extends MusicBeatState
 	private static var prevCamFollow:FlxPoint;
 	private static var prevCamFollowPos:FlxObject;
 
-	public var hscriptArray:Array<HaxeScript.HaxeScript> = [];
 	public var grpNoteSplashes:FlxTypedGroup<NoteSplash>;
 	public var grpSustainSplashes:FlxTypedGroup<SustainSplash>;
 
@@ -192,7 +207,7 @@ class PlayState extends MusicBeatState
 
 	public var generatedMusic:Bool = false;
 
-	public var sustainSplashSetting:Int = 2; // ClientPrefs.data.holdSplashSetting == "On" ? 2 : ClientPrefs.data.holdSplashSetting == "Only Covers" ? 1 : 0;
+	public var sustainSplashSetting:Int = 2;
 
 	public var endingSong:Bool = false;
 	public var startingSong:Bool = false;
@@ -282,6 +297,7 @@ class PlayState extends MusicBeatState
 	public var introSoundsSuffix:String = '';
 	public var pauseScript:String = '';
 	public var gameoverScript:String = '';
+	public var hscriptArray:Array<HaxeScript> = [];
 
 	// Debug buttons
 	private var debugKeysChart:Array<FlxKey>;
@@ -417,13 +433,20 @@ class PlayState extends MusicBeatState
 		{
 			dialogue = CoolUtil.coolTextFile(file);
 		}
-		var doof:DialogueBox = new DialogueBox(false, dialogue);
-		// doof.x += 70;
-		// doof.y = FlxG.height * 0.5;
-		doof.scrollFactor.set();
-		doof.finishThing = startCountdown;
-		doof.nextDialogueThing = startNextDialogue;
-		doof.skipDialogueThing = skipDialogue;
+		var doof:DialogueBoxPsych = null;
+		if (dialogueJson != null)
+		{
+			doof = new DialogueBoxPsych(dialogueJson, songName);
+			doof.scrollFactor.set();
+			doof.finishThing = function()
+			{
+				psychDialogue = null;
+				startCountdown();
+			};
+			doof.nextDialogueThing = startNextDialogue;
+			doof.skipDialogueThing = skipDialogue;
+			doof.cameras = [camHUD];
+		}
 
 		Conductor.songPosition = -5000 / Conductor.songPosition;
 
@@ -433,8 +456,8 @@ class PlayState extends MusicBeatState
 		strumLine.scrollFactor.set();
 		hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song); ///do this before song is generated for noteskins
 
-		opponentStrumline = new objects.Strumline(strumLine.y, false);
-		playerStrumline = new objects.Strumline(strumLine.y, true);
+		opponentStrumline = new Strumline(strumLine.y, false);
+		playerStrumline = new Strumline(strumLine.y, true);
 
 		// Note-hit logic is owned by Strumline.
 		playerStrumline.onNoteMiss = function(note:Note)
@@ -689,8 +712,8 @@ class PlayState extends MusicBeatState
 		opponentStrumline.charlist = [stage.dad];
 		setFunctionOnScripts('onCreatePost', []);
 
-		utility.SignalDispatcher.addtoSignal('beatHit', Scripthandler.onBeatHit);
-		utility.SignalDispatcher.addtoSignal('stepHit', Scripthandler.onBeatHit);
+		SignalDispatcher.addtoSignal('beatHit', Scripthandler.onBeatHit);
+		SignalDispatcher.addtoSignal('stepHit', Scripthandler.onBeatHit);
 
 		super.create();
 
@@ -914,7 +937,7 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	function schoolIntro(?dialogueBox:DialogueBox):Void
+	function schoolIntro(?dialogueBox:DialogueBoxPsych):Void
 	{
 		inCutscene = true;
 		var black:FlxSprite = new FlxSprite(-100, -100).makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.BLACK);
@@ -977,6 +1000,7 @@ class PlayState extends MusicBeatState
 									remove(red);
 									FlxG.camera.fade(FlxColor.WHITE, 0.01, true, function()
 									{
+										psychDialogue = dialogueBox;
 										add(dialogueBox);
 										camHUD.visible = true;
 									}, true);
@@ -990,6 +1014,7 @@ class PlayState extends MusicBeatState
 					}
 					else
 					{
+						psychDialogue = dialogueBox;
 						add(dialogueBox);
 					}
 				}
@@ -1311,7 +1336,7 @@ class PlayState extends MusicBeatState
 	private var noteTypeMap:Map<String, Bool> = new Map<String, Bool>();
 	private var eventPushedMap:Map<String, Bool> = new Map<String, Bool>();
 
-	inline function makeEventNote(data:Song.EventData):EventNote
+	inline function makeEventNote(data:EventData):EventNote
 	{
 		return {
 			strumTime: data.strumTime + ClientPrefs.data.noteOffset,
@@ -1497,7 +1522,7 @@ class PlayState extends MusicBeatState
 	 */
 	private function generateStaticArrows(player:Int):Void
 	{
-		var strumline:objects.Strumline = (player == 1) ? playerStrumline : opponentStrumline;
+		var strumline:Strumline = (player == 1) ? playerStrumline : opponentStrumline;
 		strumline.generateArrows(isStoryMode, skipArrowStartTween);
 
 		// Register the sustain-splash sprites with the shared splash group
@@ -1988,7 +2013,7 @@ class PlayState extends MusicBeatState
 		return pressed;
 	}
 
-	public function triggerEventNote(eventName:String, ?valuearray:Array<objects.Note.Eventsvalue>)
+	public function triggerEventNote(eventName:String, ?valuearray:Array<Eventsvalue>)
 	{
 		EventHandler.callEvent(eventName, valuearray);
 	}
@@ -2144,7 +2169,7 @@ class PlayState extends MusicBeatState
 			{
 				CustomFadeTransition.nextCamera = null;
 			}
-			MusicBeatState.switchState(new states.Freeplay());
+			MusicBeatState.switchState(new Freeplay());
 			changedDifficulty = false;
 		}
 		transitioning = true;
@@ -2431,7 +2456,7 @@ class PlayState extends MusicBeatState
 
 		if (key == 4)
 		{
-			debug.Consolehandler.print('Space key pressed');
+			Consolehandler.print('Space key pressed');
 			for (strum in playerStrumline.strumNotes.members)
 			{
 				strum.playAnim('pressed');
@@ -2539,10 +2564,10 @@ class PlayState extends MusicBeatState
 				{
 					if (daNote.special)
 					{
-						debug.Consolehandler.print('parsedHoldArray[4]: ' + parsedHoldArray[4]);
+						Consolehandler.print('parsedHoldArray[4]: ' + parsedHoldArray[4]);
 						if (parsedHoldArray[4])
 						{
-							debug.Consolehandler.print('SPACE NOTE HIT');
+							Consolehandler.print('SPACE NOTE HIT');
 							playerStrumline.hitNote(daNote);
 						}
 					}
@@ -2759,8 +2784,8 @@ class PlayState extends MusicBeatState
 		}
 		FlxG.animationTimeScale = 1;
 		#if FLX_PITCH FlxG.sound.music.pitch = 1; #end
-		utility.SignalDispatcher.removefromSignal('beatHit', Scripthandler.onBeatHit);
-		utility.SignalDispatcher.removefromSignal('stepHit', Scripthandler.onBeatHit);
+		SignalDispatcher.removefromSignal('beatHit', Scripthandler.onBeatHit);
+		SignalDispatcher.removefromSignal('stepHit', Scripthandler.onBeatHit);
 		super.destroy();
 	}
 

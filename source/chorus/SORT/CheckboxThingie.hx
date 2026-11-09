@@ -1,4 +1,5 @@
 package chorus.sort;
+import chorus.backend.utils.ClientPrefs;
 import chorus.backend.assets.Paths;
 
 import flixel.FlxSprite;

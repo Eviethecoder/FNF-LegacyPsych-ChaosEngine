@@ -15,12 +15,12 @@ using StringTools;
 
 
 final VERSION:String = "0.2.8";
-final TITLE:String = "Project Chorus:Chaos Edition"; //fuuuckin fixed the title again
+final TITLE:String = "Project Chorus"; //fuuuckin fixed the title again
 final EXECUTABLE_NAME:String = "Pc";
 final SOURCE_DIR:String = "source";
 final PRELOADER:String = "preloader.EmptyEyesPreeloader";
 final PACKAGE_NAME:String = "com.CatastropheStudios.ChaosEngine";
-final MAIN_CLASS:String = "Main";
+final MAIN_CLASS:String = "chorus.backend.system.Main";
 final COMPANY:String = "Catastrophe-Studios";
 
 final EXCLUDE_ASSETS:Array<String> = [".*", "cvs", "thumbs.db", "desktop.ini", "*.hash", "*.md"];
@@ -113,9 +113,10 @@ class Project extends HXProject {
         addHaxelib('haxeui-flixel');
         addHaxelib('haxeui-core');
         addHaxelib('uniontypes');
-        #if FEATURE_DISCORD_RPC
-        addHaxelib('hxdiscord_rpc');
-        #end
+        if (FEATURE_DISCORD_RPC.isEnabled(this)){
+            addHaxelib('hxdiscord_rpc');
+        }
+
         addHaxelib('tjson');
         addHaxelib('lucidtext');
         addHaxelib('json2object');
@@ -154,6 +155,8 @@ class Project extends HXProject {
             setHaxedef("HXCPP_TRACY_ON_DEMAND");
             setHaxedef("absolute-paths");
         }
+
+
     }
 
     function configureFeatureFlags() {
@@ -164,7 +167,7 @@ class Project extends HXProject {
         FEATURE_DEBUG_FUNCTIONS.apply(this, isDebug());
         FEATURE_LOG_TRACE.apply(this, isDebug());
 
-        FEATURE_DISCORD_RPC.apply(this, /**isDesktop() && !FEATURE_DEBUG_FUNCTIONS.isEnabled(this)**/false);
+        FEATURE_DISCORD_RPC.apply(this, /**isDesktop() && !FEATURE_DEBUG_FUNCTIONS.isEnabled(this)**/true);
         EMBED_ASSETS.apply(this, isWeb());
         MODS_ALLOWED.apply(this, true);
         PRELOAD_ALL.apply(this, !isWeb());
@@ -175,9 +178,10 @@ class Project extends HXProject {
 
      function configureCustomMacros()
   {
-    // This macro allows addition of new functionality to existing Flixel. --> the hscript shit and the flxbackdrop extension change
+    // This macro allows addition of new functionality to existing Flixel.
     addHaxeMacro("addMetadata('@:build(chorus.backend.macros.FlxMacro.buildFlxBasic())', 'flixel.FlxBasic')");
-    // addHaxeMacro("addMetadata('@:preBuild(chorus.backend.macros.Backdropclasschange.changeExtend())', 'flixel.addons.display.FlxBackdrop')");
+
+
 
   }
 

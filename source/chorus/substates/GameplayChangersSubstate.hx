@@ -1,4 +1,6 @@
 package chorus.substates;
+import chorus.backend.utils.ClientPrefs;
+import chorus.sort.CheckboxThingie;
 
 import chorus.backend.base.MusicBeatSubstate;
 

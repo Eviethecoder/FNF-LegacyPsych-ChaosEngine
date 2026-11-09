@@ -3,6 +3,8 @@ package chorus.states;
 import chorus.backend.base.MusicBeatState;
 
 import chorus.backend.assets.Paths;
+import chorus.backend.utils.CoolUtil;
+import chorus.objects.credits.Githubicon;
 #if FEATURE_DISCORD_RPC
 import chorus.backend.api.Discord.DiscordClient;
 #end

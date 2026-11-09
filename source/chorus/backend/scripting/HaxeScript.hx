@@ -1,6 +1,14 @@
 package chorus.backend.scripting;
 
 import chorus.backend.assets.Paths;
+import chorus.backend.base.MusicBeatState;
+import chorus.backend.graphics.shaders.DropShadowShader;
+import chorus.backend.utils.ClientPrefs;
+import chorus.objects.misc.FunkinSprite;
+import chorus.objects.stages.Stage;
+import chorus.objects.stages.BGSprite;
+import chorus.backend.system.Controls;
+import chorus.substates.GameOverSubstate;
 import chorus.objects.game.Note;
 import chorus.objects.game.StrumNote;
 import haxe.Rest;
@@ -136,14 +144,14 @@ class HaxeScript
 		adddvar(script, "FlxSpriteUtil", flixel.util.FlxSpriteUtil);
 		adddvar(script, "FlxG", FlxG);
 		adddvar(script, "FlxSprite", flixel.FlxSprite);
-		adddvar(script, "FunkinSprite", objects.FunkinSprite);
+		adddvar(script, "FunkinSprite", FunkinSprite);
 		adddvar(script, "ColorMatrixFilter", openfl.filters.ColorMatrixFilter);
 		adddvar(script, "Paths", Paths);
 		adddvar(script, "FlxRuntimeShader", flixel.addons.display.FlxRuntimeShader);
 		adddvar(script, "Note", Note);
 		adddvar(script, "ClientPrefs", ClientPrefs);
 		#if FEATURE_VIDEO_PLAYBACK
-		adddvar(script, "VideoSprite", objects.VideoSprite);
+		adddvar(script, "VideoSprite", VideoSprite);
 		#end
 		adddvar(script, "easeFromString", getFlxEaseByString);
 		adddvar(script, "FlxSpriteGroup", flixel.group.FlxSpriteGroup);
@@ -159,12 +167,12 @@ class HaxeScript
 		if (isInPlayState())
 		{
 			adddvar(script, "PlayState", PlayState.instance);
-			adddvar(script, "stage", objects.Stage.instance);
+			adddvar(script, "stage", Stage.instance);
 		}
 
 		adddvar(script, "BGSprite", BGSprite);
 		adddvar(script, "Math", Math);
-		adddvar(script, "DropShadowShader", shaders.DropShadowShader);
+		adddvar(script, "DropShadowShader", DropShadowShader);
 		adddvar(script, "stringContains", StringTools.contains);
 		adddvar(script, "ScriptedSubState", ScriptableMusicBeatSubState);
 		adddvar(script, 'persistantvariables', ScriptedStatehandler.persistantvariables);

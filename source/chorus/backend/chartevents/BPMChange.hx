@@ -1,4 +1,7 @@
 package chorus.backend.chartevents;
+import chorus.backend.utils.Conductor;
+
+import chorus.backend.base.BaseEvent;
 
 class BPMChange extends BaseEvent
 {

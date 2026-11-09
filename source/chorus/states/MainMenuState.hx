@@ -1,5 +1,8 @@
 package chorus.states;
 
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.CoolUtil;
+import chorus.states.options.OptionsState;
 import chorus.backend.assets.Paths;
 import chorus.backend.assets.data.WeekData;
 import chorus.backend.base.MusicBeatState;
@@ -94,6 +97,7 @@ class MainMenuState extends MusicBeatState
 		bgback.updateHitbox();
 		bgback.screenCenter();
 		bgback.color = 0xFFA4179A;
+
 		bgback.antialiasing = ClientPrefs.data.globalAntialiasing;
 		add(bgback);
 		angleMaskShader = new AngleMask();
@@ -269,7 +273,7 @@ class MainMenuState extends MusicBeatState
 									case 'credits':
 										MusicBeatState.switchState(new CreditsState());
 									case 'options':
-										MusicBeatState.switchState(new options.OptionsState());
+										MusicBeatState.switchState(new OptionsState());
 								}
 							});
 						}

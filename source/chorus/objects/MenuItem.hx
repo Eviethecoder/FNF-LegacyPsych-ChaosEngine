@@ -1,4 +1,6 @@
 package chorus.objects;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.CoolUtil;
 import chorus.backend.assets.Paths;
 import chorus.backend.assets.data.WeekData;
 

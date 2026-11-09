@@ -1,4 +1,6 @@
 package chorus.states;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.CoolUtil;
 
 import chorus.backend.base.MusicBeatState;
 

@@ -1,4 +1,5 @@
 package chorus.backend.transitions;
+import chorus.backend.utils.CoolUtil;
 
 import chorus.backend.base.MusicBeatSubstate;
 

@@ -1,5 +1,7 @@
 package chorus.backend.utils;
 import chorus.objects.game.Note;
+import chorus.objects.game.Note.EventNote;
+import chorus.objects.game.Note.Eventsvalue;
 
 #if sys
 import sys.FileSystem;
@@ -12,6 +14,7 @@ import chorus.backend.debug.Consolehandler;
 import chorus.backend.chartevents.CameraMovement;
 import chorus.backend.chartevents.CameraZoom;
 import chorus.backend.base.BaseEvent;
+import chorus.backend.base.BaseEvent.EventSchematic;
 import chorus.backend.scripting.ScriptedEvent;
 import chorus.backend.chartevents.BPMChange;
 import chorus.backend.chartevents.CharacterChange;
@@ -24,7 +27,7 @@ using StringTools;
 
 class EventHandler
 {
-	public static var eventmapping:Map<String, events.BaseEvent.EventSchematic> = [];
+	public static var eventmapping:Map<String, EventSchematic> = [];
 
 	public static var usedeventmap:Map<String, BaseEvent> = [];
 
@@ -91,7 +94,7 @@ class EventHandler
 				if (jsonString == null || jsonString.trim().length < 1)
 					return;
 
-				var eventData:events.BaseEvent.EventSchematic = Json.parse(jsonString);
+				var eventData:EventSchematic = Json.parse(jsonString);
 				var eventName:String = Path.withoutExtension(Path.withoutDirectory(filePath));
 				if (eventmapping.exists(eventName))
 					return;
@@ -107,7 +110,7 @@ class EventHandler
 		#end
 	}
 
-	public static function setupevents(eventnote:objects.Note.EventNote):Void
+	public static function setupevents(eventnote:EventNote):Void
 	{
 		var eventname:String = eventnote.event;
 		if (!usedEvents.contains(eventname))
@@ -123,7 +126,7 @@ class EventHandler
 					default:
 						eventname;
 				};
-				var cls = Type.resolveClass('events.' + className);
+				var cls = Type.resolveClass('chorus.backend.chartevents.' + className);
 				trace('making event: ' + eventname + ' looked for class: ' + cls);
 				var event:BaseEvent = Type.createInstance(cls, []);
 				trace(event);
@@ -137,7 +140,7 @@ class EventHandler
 				if (!usedEvents.contains(eventname))
 				{
 					var event:ScriptedEvent = new ScriptedEvent(eventname);
-					debug.Consolehandler.print('event is:' + event);
+					Consolehandler.print('event is:' + event);
 					if (event != null)
 					{
 						event.precacheEvent(eventnote);
@@ -157,7 +160,7 @@ class EventHandler
 		}
 	}
 
-	public static function callEvent(eventname:String, eventvalues:Array<objects.Note.Eventsvalue>):Void
+	public static function callEvent(eventname:String, eventvalues:Array<Eventsvalue>):Void
 	{
 		var event:BaseEvent = usedeventmap.get(eventname);
 		if (event != null)

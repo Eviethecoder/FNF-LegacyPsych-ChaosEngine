@@ -14,6 +14,9 @@ import flixel.FlxSubState;
 import haxe.Json;
 import haxe.format.JsonParser;
 import chorus.objects.misc.Alphabet;
+import chorus.objects.misc.TypedAlphabet;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.system.Controls;
 #if sys
 import sys.FileSystem;
 import sys.io.File;

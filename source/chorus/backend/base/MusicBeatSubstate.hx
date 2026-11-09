@@ -1,6 +1,8 @@
 package chorus.backend.base;
 
 import chorus.backend.system.Controls;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.Conductor;
 import chorus.backend.utils.Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.FlxSubState;

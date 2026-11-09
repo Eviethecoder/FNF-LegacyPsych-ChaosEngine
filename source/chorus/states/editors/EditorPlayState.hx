@@ -1,4 +1,7 @@
 package chorus.states.editors;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.Conductor;
+import chorus.states.editors.ChartingState;
 
 import chorus.backend.base.MusicBeatState;
 import chorus.backend.assets.Paths;
@@ -341,7 +344,7 @@ class EditorPlayState extends MusicBeatState
 
 	private function endSong()
 	{
-		MusicBeatState.switchState(new LoadingState(new editors.ChartingState()));
+		MusicBeatState.switchState(new LoadingState(new ChartingState()));
 	}
 
 	public var noteKillOffset:Float = 350;
@@ -353,7 +356,7 @@ class EditorPlayState extends MusicBeatState
 		{
 			FlxG.sound.music.pause();
 			vocals.pause();
-			MusicBeatState.switchState(new LoadingState(new editors.ChartingState()));
+			MusicBeatState.switchState(new LoadingState(new ChartingState()));
 		}
 
 		if (startingSong)

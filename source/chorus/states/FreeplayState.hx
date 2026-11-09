@@ -1,4 +1,13 @@
 package chorus.states;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.Constants;
+import chorus.backend.utils.CoolUtil;
+import chorus.backend.save.Highscore;
+import chorus.backend.utils.Song;
+import chorus.backend.utils.Characterpreloader;
+import chorus.substates.GameplayChangersSubstate;
+import chorus.substates.ResetScoreSubState;
+import chorus.objects.game.HealthIcon;
 
 import chorus.backend.base.MusicBeatState;
 
@@ -134,7 +143,7 @@ class FreeplayState extends MusicBeatState
 			songText.snapToPosition();
 
 			Paths.currentModDirectory = songs[i].folder;
-			var icon:HealthIcon = new HealthIcon(utility.Characterpreloader.grabchardata(songs[i].songCharacter).iconData);
+			var icon:HealthIcon = new HealthIcon(Characterpreloader.grabchardata(songs[i].songCharacter).iconData);
 			icon.autoUpdate = false;
 			icon.sprTracker = songText;
 

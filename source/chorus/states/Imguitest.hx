@@ -1,4 +1,5 @@
 package chorus.states;
+import chorus.backend.utils.ClientPrefs;
 
 import chorus.backend.base.MusicBeatState;
 
@@ -7,7 +8,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import imgui.ImGui;
-import chorus.sort.objects.FlxImGui;
+import chorus.objects.misc.FlxImGui;
 
 class Imguitest extends MusicBeatState
 {

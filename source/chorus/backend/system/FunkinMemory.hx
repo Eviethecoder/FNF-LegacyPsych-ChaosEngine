@@ -7,6 +7,7 @@ import openfl.display.BitmapData;
 import chorus.backend.assets.Assets as OpenFlAssets;
 import openfl.utils.AssetType;
 import chorus.backend.assets.Assets;
+import openfl.utils.Assets as OpenFLAssets;
 import flash.media.Sound;
 import chorus.backend.utils.ClientPrefs;
 #if sys
@@ -92,7 +93,7 @@ class FunkinMemory
 		{
 			if (!dumpExclusions.contains(key))
 			{
-				Assets.cache.clear(key);
+				OpenFLAssets.cache.clear(key);
 				currentTrackedSounds.remove(key);
 			}
 		}

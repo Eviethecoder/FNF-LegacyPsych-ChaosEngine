@@ -1,5 +1,8 @@
 package chorus.backend.chartevents;
+import chorus.backend.base.BaseEvent;
+import chorus.objects.stages.Character;
 import chorus.objects.game.Note;
+import chorus.objects.game.Note.EventNote;
 
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
@@ -73,7 +76,7 @@ class CharacterChange extends BaseEvent
 		newchar.alpha = 0.00001;
 	}
 
-	public override function precacheEvent(precachdata:objects.Note.EventNote):Void
+	public override function precacheEvent(precachdata:EventNote):Void
 	{
 	}
 }

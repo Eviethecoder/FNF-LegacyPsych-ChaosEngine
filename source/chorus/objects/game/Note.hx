@@ -1,6 +1,12 @@
 package chorus.objects.game;
 
 import chorus.backend.assets.Paths;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.Conductor;
+import chorus.backend.utils.NoteSkinHelper;
+import chorus.backend.utils.NoteTypepreloader;
+import chorus.backend.base.MusicBeatState;
+import chorus.states.PlayState;
 import chorus.backend.graphics.shaders.ColorSwap;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -189,7 +195,7 @@ class Note extends FlxSpriteGroup
 
 	public function defaultRGB()
 	{
-		var arr:Array<Dynamic> = utility.NoteSkinHelper.getNoteskinRgb(mustPress)[noteData];
+		var arr:Array<Dynamic> = NoteSkinHelper.getNoteskinRgb(mustPress)[noteData];
 
 		if (arr != null && noteData > -1 && noteData <= arr.length)
 		{
@@ -208,8 +214,8 @@ class Note extends FlxSpriteGroup
 	private function set_noteType(value:String):String
 	{
 		defaultRGB();
-		noteSplashTexture = utility.NoteSkinHelper.getNotesplash();
-		var danotetype = utility.NoteTypepreloader.notetypejsonmap.get(value);
+		noteSplashTexture = NoteSkinHelper.getNotesplash();
+		var danotetype = NoteTypepreloader.notetypejsonmap.get(value);
 		if (danotetype != null)
 		{
 			reloadNote(value);
@@ -249,7 +255,7 @@ class Note extends FlxSpriteGroup
 		var skin:String = texture;
 		if (texture.length < 1)
 		{
-			skin = utility.NoteSkinHelper.getNoteskinNotes(mustPress);
+			skin = NoteSkinHelper.getNoteskinNotes(mustPress);
 		}
 
 		var animName:String = null;
@@ -398,7 +404,6 @@ class Note extends FlxSpriteGroup
 	public function playAnim(anim:String, ?force:Bool = false)
 	{
 		var daOffset = animOffsets.get(anim);
-		trace('Animation: ' + anim + ' Offset: ' + daOffset);
 		var thisx:Float = 0;
 		var thisy:Float = 0;
 		if (daOffset != null && daOffset.length > 1)
@@ -424,7 +429,7 @@ class Note extends FlxSpriteGroup
 		{
 			var newRGB:RGBPalette = new RGBPalette();
 
-			var arr:Array<Dynamic> = utility.NoteSkinHelper.getNoteskinRgb(isPlayer)[noteData];
+			var arr:Array<Dynamic> = NoteSkinHelper.getNoteskinRgb(isPlayer)[noteData];
 			// ClientPrefs.data.arrowRGB[noteData];
 
 			if (arr != null && noteData > -1 && noteData <= arr.length)
@@ -498,12 +503,12 @@ class Note extends FlxSpriteGroup
 		switch (isnotetype)
 		{
 			case true:
-				noteSkinData = utility.NoteSkinHelper.getNoteTypeData(noteType);
+				noteSkinData = NoteSkinHelper.getNoteTypeData(noteType);
 
 				notegraphic.frames = Paths.getSparrowAtlas(noteSkinData.frames);
 
 			case false:
-				noteSkinData = utility.NoteSkinHelper.getNoteData();
+				noteSkinData = NoteSkinHelper.getNoteData();
 		}
 
 		if (noteSkinData != null)

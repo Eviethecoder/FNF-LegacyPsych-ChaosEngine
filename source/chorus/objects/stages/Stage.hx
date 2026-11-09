@@ -19,6 +19,8 @@ import flixel.util.FlxAxes;
 import chorus.backend.assets.data.StageData;
 import chorus.backend.scripting.HaxeScript;
 import chorus.objects.stages.Character;
+import chorus.states.LoadingState;
+import chorus.states.PlayState;
 
 using StringTools;
 
@@ -311,7 +313,7 @@ class Stage extends FlxBasic
 		}
 	}
 
-	function functionfromscripts(name:String, params:Array<HaxeScript.AnyValue>)
+	function functionfromscripts(name:String, params:Array<AnyValue>)
 	{
 		stagescript.runFunction(name, params);
 	}
@@ -432,9 +434,9 @@ class Stage extends FlxBasic
 		charobject.angle = chardata.angle;
 		charobject.alpha = chardata.alpha;
 		charobject.scrollFactor.set(chardata.scroll[0], chardata.scroll[1]);
-		debug.Consolehandler.print('character should be flipped: ' + chardata.flipx);
+		Consolehandler.print('character should be flipped: ' + chardata.flipx);
 		charobject.flipX = chardata.flipx;
-		debug.Consolehandler.print('character flipX is: ' + charobject.flipX);
+		Consolehandler.print('character flipX is: ' + charobject.flipX);
 		charmap.set(charobject.charactertype, charobject);
 		stageGroup.add(charobject);
 		Scripthandler.dispatchevent('CharacterCreation', [charobject.charactertype, charobject, chardata]);

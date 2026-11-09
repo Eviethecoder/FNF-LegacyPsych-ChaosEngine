@@ -1,6 +1,10 @@
 package chorus.states.options;
+import chorus.backend.utils.ClientPrefs;
 
+import chorus.backend.base.Option;
 import chorus.backend.base.MusicBeatSubstate;
+import chorus.sort.CheckboxThingie;
+import chorus.objects.stages.Character;
 
 import chorus.backend.assets.Paths;
 #if FEATURE_DISCORD_RPC

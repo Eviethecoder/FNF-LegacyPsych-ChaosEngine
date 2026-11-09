@@ -9,7 +9,7 @@ import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import imgui.ImGui;
-import chorus.sort.objects.FlxImGui;
+import chorus.objects.misc.FlxImGui;
 import flixel.FlxObject;
 import chorus.backend.debug.Consolehandler;
 

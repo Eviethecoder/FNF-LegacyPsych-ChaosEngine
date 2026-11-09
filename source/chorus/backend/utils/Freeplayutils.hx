@@ -1,4 +1,5 @@
 package chorus.backend.utils;
+import chorus.backend.debug.Consolehandler;
 import chorus.backend.assets.Paths;
 
 import sys.FileSystem;
@@ -17,7 +18,7 @@ class Freeplayutils
 		var result:Map<String, Metadata> = new Map<String, Metadata>();
 
 		if (!FileSystem.exists(baseFolder) || !FileSystem.isDirectory(baseFolder))
-			debug.Consolehandler.print('Base folder missing or invalid, skipping base scan: ' + baseFolder);
+			Consolehandler.print('Base folder missing or invalid, skipping base scan: ' + baseFolder);
 		else
 		{
 			for (entry in FileSystem.readDirectory(baseFolder))

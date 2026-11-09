@@ -1,5 +1,6 @@
 package animateatlas;
 import chorus.backend.assets.Paths;
+import chorus.backend.base.MusicBeatState;
 import flixel.util.FlxDestroyUtil;
 import openfl.geom.Rectangle;
 import flixel.math.FlxPoint;

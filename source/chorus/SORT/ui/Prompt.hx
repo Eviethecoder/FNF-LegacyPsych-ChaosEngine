@@ -8,6 +8,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import chorus.backend.base.MusicBeatState;
 import chorus.backend.base.MusicBeatSubstate;
+import chorus.states.MasterEditorMenu;
 import chorus.sort.ui.PsychUIButton;
 
 // Exit confirmation prompt used on all editors, for convenience
@@ -18,7 +19,7 @@ class ExitConfirmationPrompt extends Prompt
 		super('There\'s unsaved progress,\nare you sure you want to exit?', function()
 		{
 			FlxG.mouse.visible = false;
-			MusicBeatState.switchState(new editors.MasterEditorMenu());
+			MusicBeatState.switchState(new MasterEditorMenu());
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			if (finishCallback != null)
 				finishCallback();

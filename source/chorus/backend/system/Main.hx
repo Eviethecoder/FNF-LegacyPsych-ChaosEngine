@@ -1,6 +1,10 @@
 package chorus.backend.system;
 
 import chorus.backend.system.FunkinSoundTray;
+import chorus.backend.debug.CrashReportSubstate;
+import chorus.backend.graphics.FunkinCameraFrontEnd;
+import chorus.objects.misc.Cursor;
+import chorus.states.TitleState;
 import flixel.graphics.FlxGraphic;
 import flixel.FlxG;
 import flixel.FlxGame;
@@ -33,7 +37,7 @@ class Main extends Sprite
 	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
 
-	public static var initialState:Class<FlxState> = TitleState; // The FlxState the game starts with.
+	public static var initialState:Class<FlxState> = chorus.backend.system.InitState; // The FlxState the game starts with.
 
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var framerate:Int = 60; // How many frames per second the game should run at.
@@ -74,8 +78,9 @@ class Main extends Sprite
 			gameWidth = Math.ceil(stageWidth / zoom);
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
-		var game:FlxGame = new FlxGame(gameWidth, gameHeight, InitState, #if (flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen);
-		objects.Cursor.registerHaxeUICursors();
+		var game:FlxGame = new FlxGame(gameWidth, gameHeight, chorus.backend.system.InitState, #if (flixel < "5.0.0") zoom, #end framerate, framerate,
+			skipSplash, startFullscreen);
+		Cursor.registerHaxeUICursors();
 		@:privateAccess
 		game._customSoundTray = FunkinSoundTray;
 		FlxG.signals.postUpdate.add(function()
@@ -88,7 +93,7 @@ class Main extends Sprite
 		});
 		addChild(game);
 
-		untyped FlxG.cameras = new graphics.FunkinCameraFrontEnd();
+		untyped FlxG.cameras = new FunkinCameraFrontEnd();
 		#if !mobile
 		// addChild gets called by the user settings code.
 		debugDisplay = new FunkinDebugDisplay(10, 10, 0xFFFFFF);
@@ -112,7 +117,7 @@ class Main extends Sprite
 	{
 		try
 		{
-			FlxG.switchState(new debug.CrashReportSubstate(FlxG.state, message, message));
+			FlxG.switchState(new CrashReportSubstate(FlxG.state, message, message));
 		}
 		catch (e:Dynamic)
 		{
@@ -139,7 +144,7 @@ class Main extends Sprite
 			}
 		}
 
-		FlxG.switchState(new debug.CrashReportSubstate(FlxG.state, emsg, e.error));
+		FlxG.switchState(new CrashReportSubstate(FlxG.state, emsg, e.error));
 
 		isHandlingCrash = false;
 	}

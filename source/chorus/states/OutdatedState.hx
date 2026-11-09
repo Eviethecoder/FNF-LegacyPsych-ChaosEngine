@@ -1,4 +1,5 @@
 package chorus.states;
+import chorus.backend.utils.CoolUtil;
 
 import chorus.backend.base.MusicBeatState;
 import chorus.backend.assets.Paths;

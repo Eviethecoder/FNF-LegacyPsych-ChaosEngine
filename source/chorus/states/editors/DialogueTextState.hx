@@ -1,4 +1,6 @@
 package chorus.states.editors;
+import chorus.backend.utils.ClientPrefs;
+import chorus.states.MasterEditorMenu;
 import chorus.backend.assets.Paths;
 
 import chorus.objects.dialogue.DialogueBox;
@@ -47,7 +49,7 @@ class DialogueTextState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
-			FlxG.switchState(new editors.MasterEditorMenu());
+			FlxG.switchState(new MasterEditorMenu());
 		}
 		if (FlxG.keys.justPressed.A)
 		{

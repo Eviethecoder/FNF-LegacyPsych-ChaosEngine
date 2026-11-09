@@ -1,6 +1,9 @@
 package chorus.backend.scripting;
 
 import chorus.backend.assets.Paths;
+import chorus.backend.debug.Consolehandler;
+import chorus.backend.utils.MathUtil;
+import chorus.objects.stages.Stage;
 
 import insanity.Script;
 import insanity.Environment;
@@ -28,23 +31,23 @@ class ChaosScript extends Script
 	{
 		this.interp.setDefaults();
 		variables.set('interp', interp);
-		variables.set('MathUtil', utility.MathUtil);
+		variables.set('MathUtil', MathUtil);
 		variables.set('Path', Paths);
-		variables.set("stage", objects.Stage.instance);
-		variables.set("Consolehandler", debug.Consolehandler);
+		variables.set("stage", Stage.instance);
+		variables.set("Consolehandler", Consolehandler);
 		variables.set('FlxColor', HaxeScript.Flxcolorscript);
 		variables.set('window', lime.app.Application.current.window);
 		variables.set('print', function(v:HaxeScript.AnyValue):Void
 		{
-			debug.Consolehandler.print(v);
+			Consolehandler.print(v);
 		});
 		variables.set('warn', function(v:HaxeScript.AnyValue):Void
 		{
-			debug.Consolehandler.warn(v);
+			Consolehandler.warn(v);
 		});
 		variables.set('error', function(v:HaxeScript.AnyValue):Void
 		{
-			debug.Consolehandler.error(v);
+			Consolehandler.error(v);
 		});
 
 		if (parentObject != null)

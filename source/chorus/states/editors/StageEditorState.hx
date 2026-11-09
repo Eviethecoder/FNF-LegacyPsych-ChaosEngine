@@ -11,13 +11,21 @@ import lime.app.Application;
 import lime.ui.FileDialog;
 #end
 import chorus.objects.misc.FunkinSprite;
-import backend.ui.*;
+import chorus.objects.stages.BGSprite;
+import chorus.objects.stages.Character;
+import chorus.objects.stages.Character.AnimArray;
+import chorus.sort.ui.PsychUIBox;
+import chorus.sort.ui.PsychUIButton;
+import chorus.sort.ui.PsychUIDropDownMenu;
+import chorus.sort.ui.PsychUIInputText;
+import chorus.sort.ui.PsychUINumericStepper;
 import chorus.objects.stages.FunkinBackdrop;
 import flixel.util.FlxAxes;
 import chorus.backend.assets.data.StageData;
 import flixel.FlxObject;
 import flixel.FlxCamera;
 import chorus.sort.ui.PsychUIEventHandler;
+import chorus.sort.ui.PsychUICheckBox;
 import chorus.sort.ui.Prompt.BasePrompt;
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -708,7 +716,7 @@ class StageEditorState extends MusicBeatState implements PsychUIEvent
 		var selectedAnimation:Int = propAnimationDropDown.selectedIndex;
 		if (prop == null || prop.animations == null || selectedAnimation < 0 || selectedAnimation >= prop.animations.length)
 			return;
-		var animation:Character.AnimArray = prop.animations[selectedAnimation];
+		var animation:AnimArray = prop.animations[selectedAnimation];
 		animationInputText.text = animation.anim;
 		animationNameInputText.text = animation.name;
 		animationLoopCheckBox.checked = animation.loop;

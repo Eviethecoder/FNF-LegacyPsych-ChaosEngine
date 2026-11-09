@@ -3,6 +3,8 @@ package chorus.states.editors;
 import chorus.backend.base.MusicBeatState;
 
 import chorus.backend.assets.Paths;
+import chorus.backend.utils.ClientPrefs;
+import chorus.states.MasterEditorMenu;
 #if FEATURE_DISCORD_RPC
 import chorus.backend.api.Discord.DiscordClient;
 #end
@@ -22,6 +24,7 @@ import flixel.addons.ui.FlxUICheckBox;
 import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxUITabMenu;
+import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.ui.FlxButton;
 import openfl.net.FileReference;
 import openfl.events.Event;
@@ -33,6 +36,7 @@ import flixel.FlxCamera;
 import flixel.group.FlxSpriteGroup;
 import lime.system.Clipboard;
 import chorus.objects.misc.Alphabet;
+import chorus.objects.misc.TypedAlphabet;
 #if sys
 import sys.io.File;
 #end
@@ -237,7 +241,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 
 	var curSelectedAnim:String;
 	var animationArray:Array<String> = [];
-	var animationDropDown:FlxUIDropDownMenuCustom;
+	var animationDropDown:FlxUIDropDownMenu;
 	var animationInputText:FlxUIInputText;
 	var loopInputText:FlxUIInputText;
 	var idleInputText:FlxUIInputText;
@@ -247,7 +251,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 		var tab_group = new FlxUI(null, UI_mainbox);
 		tab_group.name = "Animations";
 
-		animationDropDown = new FlxUIDropDownMenuCustom(10, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(animation:String)
+		animationDropDown = new FlxUIDropDownMenu(10, 30, FlxUIDropDownMenu.makeStrIdLabelArray([''], true), function(animation:String)
 		{
 			var anim:String = animationArray[Std.parseInt(animation)];
 			if (character.dialogueAnimations.exists(anim))
@@ -370,7 +374,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 
 		if (animationArray.length < 1)
 			animationArray = [''];
-		animationDropDown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(animationArray, true));
+		animationDropDown.setData(FlxUIDropDownMenu.makeStrIdLabelArray(animationArray, true));
 	}
 
 	var imageInputText:FlxUIInputText;
@@ -802,7 +806,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 
 			if (FlxG.keys.justPressed.ESCAPE)
 			{
-				MusicBeatState.switchState(new editors.MasterEditorMenu());
+				MusicBeatState.switchState(new MasterEditorMenu());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'), 1);
 				transitioning = true;
 			}

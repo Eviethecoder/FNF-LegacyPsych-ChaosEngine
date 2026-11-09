@@ -6,6 +6,7 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import chorus.objects.misc.FunkinSprite;
 import chorus.backend.system.FunkinMemory;
 import chorus.objects.stages.Character.AnimArray as AnimArray;
+import chorus.backend.utils.ClientPrefs;
 
 class BGSprite extends FunkinSprite
 {

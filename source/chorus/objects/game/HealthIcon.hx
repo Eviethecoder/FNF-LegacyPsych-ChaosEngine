@@ -7,6 +7,10 @@ import flixel.math.FlxMath;
 import meta.data.*;
 import chorus.objects.misc.FunkinSprite;
 import chorus.backend.utils.FunkinInterface;
+import chorus.backend.utils.Constants;
+import chorus.backend.utils.CoolUtil;
+import chorus.backend.utils.SignalDispatcher;
+import chorus.states.PlayState;
 import chorus.objects.stages.Character.IconData as IconData;
 
 using StringTools;
@@ -29,7 +33,7 @@ class HealthIcon extends FunkinSprite implements FunkinInterface
 	public var animoveride:Bool = false;
 	public var autoUpdate:Bool = true;
 	public var autoAdjustY:Bool = true;
-	public var icondata:Character.IconData;
+	public var icondata:IconData;
 	public var iconOffset:Int = 26;
 	public var iconPosOffset:Array<Float> = [0, 0];
 
@@ -74,10 +78,10 @@ class HealthIcon extends FunkinSprite implements FunkinInterface
 		changeIcon(this.icondata);
 		flipX = isPlayer;
 		scrollFactor.set();
-		utility.SignalDispatcher.addtoSignal('onPause', onPause);
-		utility.SignalDispatcher.addtoSignal('onResume', onResume);
-		utility.SignalDispatcher.addtoSignal('BeatHit', onBeat);
-		utility.SignalDispatcher.addtoSignal('StepHit', onStep);
+		SignalDispatcher.addtoSignal('onPause', onPause);
+		SignalDispatcher.addtoSignal('onResume', onResume);
+		SignalDispatcher.addtoSignal('BeatHit', onBeat);
+		SignalDispatcher.addtoSignal('StepHit', onStep);
 	}
 
 	override function update(elapsed:Float)
@@ -285,10 +289,10 @@ class HealthIcon extends FunkinSprite implements FunkinInterface
 
 	public override function destroy():Void
 	{
-		utility.SignalDispatcher.removefromSignal('onPause', onPause);
-		utility.SignalDispatcher.removefromSignal('onResume', onResume);
-		utility.SignalDispatcher.removefromSignal('BeatHit', onBeat);
-		utility.SignalDispatcher.removefromSignal('StepHit', onStep);
+		SignalDispatcher.removefromSignal('onPause', onPause);
+		SignalDispatcher.removefromSignal('onResume', onResume);
+		SignalDispatcher.removefromSignal('BeatHit', onBeat);
+		SignalDispatcher.removefromSignal('StepHit', onStep);
 		super.destroy();
 	}
 

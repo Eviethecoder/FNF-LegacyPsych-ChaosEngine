@@ -1,5 +1,6 @@
 package chorus.objects.freeplay;
 
+import chorus.backend.debug.Consolehandler;
 import chorus.backend.utils.MathUtil;
 import chorus.objects.misc.FunkinSprite;
 import flixel.group.FlxSpriteGroup;
@@ -71,8 +72,8 @@ class Freeplaypaper extends FlxSpriteGroup
 		this.metadata = metadata;
 
 		dorendervibe = metadata.dorendervibe;
-		debug.Consolehandler.print(dorendervibe);
-		debug.Consolehandler.print(true);
+		Consolehandler.print(dorendervibe);
+		Consolehandler.print(true);
 	}
 
 	function onMouseDown(sprite:FunkinSprite)

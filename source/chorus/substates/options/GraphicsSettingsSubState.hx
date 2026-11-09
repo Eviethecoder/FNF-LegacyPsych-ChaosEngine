@@ -1,4 +1,6 @@
 package chorus.substates.options;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.base.Option;
 
 #if FEATURE_DISCORD_RPC
 import chorus.backend.api.Discord.DiscordClient;
@@ -23,6 +25,7 @@ import flixel.util.FlxTimer;
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.FlxGraphic;
 import chorus.backend.system.Controls;
+import chorus.states.options.BaseOptionsMenu;
 import openfl.Lib;
 
 using StringTools;

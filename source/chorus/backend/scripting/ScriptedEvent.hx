@@ -1,5 +1,8 @@
 package chorus.backend.scripting;
 import chorus.objects.game.Note;
+import chorus.objects.game.Note.EventNote;
+import chorus.backend.base.BaseEvent;
+import chorus.backend.debug.Consolehandler;
 
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
@@ -20,7 +23,7 @@ class ScriptedEvent extends BaseEvent
 		super();
 		eventName = name;
 		script = Scripthandler.setupScripts("data/events/" + name + ".hx", this, "eventscript", true);
-		debug.Consolehandler.print("script for event: " + name + " is: " + script);
+		Consolehandler.print("script for event: " + name + " is: " + script);
 	}
 
 	public override function triggerEvent():Void
@@ -28,7 +31,7 @@ class ScriptedEvent extends BaseEvent
 		runfunction('TriggerEvent', []);
 	}
 
-	public override function precacheEvent(daevent:objects.Note.EventNote):Void
+	public override function precacheEvent(daevent:EventNote):Void
 	{
 		runfunction('precacheEvent', [daevent]);
 	}

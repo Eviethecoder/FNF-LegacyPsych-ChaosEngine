@@ -1,4 +1,6 @@
 package chorus.backend.debug;
+import chorus.backend.utils.Constants;
+import chorus.states.MainMenuState;
 
 import flixel.FlxG;
 import flixel.FlxSprite;

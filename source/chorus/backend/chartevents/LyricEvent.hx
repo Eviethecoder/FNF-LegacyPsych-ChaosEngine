@@ -1,6 +1,9 @@
 package chorus.backend.chartevents;
+import chorus.backend.utils.Constants;
+import chorus.backend.base.BaseEvent;
 import chorus.backend.assets.Paths;
 import chorus.objects.game.Note;
+import chorus.objects.game.Note.EventNote;
 
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -14,6 +17,8 @@ import sys.FileSystem;
 import sys.io.File;
 import chorus.backend.utils.Conductor;
 import chorus.objects.game.HealthIcon;
+import chorus.objects.stages.Character;
+import chorus.objects.stages.Character.IconData;
 import chorus.states.PlayState;
 
 typedef LyricFormat =
@@ -44,7 +49,7 @@ class LyricEvent extends BaseEvent
 		eventName = "Lyrics";
 	}
 
-	override public function precacheEvent(daevent:objects.Note.EventNote):Void
+	override public function precacheEvent(daevent:EventNote):Void
 	{
 		var songName:String = PlayState.SONG != null ? PlayState.SONG.song : '';
 		grabjson(Paths.getPreloadPath('data/' + Constants.cursongfolder + Paths.formatToSongPath(songName) + '/lyrics.json'));
@@ -149,7 +154,7 @@ class LyricEvent extends BaseEvent
 		};
 	}
 
-	function returniconformat(icon:String):Character.IconData
+	function returniconformat(icon:String):IconData
 	{
 		return {
 			healthicon: icon,

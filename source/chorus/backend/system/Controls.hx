@@ -1,5 +1,6 @@
 package chorus.backend.system;
 
+import chorus.backend.utils.ClientPrefs;
 import flixel.FlxG;
 import flixel.input.gamepad.FlxGamepadButton;
 import flixel.input.gamepad.FlxGamepadInputID;

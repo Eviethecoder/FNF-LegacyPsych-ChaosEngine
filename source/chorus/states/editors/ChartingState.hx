@@ -18,6 +18,16 @@ import haxe.io.Bytes;
 import chorus.backend.utils.Conductor.BPMChangeEvent;
 import chorus.backend.utils.Section.SwagSection;
 import chorus.backend.base.BaseEvent;
+import chorus.backend.base.BaseEvent.EventData as EventSchemaData;
+import chorus.backend.utils.Conductor;
+import chorus.backend.utils.Constants;
+import chorus.backend.utils.CoolUtil;
+import chorus.backend.utils.EventHandler;
+import chorus.backend.utils.NoteSkinHelper;
+import chorus.backend.utils.NoteTypepreloader;
+import chorus.backend.assets.data.StageData;
+import chorus.states.MasterEditorMenu;
+import chorus.states.editors.EditorPlayState;
 import chorus.backend.utils.Song.SwagSong;
 import chorus.backend.utils.Song.EventData;
 import chorus.backend.utils.Song.EventValue;
@@ -897,7 +907,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		var reloadNotesButton:PsychUIButton = new PsychUIButton(hudSkinInputText.x + 5, hudSkinInputText.y + 20, 'Change Notes', function()
 		{
 			_song.hudSkin = hudSkinInputText.text;
-			utility.NoteSkinHelper.setupfallback(_song.hudSkin);
+			NoteSkinHelper.setupfallback(_song.hudSkin);
 			updateGrid();
 		}, 100, 20);
 
@@ -1290,7 +1300,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 
 		// Recursively scans custom_notetypes across the base assets and full mod folder tree,
 		// same lookup pattern NoteSkinpreloader uses for NoteSkin jsons.
-		for (fileToCheck in utility.NoteTypepreloader.customNoteTypeLookup())
+		for (fileToCheck in NoteTypepreloader.customNoteTypeLookup())
 		{
 			if (!noteTypeMap.exists(fileToCheck))
 			{
@@ -1354,7 +1364,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 	function addEventsUI():Void
 	{
 		tab_group_event = new FlxSpriteGroup();
-		utility.EventHandler.setupAllEventData();
+		EventHandler.setupAllEventData();
 
 		var eventPushedMap:Map<String, Bool> = new Map<String, Bool>();
 		var directories:Array<String> = [];
@@ -1362,7 +1372,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		eventPushedMap.clear();
 		eventPushedMap = null;
 
-		var leEvents:Array<String> = utility.EventHandler.eventList;
+		var leEvents:Array<String> = EventHandler.eventList;
 
 		var text:FlxText = new FlxText(20, 30, 0, "Event:");
 		tab_group_event.add(text);
@@ -1511,7 +1521,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		// BUILD UI FROM SCHEMA ONLY
 		var baseX:Float = 20;
 		var baseY:Float = 110;
-		var eventschema = utility.EventHandler.eventmapping.get(eventname);
+		var eventschema = EventHandler.eventmapping.get(eventname);
 		if (eventschema == null || eventschema.eventLogic == null)
 		{
 			mainBox.disableupdate = false;
@@ -1521,7 +1531,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		var rowMappedEvents:Array<Dynamic> = [];
 		for (i in 0...eventschema.eventLogic.length)
 		{
-			var mappedEvent:EventData = eventschema.eventLogic[i];
+			var mappedEvent:EventSchemaData = eventschema.eventLogic[i];
 			var rowNumber:Int = mappedEvent.rownum;
 			if (rowNumber < 1)
 				rowNumber = i + 1;
@@ -1551,7 +1561,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 
 		for (mapped in rowMappedEvents)
 		{
-			var event:EventData = mapped.event;
+			var event:EventSchemaData = mapped.event;
 			var valueIndex:Int = mapped.valueIndex;
 
 			inline function setSelectedEventValue(v:Dynamic):Void
@@ -1826,7 +1836,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		for (i in 0...selectedEvent.values.length)
 		{
 			var schemaName:String = 'Value ' + (i + 1);
-			var eventSchema = utility.EventHandler.eventmapping.get(selectedEvent.name);
+			var eventSchema = EventHandler.eventmapping.get(selectedEvent.name);
 			if (eventSchema != null && eventSchema.eventLogic != null && i < eventSchema.eventLogic.length && eventSchema.eventLogic[i] != null)
 			{
 				if (eventSchema.eventLogic[i].name != null && eventSchema.eventLogic[i].name.length > 0)
@@ -1895,7 +1905,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 		{
 			var fillIndex:Int = selectedEvent.values.length + 1;
 			var fillName:String = 'Value ' + fillIndex;
-			var fillSchema = utility.EventHandler.eventmapping.get(selectedEvent.name);
+			var fillSchema = EventHandler.eventmapping.get(selectedEvent.name);
 			if (fillSchema != null && fillSchema.eventLogic != null)
 			{
 				var fillMappedIndex:Int = fillIndex - 1;
@@ -1920,7 +1930,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 			parsedValue = Std.string(parsedValue);
 
 		var schemaName:String = 'Value ' + valueIndex;
-		var eventSchema = utility.EventHandler.eventmapping.get(selectedEvent.name);
+		var eventSchema = EventHandler.eventmapping.get(selectedEvent.name);
 		if (eventSchema != null && eventSchema.eventLogic != null)
 		{
 			var mappedIndex:Int = valueIndex - 1;
@@ -1956,7 +1966,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 			for (i in 0...values.length)
 			{
 				var schemaName:String = 'Value ' + (i + 1);
-				var eventSchema = utility.EventHandler.eventmapping.get(name);
+				var eventSchema = EventHandler.eventmapping.get(name);
 				if (eventSchema != null && eventSchema.eventLogic != null && i < eventSchema.eventLogic.length && eventSchema.eventLogic[i] != null)
 				{
 					if (eventSchema.eventLogic[i].name != null && eventSchema.eventLogic[i].name.length > 0)
@@ -2675,7 +2685,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 			if (FlxG.keys.justPressed.ESCAPE)
 			{
 				autosaveSong();
-				MusicBeatState.switchState(new LoadingState(new editors.EditorPlayState(sectionStartTime())));
+				MusicBeatState.switchState(new LoadingState(new EditorPlayState(sectionStartTime())));
 			}
 			if (FlxG.keys.justPressed.ENTER)
 			{
@@ -2687,7 +2697,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 					vocals.stop();
 
 				// if(_song.stage == null) _song.stage = stageDropDown.selectedLabel;
-				backend.assets.data.StageData.loadDirectory(_song);
+				StageData.loadDirectory(_song);
 				MusicBeatState.switchState(new LoadingState(new PlayState()));
 			}
 
@@ -2706,7 +2716,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 			if (FlxG.keys.justPressed.BACKSPACE)
 			{
 				PlayState.chartingMode = false;
-				MusicBeatState.switchState(new editors.MasterEditorMenu());
+				MusicBeatState.switchState(new MasterEditorMenu());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				FlxG.mouse.visible = false;
 				return;
@@ -4672,7 +4682,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 				for (i in 0...eventData.values.length)
 				{
 					var schemaName:String = 'Value ' + (i + 1);
-					var eventSchema = utility.EventHandler.eventmapping.get(eventData.name);
+					var eventSchema = EventHandler.eventmapping.get(eventData.name);
 					if (eventSchema != null && eventSchema.eventLogic != null && i < eventSchema.eventLogic.length && eventSchema.eventLogic[i] != null)
 					{
 						if (eventSchema.eventLogic[i].name != null && eventSchema.eventLogic[i].name.length > 0)

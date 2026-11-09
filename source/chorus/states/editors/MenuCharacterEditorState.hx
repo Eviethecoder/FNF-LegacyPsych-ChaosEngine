@@ -1,4 +1,5 @@
 package chorus.states.editors;
+import chorus.states.MasterEditorMenu;
 
 import chorus.backend.base.MusicBeatState;
 
@@ -316,7 +317,7 @@ class MenuCharacterEditorState extends MusicBeatState
 			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
 			if (FlxG.keys.justPressed.ESCAPE)
 			{
-				MusicBeatState.switchState(new editors.MasterEditorMenu());
+				MusicBeatState.switchState(new MasterEditorMenu());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			}
 

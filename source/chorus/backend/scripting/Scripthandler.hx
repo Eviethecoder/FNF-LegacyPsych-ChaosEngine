@@ -7,6 +7,7 @@ import sys.FileSystem;
 import flixel.FlxG;
 import flixel.util.FlxColor;
 import chorus.backend.assets.Assets as OpenFlAssets;
+import chorus.backend.base.MusicBeatState;
 import Std;
 
 class Scripthandler

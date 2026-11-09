@@ -1,5 +1,6 @@
 package chorus.backend.base;
 
+import chorus.backend.utils.ClientPrefs;
 import chorus.objects.misc.Alphabet;
 import flixel.FlxG;
 import flixel.FlxSprite;

@@ -1,5 +1,8 @@
 package chorus.objects.game;
 import chorus.backend.assets.Paths;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.NoteSkinHelper;
+import chorus.states.PlayState;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -36,9 +39,9 @@ class NoteSplash extends FlxSprite
 		if (PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0)
 			skin = PlayState.SONG.splashSkin;
 		rgbShader = new RGBShaderReference(this, new RGBPalette());
-		rgbShader.enabled = utility.NoteSkinHelper.useRgbShader(PlayState.instance != null
+		rgbShader.enabled = NoteSkinHelper.useRgbShader(PlayState.instance != null
 			&& PlayState.instance.hud != null ? PlayState.instance.hud.hudData : null);
-		alphaoveride = utility.NoteSkinHelper.getAlphaOverride(PlayState.instance != null
+		alphaoveride = NoteSkinHelper.getAlphaOverride(PlayState.instance != null
 			&& PlayState.instance.hud != null ? PlayState.instance.hud.hudData : null);
 
 		loadAnims(skin);

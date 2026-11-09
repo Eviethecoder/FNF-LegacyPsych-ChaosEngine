@@ -7,6 +7,7 @@ import json2object.JsonParser;
 import chorus.backend.assets.Assets;
 import chorus.backend.base.EventUnion;
 import chorus.backend.assets.data.SongMetadata.Metadata;
+import chorus.backend.assets.data.StageData;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
@@ -284,7 +285,7 @@ class Song
 
 		var songJson:Dynamic = parseJSONshit(rawJson, rawmetadata);
 		if (jsonInput != 'events' && jsonInput != 'cameraevents')
-			backend.assets.data.StageData.loadDirectory(songJson);
+			StageData.loadDirectory(songJson);
 		onLoadJson(songJson);
 		return songJson;
 	}

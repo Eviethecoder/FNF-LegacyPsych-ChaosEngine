@@ -1,5 +1,7 @@
 package chorus.backend.utils;
 
+import chorus.backend.system.Main;
+import chorus.states.TitleState;
 import flixel.FlxG;
 import flixel.util.FlxSave;
 import flixel.input.keyboard.FlxKey;
@@ -205,6 +207,8 @@ class ClientPrefs
 				Reflect.setField(data, key, Reflect.field(FlxG.save.data, key));
 			}
 		}
+
+		trace(data);
 
 		if (Main.fpsVar != null)
 			Main.fpsVar.visible = data.showFPS;

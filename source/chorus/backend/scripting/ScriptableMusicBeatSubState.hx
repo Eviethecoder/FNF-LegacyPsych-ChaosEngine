@@ -1,5 +1,6 @@
 package chorus.backend.scripting;
 import chorus.backend.assets.Paths;
+import chorus.backend.base.MusicBeatState;
 
 import chorus.backend.utils.Conductor.BPMChangeEvent;
 import flixel.FlxG;

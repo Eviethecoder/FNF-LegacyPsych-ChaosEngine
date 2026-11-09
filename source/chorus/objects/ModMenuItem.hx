@@ -1,4 +1,6 @@
 package chorus.objects;
+import chorus.states.ModsMenuState;
+import chorus.states.ModsMenuState.ModMetadata;
 import chorus.backend.assets.Paths;
 import flixel.addons.effects.FlxSkewedSprite;
 import flixel.util.FlxColor;
@@ -9,6 +11,8 @@ import openfl.display.BitmapData;
 import flixel.math.FlxRect;
 import flixel.text.FlxText;
 import chorus.objects.misc.AttachedSprite;
+import chorus.objects.misc.FunkinSprite;
+import chorus.sort.objects.Button;
 import flixel.math.FlxPoint;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.FlxCamera;
@@ -20,7 +24,7 @@ import flixel.group.FlxSpriteGroup;
 
 
 class ModMenuItem extends FlxSpriteGroup {
-    public var dlcinfo:ModsMenuState.ModMetadata;
+    public var dlcinfo:ModMetadata;
     public var icon:FunkinSprite;
     public var description:FlxText;
     public var name:FlxText;
@@ -31,7 +35,7 @@ class ModMenuItem extends FlxSpriteGroup {
     public var enable:Button;
     public var enabletxt:FlxText;
 
-   public function new(dlc:ModsMenuState.ModMetadata, startEnabled:Bool = true)
+   public function new(dlc:ModMetadata, startEnabled:Bool = true)
     {
         super();
         dlcinfo = dlc;

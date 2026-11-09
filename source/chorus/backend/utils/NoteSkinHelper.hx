@@ -3,6 +3,9 @@ import chorus.objects.game.Note;
 import chorus.objects.game.NoteSplash;
 
 import chorus.backend.utils.ClientPrefs;
+import chorus.backend.scripting.HaxeScript;
+import chorus.backend.utils.NoteSkinpreloader;
+import chorus.backend.utils.NoteTypepreloader;
 import chorus.states.PlayState;
 import chorus.backend.assets.data.HudstyleData;
 import chorus.objects.stages.Character.AnimArray;
@@ -87,7 +90,7 @@ class NoteSkinHelper
 			return;
 		}
 
-		utility.NoteSkinpreloader.preloadNoteSkin('default');
+		NoteSkinpreloader.preloadNoteSkin('default');
 		var data:HudstyleData = new HudstyleData();
 		var hudscriptpath:String = 'data/hudstyles/' + selectedHud + '.hx';
 		if (data.loadFromJson(selectedHud, hudscriptpath))
@@ -108,7 +111,7 @@ class NoteSkinHelper
 
 	public static function grabNoteskinjson(noteskin:String):NoteSkin
 	{
-		var noteskin = utility.NoteSkinpreloader.grabnoteskindata(noteskin);
+		var noteskin = NoteSkinpreloader.grabnoteskindata(noteskin);
 		return noteskin;
 	}
 
@@ -149,7 +152,7 @@ class NoteSkinHelper
 
 	public static function getNoteTypeData(notetype:String):NoteData
 	{
-		var noteTypeData:NoteData = utility.NoteTypepreloader.grabNoteTypeJson(notetype);
+		var noteTypeData:NoteData = NoteTypepreloader.grabNoteTypeJson(notetype);
 		if (noteTypeData == null)
 		{
 			var data = resolveHudData();

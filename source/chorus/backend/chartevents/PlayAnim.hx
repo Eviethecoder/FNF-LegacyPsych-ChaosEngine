@@ -1,5 +1,7 @@
 package chorus.backend.chartevents;
 
+import chorus.backend.base.BaseEvent;
+import chorus.backend.debug.Consolehandler;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -45,7 +47,7 @@ class PlayAnim extends BaseEvent
 		}
 		catch (e:Dynamic)
 		{
-			debug.Consolehandler.error('Error triggering PlayAnim event: ' + e);
+			Consolehandler.error('Error triggering PlayAnim event: ' + e);
 		}
 	}
 }

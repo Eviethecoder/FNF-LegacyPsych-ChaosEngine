@@ -1,4 +1,10 @@
 package chorus.states.options;
+import chorus.backend.utils.ClientPrefs;
+import chorus.substates.options.ControlsSubState;
+import chorus.substates.options.GameplaySettingsSubState;
+import chorus.substates.options.GraphicsSettingsSubState;
+import chorus.substates.options.NotesSubState;
+import chorus.substates.options.VisualsUISubState;
 
 import chorus.backend.base.MusicBeatState;
 
@@ -49,15 +55,15 @@ class OptionsState extends MusicBeatState
 		switch (label)
 		{
 			case 'Note Colors':
-				openSubState(new options.NotesSubState());
+				openSubState(new NotesSubState());
 			case 'Controls':
-				openSubState(new options.ControlsSubState());
+				openSubState(new ControlsSubState());
 			case 'Graphics':
-				openSubState(new options.GraphicsSettingsSubState());
+				openSubState(new GraphicsSettingsSubState());
 			case 'Visuals and UI':
-				openSubState(new options.VisualsUISubState());
+				openSubState(new VisualsUISubState());
 			case 'Gameplay':
-				openSubState(new options.GameplaySettingsSubState());
+				openSubState(new GameplaySettingsSubState());
 				// case 'Adjust Delay and Combo':
 				// 	LoadingState.loadAndSwitchState(new options.NoteOffsetState());
 		}

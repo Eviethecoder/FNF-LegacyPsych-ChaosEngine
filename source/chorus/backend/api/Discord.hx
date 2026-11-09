@@ -1,9 +1,11 @@
 package chorus.backend.api;
 
-#if FEATURE_DISCORD_RPC
 import Sys.sleep;
 import lime.app.Application;
-import chorus.backend.api.Discord;
+import chorus.backend.utils.Constants;
+import chorus.backend.utils.ClientPrefs;
+#if FEATURE_DISCORD_RPC
+import hxdiscord_rpc.Discord;
 import hxdiscord_rpc.Types;
 
 class DiscordClient
@@ -11,7 +13,7 @@ class DiscordClient
 	public static var isInitialized:Bool = false;
 	private inline static final _defaultID:String = "863222024192262205";
 	public static var clientID(default, set):String = _defaultID;
-	private static var presence:DiscordRichPresence = DiscordRichPresence.create();
+	private static var presence:DiscordRichPresence = new DiscordRichPresence();
 
 	public static function check()
 	{
@@ -65,11 +67,11 @@ class DiscordClient
 
 	public static function initialize()
 	{
-		var discordHandlers:DiscordEventHandlers = DiscordEventHandlers.create();
+		var discordHandlers:DiscordEventHandlers = new DiscordEventHandlers();
 		discordHandlers.ready = cpp.Function.fromStaticFunction(onReady);
 		discordHandlers.disconnected = cpp.Function.fromStaticFunction(onDisconnected);
 		discordHandlers.errored = cpp.Function.fromStaticFunction(onError);
-		Discord.Initialize(clientID, cpp.RawPointer.addressOf(discordHandlers), 1, null);
+		Discord.Initialize(clientID, cpp.RawPointer.addressOf(discordHandlers), true, null);
 
 		if (!isInitialized)
 			trace("Discord Client initialized");
@@ -101,6 +103,7 @@ class DiscordClient
 		if (endTimestamp != null && endTimestamp > 0)
 			endTimestampValue = startTimestamp + endTimestamp;
 
+		presence.type = DiscordActivityType.DiscordActivityType_Playing;
 		presence.details = details;
 		presence.state = state;
 		presence.largeImageKey = largeicon;
@@ -110,18 +113,8 @@ class DiscordClient
 		{
 			normalizedSmallImageKey = smallImageKey.toLowerCase();
 		}
-		if (normalizedSmallImageKey == 'i am')
-		{
-			presence.smallImageKey = 'i am';
-		}
-		else
-		{
-			presence.smallImageKey = normalizedSmallImageKey;
-		}
-		if (normalizedSmallImageKey != null)
-		{
-			trace('icon to find is: ' + normalizedSmallImageKey);
-		}
+
+		presence.smallImageKey = normalizedSmallImageKey;
 		// Obtained times are in milliseconds so they are divided so Discord can use it
 		presence.startTimestamp = Std.int(startTimestamp / 1000);
 		presence.endTimestamp = endTimestampValue > 0 ? Std.int(endTimestampValue / 1000) : 0;

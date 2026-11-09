@@ -3,6 +3,17 @@ package chorus.substates;
 import chorus.backend.base.MusicBeatSubstate;
 import chorus.backend.assets.Paths;
 import chorus.backend.assets.data.WeekData;
+import chorus.backend.utils.Conductor;
+import chorus.backend.chartevents.CameraMovement;
+import chorus.backend.chartevents.CameraZoom;
+import chorus.states.Freeplay;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.CoolUtil;
+import chorus.backend.save.Highscore;
+import chorus.backend.base.MusicBeatState;
+import chorus.states.PlayState;
+import chorus.backend.utils.Song;
+import chorus.states.StoryMenuState;
 
 import chorus.objects.misc.Alphabet;
 import flixel.FlxG;
@@ -61,13 +72,13 @@ class PauseSubState extends MusicBeatSubstate
 			menuItemsOG.insert(5 + num, 'Toggle Botplay');
 		}
 		menuItems = menuItemsOG;
-		if (events.CameraMovement.cameraTwn != null)
+		if (CameraMovement.cameraTwn != null)
 		{
-			events.CameraMovement.cameraTwn.active = false;
+			CameraMovement.cameraTwn.active = false;
 		}
-		if (events.CameraZoom.zoomTwn != null)
+		if (CameraZoom.zoomTwn != null)
 		{
-			events.CameraZoom.zoomTwn.active = false;
+			CameraZoom.zoomTwn.active = false;
 		}
 		for (i in 0...CoolUtil.difficulties.length)
 		{
@@ -236,13 +247,13 @@ class PauseSubState extends MusicBeatSubstate
 			switch (daSelected)
 			{
 				case "Resume":
-					if (events.CameraMovement.cameraTwn != null)
+					if (CameraMovement.cameraTwn != null)
 					{
-						events.CameraMovement.cameraTwn.active = true;
+						CameraMovement.cameraTwn.active = true;
 					}
-					if (events.CameraZoom.zoomTwn != null)
+					if (CameraZoom.zoomTwn != null)
 					{
-						events.CameraZoom.zoomTwn.active = true;
+						CameraZoom.zoomTwn.active = true;
 					}
 					close();
 				case 'Change Difficulty':
@@ -293,7 +304,7 @@ class PauseSubState extends MusicBeatSubstate
 					}
 					else
 					{
-						MusicBeatState.switchState(new states.Freeplay());
+						MusicBeatState.switchState(new Freeplay());
 					}
 					PlayState.cancelMusicFadeTween();
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));

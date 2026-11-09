@@ -3,6 +3,9 @@ package chorus.states.editors;
 import chorus.backend.base.MusicBeatState;
 
 import chorus.backend.assets.Paths;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.Constants;
+import chorus.backend.utils.CoolUtil;
 #if FEATURE_DISCORD_RPC
 import chorus.backend.api.Discord.DiscordClient;
 #end
@@ -39,7 +42,13 @@ import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import haxe.Json;
 import chorus.objects.stages.Character;
+import chorus.objects.stages.Character.IconData;
+import chorus.objects.stages.Character.Iconoffsets;
+import chorus.objects.game.HealthIcon;
 import chorus.backend.utils.Characterpreloader;
+import chorus.objects.stages.Character.CharacterFile;
+import chorus.states.MasterEditorMenu;
+import chorus.states.editors.EditorPlayState;
 import flixel.system.debug.Icon;
 import lime.system.Clipboard;
 import flixel.animation.FlxAnimation;
@@ -96,7 +105,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 	var ghostIconDropDown:PsychUIDropDownMenu;
 	var iconOffsetXStepper:PsychUINumericStepper;
 	var iconOffsetYStepper:PsychUINumericStepper;
-	var iconOffsetsData:Array<Character.Iconoffsets> = [];
+	var iconOffsetsData:Array<Iconoffsets> = [];
 	var characterList:Array<String> = [];
 
 	var animStyles:Array<String> = ['psych', 'v-slice', 'pause'];
@@ -972,7 +981,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 			return;
 		}
 
-		var characterData:Character.CharacterFile = Characterpreloader.charmap.get(daAnim);
+		var characterData:CharacterFile = Characterpreloader.charmap.get(daAnim);
 		if (characterData == null
 			|| characterData.iconData == null
 			|| characterData.iconData.iconOffsets == null
@@ -1401,9 +1410,9 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 		return null;
 	}
 
-	function returniconformat(icon:String):Character.IconData
+	function returniconformat(icon:String):IconData
 	{
-		var iconData:Character.IconData = {
+		var iconData:IconData = {
 			healthicon: icon,
 			iconOffsets: []
 		};
@@ -1605,7 +1614,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEvent
 				}
 				else
 				{
-					MusicBeatState.switchState(new editors.MasterEditorMenu());
+					MusicBeatState.switchState(new MasterEditorMenu());
 				}
 
 				return;

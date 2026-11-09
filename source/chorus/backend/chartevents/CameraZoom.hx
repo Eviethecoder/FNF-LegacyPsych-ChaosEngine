@@ -1,5 +1,7 @@
 package chorus.backend.chartevents;
+import chorus.backend.utils.Conductor;
 
+import chorus.backend.base.BaseEvent;
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;

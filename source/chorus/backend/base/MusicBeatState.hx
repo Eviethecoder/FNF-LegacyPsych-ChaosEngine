@@ -1,6 +1,15 @@
 package chorus.backend.base;
 import chorus.backend.assets.Paths;
 import chorus.backend.system.Controls;
+import chorus.backend.debug.Consolehandler;
+import chorus.backend.scripting.ScriptedStatehandler;
+import chorus.backend.scripting.ScriptableMusicBeatState;
+import chorus.backend.transitions.CustomFadeTransition;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.Conductor;
+import chorus.backend.utils.NoteSkinpreloader;
+import chorus.states.LoadingState;
+import chorus.states.PlayState;
 
 import chorus.backend.utils.Conductor.BPMChangeEvent;
 import flixel.FlxG;
@@ -9,7 +18,6 @@ import flixel.text.FlxText;
 import flixel.math.FlxRect;
 import flixel.util.FlxTimer;
 import chorus.backend.utils.Characterpreloader;
-import debug.*;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -74,8 +82,8 @@ class MusicBeatState extends FlxUIState
 			LoadingState.forcereloadstagedata();
 			Characterpreloader.charmap = [];
 			Characterpreloader.charLookup();
-			utility.NoteSkinpreloader.noteskinmap = [];
-			utility.NoteSkinpreloader.noteskinLookup();
+			NoteSkinpreloader.noteskinmap = [];
+			NoteSkinpreloader.noteskinLookup();
 			Scripthandler.gamescriptArray = [];
 			FlxG.resetState();
 		}

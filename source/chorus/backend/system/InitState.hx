@@ -2,6 +2,11 @@ package chorus.backend.system;
 
 import chorus.backend.assets.Paths;
 import chorus.backend.assets.data.WeekData;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.CoolUtil;
+import chorus.backend.utils.Characterpreloader;
+import chorus.backend.utils.NoteSkinpreloader;
+import chorus.states.TitleState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxG;
 #if FEATURE_DISCORD_RPC
@@ -96,9 +101,10 @@ class InitState extends flixel.FlxState
 			});
 		}
 		#end
-		utility.Characterpreloader.charLookup();
-		utility.NoteSkinpreloader.noteskinLookup();
+		Characterpreloader.charLookup();
+		NoteSkinpreloader.noteskinLookup();
 
-		FlxG.switchState(Type.createInstance(states.Imguitest, []));
+		trace("Initialization complete.");
+		FlxG.switchState(new TitleState());
 	}
 }

@@ -6,6 +6,8 @@ import flixel.tweens.FlxTween.FlxTweenType;
 import chorus.states.PlayState;
 import chorus.objects.game.Strumline;
 import flixel.FlxG;
+import chorus.backend.base.BaseEvent;
+import chorus.backend.debug.Consolehandler;
 
 class WaveyNotes extends BaseEvent
 {
@@ -40,7 +42,7 @@ class WaveyNotes extends BaseEvent
 		if (amplitude == 0)
 			amplitude = 10;
 
-		debug.Consolehandler.print('amplitude: ' + amplitude);
+		Consolehandler.print('amplitude: ' + amplitude);
 		var speed:Float = grabeventFloat('Speed');
 		if (speed <= 0)
 			speed = 5;

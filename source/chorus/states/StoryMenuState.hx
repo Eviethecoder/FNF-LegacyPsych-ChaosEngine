@@ -1,4 +1,12 @@
 package chorus.states;
+import chorus.objects.MenuItem;
+import chorus.sort.MenuCharacter;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.CoolUtil;
+import chorus.backend.utils.Song;
+import chorus.backend.save.Highscore;
+import chorus.substates.GameplayChangersSubstate;
+import chorus.substates.ResetScoreSubState;
 
 import chorus.backend.base.MusicBeatState;
 

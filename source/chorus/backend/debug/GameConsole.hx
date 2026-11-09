@@ -4,7 +4,7 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
 import imgui.ImGui;
-import chorus.sort.objects.FlxImGui;
+import chorus.objects.misc.FlxImGui;
 import imgui.TextBuffer;
 
 using StringTools;

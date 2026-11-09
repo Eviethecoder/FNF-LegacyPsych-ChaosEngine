@@ -1,4 +1,8 @@
 package chorus.substates.options;
+import chorus.states.options.BaseOptionsMenu;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.system.Main;
+import chorus.backend.base.Option;
 
 import chorus.backend.assets.Paths;
 #if FEATURE_DISCORD_RPC

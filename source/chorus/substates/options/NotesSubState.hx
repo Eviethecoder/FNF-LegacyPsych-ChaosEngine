@@ -1,4 +1,5 @@
 package chorus.substates.options;
+import chorus.backend.utils.ClientPrefs;
 
 import chorus.backend.base.MusicBeatSubstate;
 

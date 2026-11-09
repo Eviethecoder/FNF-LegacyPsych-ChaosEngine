@@ -8,6 +8,10 @@ import sys.FileSystem;
 #end
 import chorus.backend.assets.Assets;
 import chorus.backend.assets.Assets as OpenFlAssets;
+import chorus.backend.scripting.HaxeScript;
+import chorus.backend.base.MusicBeatState;
+import chorus.backend.utils.CoolUtil;
+import chorus.states.PlayState;
 import haxe.Json;
 import haxe.format.JsonParser;
 import flixel.util.FlxColor;

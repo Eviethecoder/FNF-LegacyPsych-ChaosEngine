@@ -1,10 +1,13 @@
 package chorus.backend.chartevents;
+import chorus.backend.utils.ClientPrefs;
+import chorus.backend.utils.Conductor;
 
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import chorus.states.PlayState;
 import chorus.backend.scripting.HaxeScript;
 import chorus.objects.game.Strumline;
+import chorus.backend.base.BaseEvent;
 
 @:keep
 class ChangeScrollSpeed extends BaseEvent

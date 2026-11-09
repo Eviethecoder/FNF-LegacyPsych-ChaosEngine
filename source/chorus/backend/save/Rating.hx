@@ -1,5 +1,7 @@
 package chorus.backend.save;
 import chorus.objects.game.NoteSplash;
+import chorus.backend.utils.ClientPrefs;
+import chorus.states.PlayState;
 
 class Rating
 {

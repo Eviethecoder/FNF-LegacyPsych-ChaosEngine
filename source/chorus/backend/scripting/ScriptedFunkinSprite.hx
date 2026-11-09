@@ -5,6 +5,8 @@ import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import chorus.objects.misc.FunkinSprite;
 import chorus.backend.scripting.HaxeScript;
+import chorus.backend.base.MusicBeatState;
+import chorus.states.PlayState;
 
 class ScriptedFunkinSprite extends FunkinSprite
 {

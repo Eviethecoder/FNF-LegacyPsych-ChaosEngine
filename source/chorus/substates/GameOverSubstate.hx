@@ -3,6 +3,13 @@ package chorus.substates;
 import chorus.backend.base.MusicBeatSubstate;
 import chorus.backend.assets.Paths;
 import chorus.backend.assets.data.WeekData;
+import chorus.objects.stages.Character;
+import chorus.backend.utils.Conductor;
+import chorus.backend.utils.CoolUtil;
+import chorus.states.PlayState;
+import chorus.states.FreeplayState;
+import chorus.states.StoryMenuState;
+import chorus.backend.base.MusicBeatState;
 
 import flixel.FlxG;
 import flixel.FlxObject;

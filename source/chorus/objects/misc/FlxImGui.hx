@@ -1,4 +1,4 @@
-package chorus.sort.objects;
+package chorus.objects.misc;
 
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;

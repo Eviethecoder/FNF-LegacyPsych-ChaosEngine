@@ -1,4 +1,13 @@
 package chorus.states;
+import chorus.backend.utils.Constants;
+import chorus.states.editors.CharacterEditorState;
+import chorus.states.editors.ChartingState;
+import chorus.states.editors.DialogueCharacterEditorState;
+import chorus.states.editors.DialogueTextState;
+import chorus.states.editors.ExampleEditorState;
+import chorus.states.editors.MenuCharacterEditorState;
+import chorus.states.editors.StageEditorState;
+import chorus.states.options.OptionsState;
 
 import chorus.backend.base.MusicBeatState;
 import chorus.backend.assets.Paths;
@@ -139,7 +148,7 @@ class MasterEditorMenu extends MusicBeatState
 					MusicBeatState.switchState(new LoadingState(new StageEditorState(), false));
 
 				case 'text examples':
-					FlxG.switchState(new states.EffectExamplesState());
+					MusicBeatState.switchState(new LoadingState(new ExampleEditorState(), false));
 
 				case 'Menu Character Editor':
 					MusicBeatState.switchState(new MenuCharacterEditorState());
@@ -152,7 +161,7 @@ class MasterEditorMenu extends MusicBeatState
 				// case '3dtest': // felt it would be cool maybe
 				// 	MusicBeatState.switchState(new states.Modeltest());
 				case 'options': // felt it would be cool maybe
-					MusicBeatState.switchState(new LoadingState(new options.OptionsState(), false));
+					MusicBeatState.switchState(new LoadingState(new OptionsState(), false));
 			}
 			if (FlxG.sound.music != null)
 			{

@@ -3,6 +3,10 @@ package chorus.states;
 import chorus.backend.base.MusicBeatState;
 import chorus.backend.assets.Paths;
 import chorus.backend.utils.MathUtil;
+import chorus.backend.utils.Constants;
+import chorus.backend.debug.Consolehandler;
+import chorus.backend.save.Highscore;
+import chorus.backend.utils.Song;
 
 import flixel.FlxG;
 import flixel.input.mouse.FlxMouseEvent;
@@ -10,7 +14,6 @@ import flixel.addons.ui.FlxUIState;
 import flixel.text.FlxText;
 import flixel.math.FlxRect;
 import flixel.util.FlxTimer;
-import debug.*;
 import chorus.backend.utils.Freeplayutils;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.tweens.FlxEase;
@@ -105,7 +108,7 @@ class Freeplay extends MusicBeatState
 		scoretext.screenCenter(X);
 		scoretext.x += 400;
 		scoretext.y += 50;
-		debug.Consolehandler.print(' ' + scoretext.x);
+		Consolehandler.print(' ' + scoretext.x);
 		add(scoretext);
 		scoretext.angle = 10;
 		render = new RenderSprite();
@@ -131,7 +134,7 @@ class Freeplay extends MusicBeatState
 
 			paper.onclick = loadsong.bind();
 			paper.songtoload = key;
-			debug.Consolehandler.print('paper.songtoload: ' + paper.songtoload);
+			Consolehandler.print('paper.songtoload: ' + paper.songtoload);
 
 			if (!rendermap.exists(paper.metadata.renderdata.name))
 			{

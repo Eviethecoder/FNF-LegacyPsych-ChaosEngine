@@ -1,5 +1,6 @@
 package chorus.objects.game;
 import chorus.backend.assets.Paths;
+import chorus.backend.utils.ClientPrefs;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
