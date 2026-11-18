@@ -1,4 +1,5 @@
 package chorus.backend.base;
+
 import chorus.backend.assets.Paths;
 import chorus.backend.system.Controls;
 import chorus.backend.debug.Consolehandler;
@@ -10,7 +11,6 @@ import chorus.backend.utils.Conductor;
 import chorus.backend.utils.NoteSkinpreloader;
 import chorus.states.LoadingState;
 import chorus.states.PlayState;
-
 import chorus.backend.utils.Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.addons.ui.FlxUIState;
@@ -31,6 +31,8 @@ import chorus.backend.utils.SignalDispatcher;
 import chorus.backend.scripting.Scripthandler;
 import flixel.util.FlxSignal;
 import flixel.FlxBasic;
+import chorus.backend.scripting.scriptevents.Gameplayevents.EventDispatcher;
+import chorus.backend.scripting.scriptevents.Gameplayevents.ScriptEventType;
 
 class MusicBeatState extends FlxUIState
 {
@@ -76,6 +78,7 @@ class MusicBeatState extends FlxUIState
 	override function update(elapsed:Float)
 	{
 		// everyStep();
+
 		if (FlxG.keys.justPressed.F5)
 		{
 			ScriptedStatehandler.reListStates();
@@ -110,8 +113,8 @@ class MusicBeatState extends FlxUIState
 			FlxG.save.data.fullscreen = FlxG.fullscreen;
 
 		super.update(elapsed);
-
 	}
+
 	private function updateSection():Void
 	{
 		if (stepsToDo < 1)
@@ -278,11 +281,14 @@ class MusicBeatState extends FlxUIState
 			beatHit();
 		}
 		SignalDispatcher.dispatch("StepHit", curStep);
+		var event:Dynamic = EventDispatcher.dispatchEvent(ScriptEventType.STEP_HIT, false, {step: curStep});
 	}
 
 	public function beatHit():Void
 	{
 		SignalDispatcher.dispatch("BeatHit", curBeat);
+		var event:Dynamic = EventDispatcher.dispatchEvent(ScriptEventType.BEAT_HIT, false, {beat: curBeat});
+
 		// trace('Beat: ' + curBeat);
 	}
 
@@ -318,6 +324,7 @@ class DebugText extends FlxText
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
 		disableTime -= elapsed;
 		if (disableTime < 0)
 			disableTime = 0;

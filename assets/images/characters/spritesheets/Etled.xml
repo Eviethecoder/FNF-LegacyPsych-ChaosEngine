@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created with Heroic Packer v0.1.2 https://heroicpacker.heroeyad.dev
+-->
+<TextureAtlas imagePath="Etled.png" width="1065" height="631" spritePadding="3" borderPadding="1">
+	<SubTexture name="Idle" x="419" y="324" width="124" height="306" frameX="-1103" frameY="-651" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Left1" x="803" y="1" width="229" height="289" frameX="-1019" frameY="-667" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Left2" x="803" y="1" width="229" height="289" frameX="-1019" frameY="-667" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Left3" x="546" y="312" width="223" height="297" frameX="-1032" frameY="-659" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Left4" x="546" y="312" width="223" height="297" frameX="-1032" frameY="-659" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Left5" x="421" y="1" width="211" height="308" frameX="-1057" frameY="-648" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Right1" x="635" y="1" width="165" height="295" frameX="-1108" frameY="-660" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Right2" x="635" y="1" width="165" height="295" frameX="-1108" frameY="-660" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Right3" x="772" y="299" width="166" height="293" frameX="-1098" frameY="-662" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Right4" x="772" y="299" width="166" height="293" frameX="-1098" frameY="-662" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Right5" x="253" y="336" width="163" height="294" frameX="-1090" frameY="-661" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Up1" x="1" y="1" width="137" height="343" frameX="-1099" frameY="-610" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Up2" x="1" y="1" width="137" height="343" frameX="-1099" frameY="-610" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Up3" x="141" y="1" width="137" height="332" frameX="-1100" frameY="-621" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Up4" x="141" y="1" width="137" height="332" frameX="-1100" frameY="-621" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="Up5" x="281" y="1" width="137" height="320" frameX="-1100" frameY="-633" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="down1" x="941" y="293" width="123" height="251" frameX="-1098" frameY="-704" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="down2" x="127" y="347" width="123" height="259" frameX="-1097" frameY="-696" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="down3" x="941" y="293" width="123" height="251" frameX="-1098" frameY="-704" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="down4" x="127" y="347" width="123" height="259" frameX="-1097" frameY="-696" frameWidth="2360" frameHeight="1640"/>
+	<SubTexture name="down5" x="1" y="347" width="123" height="274" frameX="-1100" frameY="-681" frameWidth="2360" frameHeight="1640"/>
+</TextureAtlas>

@@ -88,6 +88,7 @@ class InitState extends flixel.FlxState
 		SignalDispatcher.addSignal("BeatHit", new FlxTypedSignal<Int->Void>());
 		SignalDispatcher.addSignal("StepHit", new FlxTypedSignal<Float->Void>());
 
+		chorus.backend.scripting.scriptevents.Gameplayevents.EventDispatcher.setupeventmap();
 		FunkinMemory.loadPerminateAssets();
 		EventHandler.setupAllEventData();
 

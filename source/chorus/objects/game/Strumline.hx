@@ -1,6 +1,7 @@
 package chorus.objects.game;
-import chorus.backend.assets.Paths;
 
+import chorus.backend.save.Rating;
+import chorus.backend.assets.Paths;
 import flixel.FlxG;
 import flixel.FlxBasic;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -9,6 +10,11 @@ import chorus.backend.utils.Section.SwagSection;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import chorus.backend.scripting.scriptevents.Gameplayevents.NoteHitEvent;
+import chorus.backend.scripting.scriptevents.Gameplayevents.NoteMissEvent;
+import chorus.backend.scripting.scriptevents.Gameplayevents.EventDispatcher;
+import chorus.backend.scripting.scriptevents.Gameplayevents.ScriptEventType;
+import chorus.backend.save.Rating;
 import flixel.util.FlxSort;
 import chorus.states.editors.ChartingState;
 import chorus.backend.utils.Song.ChartNoteData;
@@ -28,8 +34,6 @@ using StringTools;
  */
 class Strumline extends FlxTypedGroup<FlxBasic>
 {
-	// ─── public fields ───────────────────────────────────────────────────────
-
 	/** The 4 receptor / strum-arrow sprites for this lane. */
 	public var strumNotes:FlxTypedSpriteGroup<StrumNote>;
 
@@ -58,21 +62,11 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 	/** When true the CPU plays this strumline automatically. */
 	public var cpuControlled:Bool = false;
 
-	// ─── callbacks (assigned by PlayState) ───────────────────────────────────
-
 	/** Called when a note should be hit (player good-hit or cpu/opponent auto-hit). */
 	public var onNoteHit:Note->Void = null;
 
-	/** Called when a player note was missed (ran off screen without being hit). */
-	public var onNoteMiss:Note->Void = null;
-
-	/**
-	 * Backward-compatible script callback hook.
-	 * Hit handling is now owned by Strumline; this callback is optional.
-	 */
 	public var onNoteProcessed:Note->Void = null;
 
-	// ─── private ─────────────────────────────────────────────────────────────
 	var _strumY:Float = 10;
 
 	// ─────────────────────────────────────────────────────────────────────────
@@ -109,8 +103,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 		noteKillOffset = 350 / songSpeed;
 		return value;
 	}
-
-	// ─── Arrow generation ─────────────────────────────────────────────────────
 
 	/**
 	 * Spawns the 4 strum-arrow sprites, positions them, and applies the
@@ -160,8 +152,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 		}
 	}
 
-	// ─── Note generation ──────────────────────────────────────────────────────
-
 	/**
 	 * Parses all song sections, keeps only the notes that belong to *this*
 	 * strumline, builds Note + sustain objects, and sorts them into
@@ -194,7 +184,7 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 
 				final leNoteData:ChartNoteData = {
 					time: songNotes[0],
-					id: Std.int(songNotes[1] % 4),
+					id: Std.int(songNotes[1] % 4), // posibly make the special notes id 4 so it can be distinguished from regular notes strumline wise
 					sLen: songNotes[2],
 					strumLine: gottaHitNote ? 1 : 0,
 					isGfNote: (section.gfSection && (songNotes[1] < 4)),
@@ -221,7 +211,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 			}
 		}
 
-		// Build Note objects
 		for (note in noteDatas)
 		{
 			var oldNote:Note = unspawnNotes.length > 0 ? unspawnNotes[unspawnNotes.length - 1] : null;
@@ -235,7 +224,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 
 			unspawnNotes.push(swagNote);
 
-			// Sustain notes
 			var floorSus:Int = Math.floor(swagNote.sustainLength / Conductor.stepCrochet);
 			if (floorSus > 0)
 			{
@@ -247,7 +235,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 						+ (Conductor.stepCrochet / FlxMath.roundDecimal(songSpeed, 2)), note.id, oldNote,
 						isPlayer, true);
 
-					// Opponent sustains use oppsongSpeed for timing offset
 					if (!isPlayer)
 					{
 						var ps:PlayState = PlayState.instance;
@@ -291,9 +278,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 		}
 	}
 
-	// ─── Speed helpers ────────────────────────────────────────────────────────
-
-	/** Called when PlayState.songSpeed changes so existing notes resize. */
 	public function resizeByRatio(ratio:Float):Void
 	{
 		for (note in notes)
@@ -302,9 +286,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 			note.resizeByRatio(ratio);
 	}
 
-	// ─── Cleanup helpers ─────────────────────────────────────────────────────
-
-	/** Invalidate all notes at or before `time` (used by startOnTime / seek). */
 	public function clearNotesBefore(time:Float):Void
 	{
 		var i:Int = unspawnNotes.length - 1;
@@ -336,7 +317,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 		}
 	}
 
-	/** Destroy every active/unspawned note in this strumline. */
 	public function killAllNotes():Void
 	{
 		while (notes.length > 0)
@@ -348,8 +328,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 		}
 		unspawnNotes = [];
 	}
-
-	// ─── Update ───────────────────────────────────────────────────────────────
 
 	override function update(elapsed:Float)
 	{
@@ -382,7 +360,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 			notes.insert(0, dunceNote);
 			dunceNote.spawned = true;
 
-			// Fire the script hook directly – no external callback needed
 			var ps = PlayState.instance;
 			if (ps != null)
 				ps.setFunctionOnScripts('onSpawnNote', [notes.members.indexOf(dunceNote), dunceNote]);
@@ -391,7 +368,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 		}
 	}
 
-	/** Move every live note to its correct screen position and handle hits/misses. */
 	function _updateNotePositions():Void
 	{
 		var ps:PlayState = PlayState.instance;
@@ -455,8 +431,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 				}
 			}
 
-			// ── Hit triggers ──────────────────────────────────────────────────
-
 			// Opponent auto-hit – handle strum/note visuals here; callback handles cam/char/vocals/scripts
 			if (!isPlayer && daNote.wasGoodHit && !daNote.hitByOpponent && !daNote.ignoreNote)
 			{
@@ -490,8 +464,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 				}
 			}
 
-			// ── Sustain visuals ───────────────────────────────────────────────
-
 			if (daNote.isSustainNote && strum.sustainReduce)
 				daNote.clipToStrumNote(strum);
 
@@ -506,15 +478,10 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 					strum.sustainSplash.show();
 			}
 
-			// ── Kill late notes ───────────────────────────────────────────────
-
 			if (Conductor.songPosition > noteKillOffset + daNote.strumTime)
 			{
 				if (isPlayer && !cpuControlled && !daNote.ignoreNote && !ps.endingSong && (daNote.tooLate || !daNote.wasGoodHit))
-				{
-					if (onNoteMiss != null)
-						onNoteMiss(daNote);
-				}
+					noteMiss(daNote);
 
 				daNote.active = false;
 				daNote.visible = false;
@@ -535,14 +502,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 		}
 	}
 
-	// ─── Public hit helpers ───────────────────────────────────────────────────
-
-	/**
-	 * Play the strum confirm animation for a given note column.
-	 * Called by PlayState.goodNoteHit so strum logic stays here.
-	 * For CPU/botplay lanes resetAnim is set so the arrow returns to static
-	 * automatically; for human-input lanes it stays in confirm until next frame.
-	 */
 	public function confirmStrum(noteData:Int, isSustainNote:Bool):Void
 	{
 		var strum = strumNotes.members[Std.int(Math.abs(noteData))];
@@ -558,11 +517,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 		}
 	}
 
-	/**
-	 * Handles note-hit logic for this lane.
-	 * - Player lane: score/rating/health/animations and note invalidation.
-	 * - Opponent lane: camera/character/vocals hooks and script callback.
-	 */
 	public function hitNote(note:Note):Void
 	{
 		if (isPlayer)
@@ -610,6 +564,7 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 	function _playerGoodNoteHit(note:Note):Void
 	{
 		var ps:PlayState = PlayState.instance;
+		var ranking:Null<Rating>;
 		if (ps == null)
 			return;
 		if (note.invalid)
@@ -620,30 +575,52 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 		if (cpuControlled && note.ignoreNote)
 			return;
 
+		var shouldDoNotesplash:Bool = note.noteSplashDisabled;
+
+		switch (note.isSustainNote)
+		{
+			case false:
+				ranking = _applyNoteRating(note);
+				if (shouldDoNotesplash && ranking.noteSplash == false)
+				{
+					shouldDoNotesplash = false;
+				}
+			case true:
+				ranking = null;
+		}
+
 		var leData:Int = Math.round(Math.abs(note.noteData));
-		ps.setFunctionOnScripts('goodNoteHit', [note]);
+
+		var event:NoteHitEvent = EventDispatcher.dispatchEvent(ScriptEventType.NOTE_HIT, true,
+			{note: note, doesNotesplash: shouldDoNotesplash, ranking: ranking});
+
+		if (event.cancled == true)
+			return;
 
 		note.wasGoodHit = true;
+
+		// ps.setFunctionOnScripts('goodNoteHit', [note]);
+
 		if (ClientPrefs.data.hitsoundVolume > 0 && !note.hitsoundDisabled)
 			FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.data.hitsoundVolume);
 
-		if (note.hitCausesMiss)
+		if (event.hitCausesMiss)
 		{
-			ps.noteMiss(note);
-			if (!note.noteSplashDisabled && !note.isSustainNote)
-				ps.spawnNoteSplashOnNote(note);
+			noteMiss(event.note);
+			if (!event.doesNotesplash && !event.sustainInfo.isSustain)
+				ps.spawnNoteSplashOnNote(event.note);
 
-			if (!note.isSustainNote)
+			if (!event.sustainInfo.isSustain)
 				invalidateNote(note);
 			return;
 		}
 
-		var animToPlay:String = ps.getSingAnimationByData(leData) + note.animSuffix;
-		if (note.gfNote)
+		var animToPlay:String = ps.getSingAnimationByData(leData) + event.animSuffix;
+		if (event.gfNote)
 		{
 			if (ps.stage.gf != null)
 			{
-				ps.stage.gf.playSingAnim(note, animToPlay, true);
+				ps.stage.gf.playSingAnim(event.note, animToPlay, true);
 				ps.stage.gf.holdTimer = 0;
 			}
 		}
@@ -655,31 +632,30 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 				{
 					if (character.charactertype == 'bf')
 					{
-						character.playSingAnim(note, animToPlay, true);
+						character.playSingAnim(event.note, animToPlay, true);
 						character.holdTimer = 0;
 					}
-					if (note.noteType == 'Hey!')
-					{
-						if (character.animOffsets.exists('hey'))
-						{
-							character.playAnim('hey', true);
-							character.specialAnim = true;
-							character.heyTimer = 0.6;
-						}
-					}
+					// if (event.noteType == 'Hey!')
+					// {
+					// 	if (character.animOffsets.exists('hey'))
+					// 	{
+					// 		character.playAnim('hey', true);
+					// 		character.specialAnim = true;
+					// 		character.heyTimer = 0.6;
+					// 	}
+					// 	if (ps.stage.gf != null && ps.stage.gf.animOffsets.exists('cheer'))
+					// 	{
+					// 		ps.stage.gf.playAnim('cheer', true);
+					// 		ps.stage.gf.specialAnim = true;
+					// 		ps.stage.gf.heyTimer = 0.6;
+					// 	}
+					// }
 				}
-			}
-			if (ps.stage.gf != null && ps.stage.gf.animOffsets.exists('cheer'))
-			{
-				ps.stage.gf.playAnim('cheer', true);
-				ps.stage.gf.specialAnim = true;
-				ps.stage.gf.heyTimer = 0.6;
 			}
 		}
 
-		if (note.special == true)
+		if (event.isspecial == true)
 		{
-			Consolehandler.print('ALLL NOTES BEING HIT');
 			for (strum in strumNotes.members)
 			{
 				if (strum != null)
@@ -688,25 +664,75 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 		}
 		else
 		{
-			confirmStrum(note.noteData, note.isSustainNote);
+			confirmStrum(event.note.noteData, event.sustainInfo.isSustain);
 		}
 		ps.vocals.unmutePlayer();
 
-		if (!note.isSustainNote)
+		if (!event.sustainInfo.isSustain)
 		{
 			ps.combo += 1;
 			if (ps.combo > 9999)
 				ps.combo = 9999;
-			ps.popUpScore(note);
+			ps.hud.popUpScore(note, event);
 			ps.health += note.hitHealth * ps.healthGain;
-			invalidateNote(note);
+			invalidateNote(note); // we dont use event here so we can still
 		}
 	}
 
-	/**
-	 * Remove any duplicate live notes that match daNote's data/time.
-	 * Called by PlayState.noteMiss to clean up ghost jacks.
-	 */
+	public function noteMiss(note:Note):Void
+	{
+		var ps:PlayState = PlayState.instance;
+		if (ps == null)
+			return;
+
+		var event:NoteMissEvent = EventDispatcher.dispatchEvent(ScriptEventType.NOTE_MISS, true, {note: note});
+		if (event.cancled)
+			return;
+
+		note = event.note;
+		removeDupeNotes(note);
+		ps.combo = 0;
+		ps.health -= event.healthchange * ps.healthLoss;
+
+		if (ps.instakillOnMiss)
+		{
+			ps.vocals.volume = 0;
+			ps.doDeathCheck(true);
+		}
+
+		ps.songMisses++;
+		ps.vocals.mutePlayer();
+		if (!ps.practiceMode)
+			ps.songScore -= 10;
+
+		ps.totalPlayed++;
+		ps.RecalculateRating(true);
+
+		var char:Character = event.gfNote ? ps.stage.gf : ps.stage.boyfriend;
+		if (char != null && !note.noMissAnimation && char.hasMissAnimations)
+		{
+			var animToPlay:String = ps.getSingAnimationByData(note.noteData) + 'miss' + event.animSuffix;
+			char.playSingAnim(note, animToPlay, true);
+		}
+		ps.setFunctionOnScripts('noteMiss', [notes.members.indexOf(note), note]);
+	}
+
+	function _applyNoteRating(note:Note):Rating
+	{
+		var ps:PlayState = PlayState.instance;
+		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.data.ratingOffset);
+		var daRating:Rating = Conductor.judgeNote(note, noteDiff / ps.playbackRate);
+
+		ps.totalNotesHit += daRating.ratingMod;
+		note.ratingMod = daRating.ratingMod;
+		if (!note.ratingDisabled)
+			daRating.increase();
+		note.rating = daRating.name;
+		note.score = daRating.score;
+
+		return daRating;
+	}
+
 	public function removeDupeNotes(daNote:Note):Void
 	{
 		notes.forEachAlive(function(note:Note)
@@ -723,10 +749,6 @@ class Strumline extends FlxTypedGroup<FlxBasic>
 		});
 	}
 
-	/**
-	 * Kill and remove a note from this lane's live notes group.
-	 * PlayState.invalidateNote delegates here based on mustPress.
-	 */
 	public function invalidateNote(note:Note):Void
 	{
 		note.kill();

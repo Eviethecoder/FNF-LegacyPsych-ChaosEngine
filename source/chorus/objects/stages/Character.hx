@@ -1,7 +1,7 @@
 package chorus.objects.stages;
+
 import chorus.backend.assets.Paths;
 import chorus.objects.game.Note;
-
 import flixel.FlxG;
 import animateatlas.AtlasFrameMaker;
 import flixel.addons.effects.FlxTrail;
@@ -49,6 +49,7 @@ typedef CharacterFile =
 	var healthbar_colors:Array<Int>;
 	@:optional
 	var animtype:String;
+	var globaloffsets:Array<Float>;
 }
 
 typedef IconData =
@@ -96,6 +97,8 @@ class Character extends FunkinSprite
 	var reverttimer:FlxTimer;
 	var timerhandled:Bool = false;
 	var didswitch:Bool;
+
+	public var globaloffsets:Array<Float>;
 
 	public var pendingRevertAnim:Bool = false;
 
@@ -253,6 +256,14 @@ class Character extends FunkinSprite
 					noAntialiasing = true;
 				}
 
+				if (json.globaloffsets != null && json.globaloffsets.length > 1)
+				{
+					globaloffsets = json.globaloffsets;
+				}
+				else
+				{
+					globaloffsets = [0, 0];
+				}
 				if (json.healthbar_colors != null && json.healthbar_colors.length > 2)
 					healthColorArray = json.healthbar_colors;
 

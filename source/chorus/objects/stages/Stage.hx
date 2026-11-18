@@ -397,8 +397,8 @@ class Stage extends FlxBasic
 				trace('adding dad');
 				charposmap.set('dad', [chardata.position[0], chardata.position[1]]);
 				charobject = new Character(chardata.position[0], chardata.position[1], player2Char, 'dad', false);
-				charobject.x = chardata.position[0] - charobject.characterOrigin.x;
-				charobject.y = chardata.position[1] - charobject.characterOrigin.y;
+				charobject.x = chardata.position[0] - charobject.characterOrigin.x + charobject.globaloffsets[0];
+				charobject.y = chardata.position[1] - charobject.characterOrigin.y + charobject.globaloffsets[1];
 				charextradata(charobject, chardata);
 
 				startCharacterPos(charobject, true);
@@ -407,8 +407,8 @@ class Stage extends FlxBasic
 				trace('adding boyfriend');
 				charposmap.set('boyfriend', [chardata.position[0], chardata.position[1]]);
 				charobject = new Character(chardata.position[0], chardata.position[1], player1Char, 'bf', true);
-				charobject.x = chardata.position[0] - charobject.characterOrigin.x;
-				charobject.y = chardata.position[1] - charobject.characterOrigin.y;
+				charobject.x = chardata.position[0] - charobject.characterOrigin.x + charobject.globaloffsets[0];
+				charobject.y = chardata.position[1] - charobject.characterOrigin.y + charobject.globaloffsets[1];
 				charextradata(charobject, chardata);
 				startCharacterPos(charobject);
 
@@ -420,8 +420,8 @@ class Stage extends FlxBasic
 				if (!stageData.hide_girlfriend)
 				{
 					charobject = new Character(chardata.position[0], chardata.position[1], gfChar, 'gf', true);
-					charobject.x = chardata.position[0] - charobject.characterOrigin.x;
-					charobject.y = chardata.position[1] - charobject.characterOrigin.y;
+					charobject.x = chardata.position[0] - charobject.characterOrigin.x + charobject.globaloffsets[0];
+					charobject.y = chardata.position[1] - charobject.characterOrigin.y + charobject.globaloffsets[1];
 					charextradata(charobject, chardata);
 					trace('gf added: ' + charobject + ' at position: ' + charobject.x + ', ' + charobject.y + 'with alpha: ' + charobject.alpha);
 				}

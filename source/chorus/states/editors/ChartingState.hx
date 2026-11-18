@@ -2,7 +2,6 @@ package chorus.states.editors;
 
 import chorus.backend.utils.Vocals;
 import chorus.backend.base.MusicBeatState;
-
 import chorus.backend.assets.Paths;
 import chorus.objects.game.Note;
 import chorus.objects.game.StrumNote;
@@ -1604,7 +1603,7 @@ class ChartingState extends MusicBeatState implements PsychUIEvent
 					var parsed = Std.parseFloat(getSelectedEventValue());
 					if (Math.isNaN(parsed))
 						parsed = 1;
-					var stepper = new PsychUINumericStepper(posX, posY, 1, parsed, -9999, 9999, 1);
+					var stepper = new PsychUINumericStepper(posX, posY, 1, parsed, -9999, 9999, 4);
 					stepper.onValueChange = function()
 					{
 						setSelectedEventValue(Std.string(stepper.value));

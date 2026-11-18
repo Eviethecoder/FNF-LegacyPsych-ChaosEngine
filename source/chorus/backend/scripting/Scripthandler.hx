@@ -14,6 +14,8 @@ class Scripthandler
 {
 	public static var gamescriptArray:Array<HaxeScript> = [];
 
+	public static var modules:Array<HaxeScript> = [];
+
 	public static function checkDirectoryScripts(directorys:Array<String>, obj:Dynamic, type:String = "gamescript"):Void
 	{
 		var filesPushed:Array<String> = [];

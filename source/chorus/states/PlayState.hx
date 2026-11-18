@@ -24,6 +24,7 @@ import chorus.objects.game.HealthIcon;
 import chorus.objects.game.Strumline;
 import chorus.objects.game.StrumNote;
 import chorus.objects.game.StrumNote.SustainSplash;
+import chorus.backend.scripting.scriptevents.Gameplayevents.NoteHitEvent;
 import chorus.backend.system.FunkinSoundTray;
 import flixel.graphics.FlxGraphic;
 #if FEATURE_DISCORD_RPC
@@ -154,25 +155,16 @@ class PlayState extends MusicBeatState
 
 	public var startedCountdown:Bool = false;
 
-	// â”€â”€ Strumlines (own arrows + notes for each lane) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-	/** Opponent (CPU) strumline. */
 	public var opponentStrumline:chorus.objects.game.Strumline;
 
-	/** Player strumline. */
 	public var playerStrumline:chorus.objects.game.Strumline;
 
-	/**
-	 * Combined strum arrows from both lanes.
-	 * Populated once during setup so it can be iterated without per-frame allocation.
-	 */
 	public var strumLineNotes:FlxTypedGroup<StrumNote>;
 
 	public var eventNotes:Array<EventNote> = [];
 
 	private var strumLine:FlxSprite;
 
-	// Handles the new epic mega sexy cam code that i've done
 	public var camFollow:FlxPoint;
 	public var camFollowPos:FlxObject;
 
@@ -455,15 +447,10 @@ class PlayState extends MusicBeatState
 			strumLine.y = FlxG.height - 150;
 		strumLine.scrollFactor.set();
 		hud = new HudHandler(PlayState.SONG.hudSkin, PlayState.SONG.hudSkin, SONG.song); ///do this before song is generated for noteskins
+		hud.comboGroup = comboGroup;
 
 		opponentStrumline = new Strumline(strumLine.y, false);
 		playerStrumline = new Strumline(strumLine.y, true);
-
-		// Note-hit logic is owned by Strumline.
-		playerStrumline.onNoteMiss = function(note:Note)
-		{
-			noteMiss(note);
-		};
 
 		// Build the combined strumLineNotes group for backward compat (Lua/HScript)
 		strumLineNotes = new FlxTypedGroup<StrumNote>();
@@ -718,7 +705,6 @@ class PlayState extends MusicBeatState
 		super.create();
 
 		cacheCountdown();
-		cachePopUpScore();
 		for (key => type in precacheList)
 		{
 			// trace('Key $key is type $type');
@@ -1940,7 +1926,7 @@ class PlayState extends MusicBeatState
 
 	public var isDead:Bool = false; // Don't mess with this on Lua!!!
 
-	function doDeathCheck(?skipHealthCheck:Bool = false)
+	public function doDeathCheck(?skipHealthCheck:Bool = false)
 	{
 		if (((skipHealthCheck && instakillOnMiss) || health <= 0) && !practiceMode && !isDead)
 		{
@@ -2186,208 +2172,6 @@ class PlayState extends MusicBeatState
 
 	public var totalPlayed:Int = 0;
 	public var totalNotesHit:Float = 0.0;
-	public var showCombo:Bool = false;
-	public var showComboNum:Bool = true;
-	public var showRating:Bool = true;
-
-	private function cachePopUpScore()
-	{
-		var pixelShitPart1:String = '';
-		var pixelShitPart2:String = '';
-		if (stage.isPixelStage)
-		{
-			pixelShitPart1 = 'pixelUI/';
-			pixelShitPart2 = '-pixel';
-		}
-
-		Paths.image(pixelShitPart1 + "sick" + pixelShitPart2);
-		Paths.image(pixelShitPart1 + "good" + pixelShitPart2);
-		Paths.image(pixelShitPart1 + "bad" + pixelShitPart2);
-		Paths.image(pixelShitPart1 + "shit" + pixelShitPart2);
-		Paths.image(pixelShitPart1 + "combo" + pixelShitPart2);
-
-		for (i in 0...10)
-		{
-			Paths.image(pixelShitPart1 + 'num' + i + pixelShitPart2);
-		}
-	}
-
-	public function popUpScore(note:Note = null):Void
-	{
-		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.data.ratingOffset);
-		vocals.unmutePlayer();
-
-		var placement:String = Std.string(combo);
-
-		var coolText:FlxText = new FlxText(0, 0, 0, placement, 32);
-		coolText.screenCenter();
-		coolText.x = FlxG.width * 0.35;
-		//
-
-		var rating:FlxSprite = new FlxSprite();
-		var score:Int = 350;
-
-		// tryna do MS based judgment due to popular demand
-		var daRating:Rating = Conductor.judgeNote(note, noteDiff / playbackRate);
-
-		totalNotesHit += daRating.ratingMod;
-		note.ratingMod = daRating.ratingMod;
-		if (!note.ratingDisabled)
-			daRating.increase();
-		note.rating = daRating.name;
-		score = daRating.score;
-
-		if (daRating.noteSplash && !note.noteSplashDisabled)
-			spawnNoteSplashOnNote(note);
-
-		if (!practiceMode && !cpuControlled)
-		{
-			songScore += score;
-			if (!note.ratingDisabled)
-			{
-				songHits++;
-				totalPlayed++;
-				RecalculateRating(false);
-			}
-		}
-
-		if (!ClientPrefs.data.comboStacking && comboGroup.members.length > 1)
-		{
-			for (spr in comboGroup.members)
-			{
-				spr.destroy();
-				comboGroup.remove(spr, true);
-			}
-		}
-
-		var pixelShitPart1:String = "";
-		var pixelShitPart2:String = '';
-
-		if (stage.isPixelStage)
-		{
-			pixelShitPart1 = 'pixelUI/';
-			pixelShitPart2 = '-pixel';
-		}
-
-		rating.loadGraphic(Paths.image(pixelShitPart1 + daRating.image + pixelShitPart2));
-		rating.cameras = [camHUD];
-		rating.screenCenter();
-		rating.x = coolText.x - 40;
-		rating.y -= 60;
-		rating.acceleration.y = 550 * playbackRate * playbackRate;
-		rating.velocity.y -= FlxG.random.int(140, 175) * playbackRate;
-		rating.velocity.x -= FlxG.random.int(0, 10) * playbackRate;
-		rating.visible = (!ClientPrefs.data.hideHud && showRating);
-		rating.x += ClientPrefs.data.comboOffset[0];
-		rating.y -= ClientPrefs.data.comboOffset[1];
-
-		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));
-		comboSpr.cameras = [camHUD];
-		comboSpr.screenCenter();
-		comboSpr.x = coolText.x;
-		comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
-		comboSpr.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
-		comboSpr.visible = (!ClientPrefs.data.hideHud && showCombo);
-		comboSpr.x += ClientPrefs.data.comboOffset[0];
-		comboSpr.y -= ClientPrefs.data.comboOffset[1];
-		comboSpr.y += 60;
-		comboSpr.velocity.x += FlxG.random.int(1, 10) * playbackRate;
-		comboGroup.add(rating);
-
-		if (!stage.isPixelStage)
-		{
-			rating.setGraphicSize(Std.int(rating.width * 0.7));
-			rating.antialiasing = ClientPrefs.data.globalAntialiasing;
-			comboSpr.setGraphicSize(Std.int(comboSpr.width * 0.7));
-			comboSpr.antialiasing = ClientPrefs.data.globalAntialiasing;
-		}
-		else
-		{
-			rating.setGraphicSize(Std.int(rating.width * daPixelZoom * 0.85));
-			comboSpr.setGraphicSize(Std.int(comboSpr.width * daPixelZoom * 0.85));
-		}
-
-		comboSpr.updateHitbox();
-		rating.updateHitbox();
-
-		var seperatedScore:Array<Int> = [];
-
-		if (combo >= 1000)
-		{
-			seperatedScore.push(Math.floor(combo / 1000) % 10);
-		}
-		seperatedScore.push(Math.floor(combo / 100) % 10);
-		seperatedScore.push(Math.floor(combo / 10) % 10);
-		seperatedScore.push(combo % 10);
-
-		var daLoop:Int = 0;
-		var xThing:Float = 0;
-		if (showCombo)
-			comboGroup.add(comboSpr);
-
-		for (i in seperatedScore)
-		{
-			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
-			numScore.cameras = [camHUD];
-			numScore.screenCenter();
-			numScore.x = coolText.x + (43 * daLoop) - 90;
-			numScore.y += 80;
-
-			numScore.x += ClientPrefs.data.comboOffset[2];
-			numScore.y -= ClientPrefs.data.comboOffset[3];
-
-			if (!stage.isPixelStage)
-			{
-				numScore.antialiasing = ClientPrefs.data.globalAntialiasing;
-				numScore.setGraphicSize(Std.int(numScore.width * 0.5));
-			}
-			else
-			{
-				numScore.setGraphicSize(Std.int(numScore.width * daPixelZoom));
-			}
-			numScore.updateHitbox();
-
-			numScore.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
-			numScore.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
-			numScore.velocity.x = FlxG.random.float(-5, 5) * playbackRate;
-			numScore.visible = !ClientPrefs.data.hideHud;
-
-			// if (combo >= 10 || combo == 0)
-			if (showComboNum)
-				comboGroup.add(numScore);
-
-			FlxTween.tween(numScore, {alpha: 0}, 0.2 / playbackRate, {
-				onComplete: function(tween:FlxTween)
-				{
-					numScore.destroy();
-				},
-				startDelay: Conductor.crochet * 0.002 / playbackRate
-			});
-
-			daLoop++;
-			if (numScore.x > xThing)
-				xThing = numScore.x;
-		}
-		comboSpr.x = xThing + 50;
-
-		coolText.text = Std.string(seperatedScore);
-
-		FlxTween.tween(rating, {alpha: 0}, 0.2 / playbackRate, {
-			startDelay: Conductor.crochet * 0.001 / playbackRate
-		});
-
-		FlxTween.tween(comboSpr, {alpha: 0}, 0.2 / playbackRate, {
-			onComplete: function(tween:FlxTween)
-			{
-				coolText.destroy();
-				comboSpr.destroy();
-
-				rating.destroy();
-			},
-			startDelay: Conductor.crochet * 0.002 / playbackRate
-		});
-		setFunctionOnScripts('OnScorePopup', [note]);
-	}
 
 	public var strumsBlocked:Array<Bool> = [];
 
@@ -2628,44 +2412,6 @@ class PlayState extends MusicBeatState
 		return ret;
 	}
 
-	public function noteMiss(daNote:Note):Void
-	{ // You didn't hit the key and let it go offscreen, also used by Hurt Notes
-		// Dupe note removal is delegated to the Strumline
-		playerStrumline.removeDupeNotes(daNote);
-		combo = 0;
-
-		health -= daNote.missHealth * healthLoss;
-
-		if (instakillOnMiss)
-		{
-			vocals.volume = 0;
-			doDeathCheck(true);
-		}
-
-		// For testing purposes
-		// trace(daNote.missHealth);
-		songMisses++;
-		vocals.mutePlayer();
-		if (!practiceMode)
-			songScore -= 10;
-
-		totalPlayed++;
-		RecalculateRating(true);
-
-		var char:Character = stage.boyfriend;
-		if (daNote.gfNote)
-		{
-			char = stage.gf;
-		}
-
-		if (char != null && !daNote.noMissAnimation && char.hasMissAnimations)
-		{
-			var animToPlay:String = singAnimations[Std.int(Math.abs(daNote.noteData))] + 'miss' + daNote.animSuffix;
-			char.playSingAnim(daNote, animToPlay, true);
-		}
-		setFunctionOnScripts('noteMiss', [playerStrumline.notes.members.indexOf(daNote), daNote]);
-	}
-
 	function noteMissPress(direction:Int = 1):Void // You pressed a key when there was no notes to press for this key
 	{
 		if (ClientPrefs.data.ghostTapping)
@@ -2706,16 +2452,6 @@ class PlayState extends MusicBeatState
 			vocals.mutePlayer();
 		}
 		setFunctionOnScripts('noteMissPress', [direction]);
-	}
-
-	public function opponentNoteHit(note:Note):Void
-	{
-		opponentStrumline.hitNote(note);
-	}
-
-	public function goodNoteHit(note:Note):Void
-	{
-		playerStrumline.hitNote(note);
 	}
 
 	public inline function getSingAnimationByData(noteData:Int):String

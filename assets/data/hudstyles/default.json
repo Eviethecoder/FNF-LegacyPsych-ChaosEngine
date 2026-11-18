@@ -16,5 +16,8 @@
     "barOffsets": [320, 99999]
   },
   "noteskin": "default",
-  "scorpos": [-400, 50]
+  "scorpos": [-400, 50],
+  "popUpScoreFolder": "default",
+  "popUpScoreSuffix": ""
+
 }

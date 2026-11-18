@@ -1,0 +1,80 @@
+{
+	"animations": [
+		{
+			"anim": "idle",
+			"name": "Idle",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [
+				0,
+				0
+			]
+		},
+		{
+			"anim": "singLEFT",
+			"name": "Left",
+			"fps": 27,
+			"loop": false,
+			"indices": [],
+			"offsets": [
+				-5,
+				-1
+			]
+		},
+		{
+			"anim": "singDOWN",
+			"name": "down",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [
+				1,
+				-2
+			]
+		},
+		{
+			"anim": "singUP",
+			"name": "Up",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [
+				-18,
+				-4
+			]
+		},
+		{
+			"anim": "singRIGHT",
+			"name": "Right",
+			"fps": 24,
+			"loop": false,
+			"indices": [],
+			"offsets": [
+				7,
+				-2
+			]
+		}
+	],
+	"vocals_file": "",
+	"no_antialiasing": true,
+	"image": "characters/spritesheets/Etled",
+	"position": [
+		0,
+		0
+	],
+	"healthicon": "face",
+	"flip_x": false,
+	"healthbar_colors": [
+		161,
+		161,
+		161
+	],
+	"camera_position": [
+		0,
+		0
+	],
+	"sing_duration": 4,
+	"scale": 1,
+	"_editor_isPlayer": false
+}

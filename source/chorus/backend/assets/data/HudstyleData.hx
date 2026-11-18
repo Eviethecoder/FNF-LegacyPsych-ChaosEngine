@@ -2,9 +2,7 @@ package chorus.backend.assets.data;
 
 import chorus.backend.scripting.HaxeScript;
 import chorus.backend.assets.Paths;
-
 import chorus.objects.game.NoteSplash;
-
 import haxe.Json;
 import chorus.objects.stages.Character.AnimArray as AnimArray;
 import chorus.backend.utils.ClientPrefs;
@@ -34,6 +32,11 @@ typedef Hudstyle =
 	@:optional
 	var noteskin:String;
 	var soundbar:String;
+	@:default('default')
+	var popUpScoreFolder:String;
+
+	@:default('')
+	var popUpScoreSuffix:String;
 }
 
 typedef BarInfo =
@@ -61,6 +64,8 @@ class HudstyleData
 	public var hasscript:Bool = false;
 	public var soundbar:String;
 	public var noteskindata:NoteSkin;
+	public var popUpScoreFolder:String;
+	public var popUpScoreSuffix:String;
 
 	public function new()
 	{
@@ -128,6 +133,14 @@ class HudstyleData
 		if (bars.noteskin == null)
 		{
 			bars.noteskin = 'default';
+		}
+		if (bars.popUpScoreFolder != null)
+		{
+			popUpScoreFolder = bars.popUpScoreFolder;
+		}
+		if (bars.popUpScoreSuffix != null)
+		{
+			popUpScoreSuffix = bars.popUpScoreSuffix;
 		}
 	}
 
@@ -204,6 +217,50 @@ class HudstyleData
 			return bars.healthbar.position;
 		}
 		return bars.healthbar.position;
+	}
+
+	public function getpopUpScoreFolder():Null<String>
+	{
+		if (script != null)
+		{
+			trace('Running script function getpopUpScoreFolder');
+			var func = script.variables.get("getpopUpScoreFolder");
+			if (func != null)
+			{
+				var folder:String = cast Reflect.callMethod(null, func, []);
+				trace('folder is: ' + folder);
+				if (folder != null)
+				{
+					return folder;
+				}
+
+				return bars.popUpScoreFolder;
+			}
+			return bars.popUpScoreFolder;
+		}
+		return bars.popUpScoreFolder;
+	}
+
+	public function getpopUpScoreSufix():Null<String>
+	{
+		if (script != null)
+		{
+			trace('Running script function getpopUpScoreSufix');
+			var func = script.variables.get("getpopUpScoreSufix");
+			if (func != null)
+			{
+				var sufix:String = cast Reflect.callMethod(null, func, []);
+				trace('sufix is: ' + sufix);
+				if (sufix != null)
+				{
+					return sufix;
+				}
+
+				return bars.popUpScoreSuffix;
+			}
+			return bars.popUpScoreSuffix;
+		}
+		return bars.popUpScoreSuffix;
 	}
 
 	public function gethealthbargraphics(barnum:Int):Null<String>
