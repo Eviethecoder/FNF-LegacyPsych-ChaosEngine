@@ -1,4 +1,5 @@
 package chorus.states;
+
 import chorus.backend.utils.Constants;
 import chorus.states.editors.CharacterEditorState;
 import chorus.states.editors.ChartingState;
@@ -6,9 +7,8 @@ import chorus.states.editors.DialogueCharacterEditorState;
 import chorus.states.editors.DialogueTextState;
 import chorus.states.editors.ExampleEditorState;
 import chorus.states.editors.MenuCharacterEditorState;
-import chorus.states.editors.StageEditorState;
+import chorus.states.editors.ChorusStageEditorState;
 import chorus.states.options.OptionsState;
-
 import chorus.backend.base.MusicBeatState;
 import chorus.backend.assets.Paths;
 import chorus.backend.assets.data.WeekData;
@@ -145,7 +145,7 @@ class MasterEditorMenu extends MusicBeatState
 					MusicBeatState.switchState(new LoadingState(new ExampleEditorState(), false));
 
 				case 'stage Editor':
-					MusicBeatState.switchState(new LoadingState(new StageEditorState(), false));
+					MusicBeatState.switchState(new LoadingState(new ChorusStageEditorState(), false));
 
 				case 'text examples':
 					MusicBeatState.switchState(new LoadingState(new ExampleEditorState(), false));
