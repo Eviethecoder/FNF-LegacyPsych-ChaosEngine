@@ -2,10 +2,12 @@
 
 import flixel.FlxG;
 import lime.ui.FileDialogFilter;
+import chorus.backend.debug.GameConsole;
 import imgui.ImGui;
 import imgui.ImGui.ImGuiWindowFlags as WindowFlags;
 import chorus.objects.misc.FlxImGui;
 import imgui.BoolPointer;
+import imgui.TextBuffer;
 import chorus.backend.base.MusicBeatState;
 import chorus.backend.assets.Paths;
 import chorus.backend.assets.data.StageData;
@@ -47,7 +49,14 @@ class ChorusStageEditorState extends MusicBeatState
 	var stageList:Array<String> = [];
 	var stagecam:FlxCamera;
 	var camFollow:FlxObject;
+	var propnames:Array<String> = [];
+	var selectedProp:Int = 0;
+
+	var proplist:Array<Dynamic> = [];
 	var selectedStage:Int = 0;
+	var propnamebuffer:TextBuffer = new TextBuffer(256);
+
+	var propZindex:Int = 0;
 
 	public function new()
 	{
@@ -182,22 +191,58 @@ class ChorusStageEditorState extends MusicBeatState
 			if (ImGui.button("Refresh Stage List"))
 				reloadStageList();
 			ImGui.textUnformatted("Stages:");
-				if (stageList.length > 0 && ImGui.beginCombo("Stages", stageList[selectedStage], 0))
+			if (stageList.length > 0 && ImGui.beginCombo("Stages", stageList[selectedStage], 0))
+			{
+				for (i in 0...stageList.length)
+				{
+					var isSelected = selectedStage == i;
+					if (ImGui.selectable(stageList[i], isSelected, 0, ImVec2.create()) && selectedStage != i)
 					{
-						for (i in 0...stageList.length)
-						{
-							var isSelected = selectedStage == i;
-							if (ImGui.selectable(stageList[i], isSelected, 0, ImVec2.create()) && selectedStage != i)
-							{
+						selectedStage = i;
+						loadStageFromData(stageList[selectedStage]);
+					}
+				}
+				ImGui.endCombo();
+			}
 
-								selectedStage = i;
-								loadStageFromData(stageList[selectedStage]);
+			if (ImGui.beginTabBar("Stage ", 0))
+			{
+				// Tab 1: Prop Settings
+				if (ImGui.beginTabItem("Prop Settings", null, 0))
+				{
+					if (propnames.length > 0 && ImGui.beginCombo("Props", propnames[selectedProp], 0))
+					{
+						for (i in 0...propnames.length)
+						{
+							var isSelected = selectedProp == i;
+							if (ImGui.selectable(propnames[i], isSelected, 0, ImVec2.create()) && selectedProp != i)
+							{
+								selectedProp = i;
+								loadSelectedProp();
+								trace('load respected prop info in here: ' + propnames[selectedProp]);
 							}
 						}
 						ImGui.endCombo();
 					}
+
+					ImGui.setNextItemWidth(120);
+					ImGui.inputInt("Zindex", propZindex);
+					ImGui.inputText("Name", propnamebuffer, propnamebuffer.length());
+					ImGui.endTabItem();
+				}
+
+				// Tab 2: Stage Properties
+				if (ImGui.beginTabItem("Stage Properties", null, 0))
+				{
+					ImGui.textUnformatted("Stage properties go here");
+					// Add your stage properties UI here
+					ImGui.endTabItem();
+				}
+
+				ImGui.endTabBar();
+			}
+			ImGui.end();
 		}
-		ImGui.end();
 	}
 
 	function reloadStageList():Void
@@ -251,11 +296,31 @@ class ChorusStageEditorState extends MusicBeatState
 
 		stageData = file;
 		curStage = stageName;
+		propnames = [];
+		proplist = [];
+		selectedProp = 0;
+		for (prop in stageData.props)
+		{
+			propnames.push(prop.name);
+			proplist.push(prop);
+		}
+		if (propnames.length > 0)
+			loadSelectedProp();
+		else
+			propnamebuffer = new TextBuffer(256);
 		rebuildPreviewFromJson();
 
 		#if FEATURE_DISCORD_RPC
 		DiscordClient.changePresence("Stage Editor", "Editing: " + curStage);
 		#end
+	}
+
+	function loadSelectedProp():Void
+	{
+		propZindex = proplist[selectedProp].zIndex;
+		var name = propnames[selectedProp];
+		propnamebuffer = new TextBuffer(Std.int(Math.max(256, name.length + 1)));
+		propnamebuffer.set(name);
 	}
 
 	function clearPreviewSprites():Void

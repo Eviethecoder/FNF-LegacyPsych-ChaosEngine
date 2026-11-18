@@ -2,8 +2,6 @@ package chorus.backend.assets.data;
 
 import chorus.objects.stages.Character.AnimArray;
 import chorus.backend.assets.Paths;
-
-
 #if MODS_ALLOWED
 import sys.io.File;
 import sys.FileSystem;
