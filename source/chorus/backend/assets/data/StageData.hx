@@ -267,7 +267,7 @@ class StageData
 		var rawJson:String = null;
 		var path:String = Paths.getPreloadPath('data/stages/' + stage + '.json');
 
-		var modPath = Paths.modFolders('data/stages/' + stage + '.json');
+		var modPath = Paths.modFolders('data/stages/' + stage + '.pcstg');
 
 		if (modPath != null && FileSystem.exists(modPath))
 		{

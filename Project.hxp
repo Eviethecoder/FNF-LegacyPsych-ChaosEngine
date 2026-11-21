@@ -122,7 +122,7 @@ class Project extends HXProject {
         addHaxelib('json2object');
         addHaxelib('linc_imgui');
         addHaxelib('hxjsonast');
-        addHaxelib('foxlite');
+        //addHaxelib('foxlite');
         if (FEATURE_VIDEO_PLAYBACK.isEnabled(this)){
             info('videos allowed, adding library hxvlc');
             //addHaxelib('hxvlc');

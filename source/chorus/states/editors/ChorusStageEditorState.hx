@@ -2,6 +2,7 @@
 
 import flixel.FlxG;
 import lime.ui.FileDialogFilter;
+import haxe.zip.Entry;
 import chorus.backend.debug.GameConsole;
 import imgui.ImGui;
 import imgui.ImGui.ImGuiWindowFlags as WindowFlags;
@@ -167,8 +168,27 @@ class ChorusStageEditorState extends MusicBeatState
 					_savingDialog = true;
 					FileDialog.openFile(Application.current.window, "Open from file...", function(path:Array<String>, _)
 					{
+						trace(path[0]);
 						_savingDialog = false;
-						FlxG.log.notice("File open success!!");
+						#if sys
+						var bytesIn = sys.io.File.getBytes(path[0]);
+						var bytesInput = new haxe.io.BytesInput(bytesIn);
+						var zippedEntries = haxe.zip.Reader.readZip(bytesInput);
+						var results:Array<Entry> = new Array<Entry>();
+						for (entry in zippedEntries)
+						{
+							if (entry.compressed)
+							{
+								entry.data = haxe.zip.Reader.unzip(entry);
+							}
+
+							results.push(entry);
+						}
+
+						trace(results);
+						#else
+						throw 'Direct file reading by path is not supported on this platform.';
+						#end
 					}, [new FileDialogFilter("Chorus Stage File", "pcstg")], curStage + '.pcstg');
 					#end
 				}

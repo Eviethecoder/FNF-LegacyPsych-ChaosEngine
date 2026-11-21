@@ -19,7 +19,7 @@ import chorus.backend.utils.NoteTypepreloader;
 import chorus.backend.utils.NoteSkinHelper;
 import chorus.backend.system.FunkinMemory;
 import flixel.system.debug.log.LogStyle;
-import foxlite.renderer.FoxRenderer;
+// import foxlite.renderer.FoxRenderer;
 import flixel.util.FlxSignal;
 import chorus.backend.utils.SignalDispatcher;
 
@@ -80,7 +80,7 @@ class InitState extends flixel.FlxState
 
 		// -- -- -- //
 
-		FoxRenderer.initLibs();
+		// FoxRenderer.initLibs();
 
 		FunkinMemory.clearStoredMemory();
 		FunkinMemory.clearUnusedMemory();
