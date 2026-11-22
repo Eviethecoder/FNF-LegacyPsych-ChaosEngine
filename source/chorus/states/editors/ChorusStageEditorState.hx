@@ -20,12 +20,19 @@ import chorus.objects.stages.FunkinBackdrop;
 import chorus.states.MasterEditorMenu;
 import flixel.FlxCamera;
 import flixel.FlxObject;
+import flixel.FlxSprite;
+import flixel.addons.display.FlxBackdrop;
+import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
+import flixel.util.FlxSort;
+import haxe.io.Bytes;
+import json2object.JsonParser;
 import openfl.display.BlendMode;
 import sys.FileSystem;
+import chorus.backend.utils.Ziputil;
 #if FEATURE_DISCORD_RPC
 import chorus.backend.api.Discord.DiscordClient;
 #end
@@ -46,7 +53,7 @@ class ChorusStageEditorState extends MusicBeatState
 	var editorWindowOpen:Bool = false;
 
 	var stageData:StageFile;
-	var propLayer:FlxTypedGroup<FunkinSprite>;
+	var propLayer:FlxTypedGroup<FlxSprite>;
 	var markerLayer:FlxTypedGroup<FunkinSprite>;
 	var markerTextLayer:FlxTypedGroup<FlxText>;
 	var stageList:Array<String> = [];
@@ -60,6 +67,9 @@ class ChorusStageEditorState extends MusicBeatState
 	var propnamebuffer:TextBuffer = new TextBuffer(256);
 
 	var propZindex:Int = 0;
+
+	var zipassetsmap:Map<String, Dynamic>;
+	var zipStagePath:String;
 
 	public function new()
 	{
@@ -76,7 +86,7 @@ class ChorusStageEditorState extends MusicBeatState
 		if (stageList.length > 0)
 			curStage = stageList[selectedStage];
 
-		propLayer = new FlxTypedGroup<FunkinSprite>();
+		propLayer = new FlxTypedGroup<FlxSprite>();
 		add(propLayer);
 		markerLayer = new FlxTypedGroup<FunkinSprite>();
 		add(markerLayer);
@@ -162,42 +172,17 @@ class ChorusStageEditorState extends MusicBeatState
 		{
 			if (ImGui.begin("Stage Editor - Welcome", isBeginningWindowOpen, WindowFlags.NoCollapse | WindowFlags.NoResize | WindowFlags.NoMove))
 			{
-				if (ImGui.button("Open from file test..."))
+				if (ImGui.button("Open from file test...") && !_savingDialog)
 				{
 					#if desktop
-					if (_savingDialog)
-						return;
 					_savingDialog = true;
 					FileDialog.openFile(Application.current.window, "Open from file...", function(path:Array<String>, _)
 					{
-						trace(path[0]);
 						_savingDialog = false;
+						if (path == null || path.length == 0)
+							return;
 						#if sys
-						var bytesIn = sys.io.File.getBytes(path[0]);
-						var bytesInput = new haxe.io.BytesInput(bytesIn);
-						var zippedEntries = haxe.zip.Reader.readZip(bytesInput);
-						var results:Array<Entry> = new Array<Entry>();
-						for (entry in zippedEntries)
-						{
-							if (entry.compressed)
-							{
-								entry.data = haxe.zip.Reader.unzip(entry);
-							}
-
-							results.push(entry);
-						}
-
-						for (r in results)
-						{
-							if (r.fileName.endsWith('.png'))
-							{
-								var byteArray:ByteArray = ByteArray.fromBytes(r.data);
-								var bitmapData:BitmapData = BitmapData.fromBytes(byteArray);
-								trace(bitmapData.height);
-							}
-							else
-								trace(r.data);
-						}
+						loadStageArchive(path[0]);
 						#else
 						throw 'Direct file reading by path is not supported on this platform.';
 						#end
@@ -219,7 +204,12 @@ class ChorusStageEditorState extends MusicBeatState
 		{
 			ImGui.textUnformatted("Current stage: " + curStage);
 			if (ImGui.button("Reload Stage"))
-				loadStageFromData(curStage);
+			{
+				if (zipStagePath != null)
+					loadStageArchive(zipStagePath);
+				else
+					loadStageFromData(curStage);
+			}
 			if (ImGui.button("Refresh Stage List"))
 				reloadStageList();
 			ImGui.textUnformatted("Stages:");
@@ -273,8 +263,8 @@ class ChorusStageEditorState extends MusicBeatState
 
 				ImGui.endTabBar();
 			}
-			ImGui.end();
 		}
+		ImGui.end();
 	}
 
 	function reloadStageList():Void
@@ -309,6 +299,15 @@ class ChorusStageEditorState extends MusicBeatState
 		{
 			stageList = ['test'];
 		}
+		if (selectedStage >= stageList.length)
+			selectedStage = 0;
+	}
+
+	override function destroy():Void
+	{
+		if (imgui != -1)
+			FlxImGui.unregister(imgui);
+		super.destroy();
 	}
 
 	function loadStageFromData(stageName:String):Void
@@ -326,15 +325,59 @@ class ChorusStageEditorState extends MusicBeatState
 			return;
 		}
 
+		zipassetsmap = null;
+		zipStagePath = null;
+		setStageData(stageName, file);
+	}
+
+	function loadStageArchive(path:String):Void
+	{
+		#if sys
+		var bytesInput = new haxe.io.BytesInput(sys.io.File.getBytes(path));
+		var assets = Ziputil.readStage(haxe.zip.Reader.readZip(bytesInput));
+		var json:Bytes = assets.get('json');
+		if (json == null)
+		{
+			FlxG.log.error('Stage archive has no JSON: ' + path);
+			return;
+		}
+
+		var parser = new JsonParser<StageFile>();
+		parser.fromJson(json.toString(), path);
+		if (parser.errors.length > 0)
+		{
+			for (error in parser.errors)
+				FlxG.log.error('Failed to parse stage archive ' + path + ': ' + error);
+			return;
+		}
+		if (parser.value == null || parser.value.props == null)
+		{
+			FlxG.log.error('Stage archive has no valid stage data: ' + path);
+			return;
+		}
+
+		zipassetsmap = assets;
+		zipStagePath = path;
+		setStageData(haxe.io.Path.withoutExtension(haxe.io.Path.withoutDirectory(path)), parser.value);
+		isBeginningWindowOpen = false;
+		editorWindowOpen = true;
+		#end
+	}
+
+	function setStageData(stageName:String, file:StageFile):Void
+	{
 		stageData = file;
 		curStage = stageName;
 		propnames = [];
 		proplist = [];
 		selectedProp = 0;
-		for (prop in stageData.props)
+		if (stageData.props != null)
 		{
-			propnames.push(prop.name);
-			proplist.push(prop);
+			for (prop in stageData.props)
+			{
+				propnames.push(prop.name);
+				proplist.push(prop);
+			}
 		}
 		if (propnames.length > 0)
 			loadSelectedProp();
@@ -454,8 +497,23 @@ class ChorusStageEditorState extends MusicBeatState
 						propLayer.add(bgSprite);
 
 					case 'BGSprite':
-						var bgSprite:BGSprite = new BGSprite(stageData.directory + '/' + prop.path, prop.position[0], prop.position[1], prop.scroll[0],
-							prop.scroll[1], prop.animations, prop.velocity);
+						var bgSprite:BGSprite;
+						if (zipassetsmap != null)
+						{
+							var image = getArchiveImage(prop.path);
+							if (image == null)
+								continue;
+							bgSprite = new BGSprite(null, prop.position[0], prop.position[1], prop.scroll[0], prop.scroll[1], null, prop.velocity);
+							loadArchiveGraphic(bgSprite, image, prop.name);
+							bgSprite.id = prop.name;
+							bgSprite.zIndex = prop.zIndex;
+							bgSprite.alpha = prop.alpha;
+							bgSprite.scale.set(prop.scale[0], prop.scale[1]);
+							bgSprite.angle = prop.angle;
+						}
+						else
+							bgSprite = new BGSprite(stageData.directory + '/' + prop.path, prop.position[0], prop.position[1], prop.scroll[0], prop.scroll[1],
+								prop.animations, prop.velocity);
 						bgSprite.id = prop.name;
 						bgSprite.zIndex = prop.zIndex;
 						bgSprite.alpha = prop.alpha;
@@ -480,12 +538,21 @@ class ChorusStageEditorState extends MusicBeatState
 							default:
 								axsis = FlxAxes.NONE;
 						}
-						var bgSprite:FunkinBackdrop = new FunkinBackdrop(stageData.directory + '/' + prop.path, axsis, prop.spacing[0], prop.spacing[1],
-							prop.animations);
+						var bgSprite:FlxSprite;
+						if (zipassetsmap != null)
+						{
+							var image = getArchiveImage(prop.path);
+							if (image == null)
+								continue;
+							bgSprite = new FlxBackdrop(null, axsis, prop.spacing[0], prop.spacing[1]);
+							loadArchiveGraphic(bgSprite, image, prop.name, prop.animations);
+						}
+						else
+							bgSprite = new FunkinBackdrop(stageData.directory + '/' + prop.path, axsis, prop.spacing[0], prop.spacing[1], prop.animations);
 
 						bgSprite.x = prop.position[0];
 						bgSprite.y = prop.position[1];
-						bgSprite.id = prop.name;
+						bgSprite.scrollFactor.set(prop.scroll[0], prop.scroll[1]);
 						bgSprite.velocity.set(prop.velocity[0], prop.velocity[1]);
 						bgSprite.zIndex = prop.zIndex;
 						bgSprite.alpha = prop.alpha;
@@ -495,10 +562,10 @@ class ChorusStageEditorState extends MusicBeatState
 						{
 							bgSprite.blend = getBlendmodeFromString(prop.blend);
 						}
-
 						propLayer.add(bgSprite);
 				}
 			}
+			propLayer.sort(function(order:Int, a:FlxSprite, b:FlxSprite):Int return FlxSort.byValues(order, a.zIndex, b.zIndex), FlxSort.ASCENDING);
 
 			if (stageData.characters != null)
 			{
@@ -510,6 +577,40 @@ class ChorusStageEditorState extends MusicBeatState
 				}
 			}
 		}
+	}
+
+	function getArchiveImage(path:String):BitmapData
+	{
+		var fileName = haxe.io.Path.withoutDirectory(path);
+		if (!fileName.endsWith('.png'))
+			fileName += '.png';
+		var image:BitmapData = zipassetsmap.get(fileName);
+		if (image == null)
+			FlxG.log.warn('Missing stage archive image: ' + fileName);
+		return image;
+	}
+
+	function loadArchiveGraphic(sprite:FlxSprite, image:BitmapData, propName:String, animations:Null<Array<AnimArray>>):Void
+	{
+		if (animations != null && animations.length > 0)
+		{
+			var xmlName = propName + '.xml';
+			var xml:String = zipassetsmap.get(xmlName);
+			if (xml != null)
+			{
+				sprite.frames = FlxAtlasFrames.fromSparrow(image.clone(), xml);
+				sprite.active = true;
+				for (anim in animations)
+				{
+					sprite.animation.addByPrefix(anim.name, anim.anim, anim.fps, anim.loop);
+					if (anim.name == 'idle' || anim.name == 'dance' || anim.name == 'bop' || anim.name == 'resting' || anim.name == 'rest')
+						sprite.animation.play(anim.name);
+				}
+				return;
+			}
+			trace('Missing stage archive atlas: ' + xmlName);
+		}
+		sprite.loadGraphic(image, false, 0, 0, true);
 	}
 
 	function addCharacterMarker(name:String, data:CharacterData, color:FlxColor):Void

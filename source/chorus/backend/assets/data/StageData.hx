@@ -23,11 +23,14 @@ typedef StageFile =
 	@:default(1.0)
 	var defaultZoom:Float;
 
+	@:optional
 	@:default(false)
 	var isPixelStage:Bool;
+	@:optional
 	@:default('')
 	var directory:String;
 
+	@:optional
 	@:default([0, 0])
 	var focusOffsets:Array<Float>;
 
@@ -45,9 +48,11 @@ typedef StageFile =
 	/**
 	 *  what the stage will focus on initaly, can be a prop or a character
 	 */
-	@default('boyfriend')
+	@:optional
+	@:default('boyfriend')
 	var camera_focus:String;
 
+	@:optional
 	var camera_speed:Null<Float>;
 }
 
@@ -125,12 +130,14 @@ typedef PropData =
 	/**
 	 * The X And Y position of the prop on the stage.
 	 */
+	@:optional
 	@:default([0, 0])
 	var position:Array<Float>;
 
 	/**
 	 * The velocity of the prop, used for flxbackdrops to make them scroll automatically.
 	 */
+	@:optional
 	@:default([0, 0])
 	var velocity:Array<Float>;
 
@@ -184,6 +191,7 @@ typedef CharacterData =
 	/**
 	 * The X And Y position of the character on the stage.
 	 */
+	@:optional
 	@:default([0, 0])
 	var position:Array<Float>;
 
@@ -215,6 +223,7 @@ typedef CharacterData =
 	@:default(0.0)
 	var angle:Float;
 
+	@:optional
 	@:default(false)
 	var flipx:Bool;
 }
@@ -267,7 +276,7 @@ class StageData
 		var rawJson:String = null;
 		var path:String = Paths.getPreloadPath('data/stages/' + stage + '.json');
 
-		var modPath = Paths.modFolders('data/stages/' + stage + '.pcstg');
+		var modPath = Paths.modFolders('data/stages/' + stage + '.json');
 
 		if (modPath != null && FileSystem.exists(modPath))
 		{

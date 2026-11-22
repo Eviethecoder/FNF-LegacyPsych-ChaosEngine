@@ -1,4 +1,5 @@
 package chorus.states;
+
 import chorus.objects.MenuItem;
 import chorus.sort.MenuCharacter;
 import chorus.backend.utils.ClientPrefs;
@@ -7,9 +8,7 @@ import chorus.backend.utils.Song;
 import chorus.backend.save.Highscore;
 import chorus.substates.GameplayChangersSubstate;
 import chorus.substates.ResetScoreSubState;
-
 import chorus.backend.base.MusicBeatState;
-
 import chorus.backend.assets.Paths;
 #if FEATURE_DISCORD_RPC
 import chorus.backend.api.Discord.DiscordClient;
@@ -28,7 +27,6 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
-import lime.net.curl.CURLCode;
 import flixel.graphics.FlxGraphic;
 import chorus.backend.assets.data.WeekData;
 
