@@ -1,5 +1,7 @@
 ﻿package chorus.states.editors;
 
+import openfl.display.BitmapData;
+import openfl.utils.ByteArray;
 import flixel.FlxG;
 import lime.ui.FileDialogFilter;
 import haxe.zip.Entry;
@@ -185,7 +187,17 @@ class ChorusStageEditorState extends MusicBeatState
 							results.push(entry);
 						}
 
-						trace(results);
+						for (r in results)
+						{
+							if (r.fileName.endsWith('.png'))
+							{
+								var byteArray:ByteArray = ByteArray.fromBytes(r.data);
+								var bitmapData:BitmapData = BitmapData.fromBytes(byteArray);
+								trace(bitmapData.height);
+							}
+							else
+								trace(r.data);
+						}
 						#else
 						throw 'Direct file reading by path is not supported on this platform.';
 						#end
