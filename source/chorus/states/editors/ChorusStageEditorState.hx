@@ -7,6 +7,7 @@ import lime.ui.FileDialogFilter;
 import haxe.zip.Entry;
 import chorus.backend.debug.GameConsole;
 import imgui.ImGui;
+import chorus.objects.stages.Character.AnimArray;
 import imgui.ImGui.ImGuiWindowFlags as WindowFlags;
 import chorus.objects.misc.FlxImGui;
 import imgui.BoolPointer;
@@ -504,7 +505,7 @@ class ChorusStageEditorState extends MusicBeatState
 							if (image == null)
 								continue;
 							bgSprite = new BGSprite(null, prop.position[0], prop.position[1], prop.scroll[0], prop.scroll[1], null, prop.velocity);
-							loadArchiveGraphic(bgSprite, image, prop.name);
+							loadArchiveGraphic(bgSprite, image, prop.name, null);
 							bgSprite.id = prop.name;
 							bgSprite.zIndex = prop.zIndex;
 							bgSprite.alpha = prop.alpha;

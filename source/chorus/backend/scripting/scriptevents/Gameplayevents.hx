@@ -9,7 +9,6 @@ import chorus.backend.save.Rating;
 import chorus.objects.game.Note;
 
 // this is modified from v slice directly support the official release of the game
-
 enum abstract ScriptEventType(String) from String to String
 {
 	/**
@@ -726,6 +725,11 @@ class EventDispatcher
 			}
 			// add actual script call handling here, if needed
 		 */
+		if (eventtype.scriptFuncName() != '')
+		{
+			Scripthandler.dispatchevent(eventtype.scriptFuncName(), [event]); // once modules are added make these run both gamescripts AND modules
+		}
+
 		return event;
 	}
 
